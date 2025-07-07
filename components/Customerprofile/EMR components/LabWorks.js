@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import "./LabWorks.css";
 import { FaPen } from "react-icons/fa";
+import AddLabWorkModal from "@/components/PopupModals/AddLabWorkModal/AddLabWorkModal";
 
 const LabWorks = () => {
   const [labData] = useState([
@@ -28,9 +29,12 @@ const LabWorks = () => {
     },
   ]);
 
+  const [showModal, setShowModal] = useState(false);
+
   return (
     <div className="lab-container">
       <h2 className="lab-title">Lab Works</h2>
+
       <table className="lab-table">
         <thead>
           <tr>
@@ -64,13 +68,19 @@ const LabWorks = () => {
               <td>{item.workParticulars}</td>
               <td>{item.repeat}</td>
               <td>{item.remarks}</td>
-              <td className="edit-action">
+              <td className="edit-action" onClick={() => setShowModal(true)}>
                 <FaPen />
               </td>
             </tr>
           ))}
         </tbody>
       </table>
+
+      {/* ✅ Render modal separately, outside the table */}
+      {showModal && (
+        <AddLabWorkModal onClose={() => setShowModal(false)} />
+      )}
+
       <div className="back-link">
         <a href="#">Back to History</a>
       </div>

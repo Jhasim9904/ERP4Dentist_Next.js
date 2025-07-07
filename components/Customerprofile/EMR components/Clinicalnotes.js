@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { FaPen } from "react-icons/fa";
 import "./Clinicalnotes.css";
+import AddNoteModal from "@/components/PopupModals/AddNoteModal/AddNoteModal";
 
 const Clinicalnotes = () => {
   const [notes, setNotes] = useState([
@@ -29,6 +30,7 @@ const Clinicalnotes = () => {
       planCreated: true,
     },
   ]);
+  const [showModal, setShowModal] = useState(false);
 
   return (
     <div className="clinical-container">
@@ -73,14 +75,16 @@ const Clinicalnotes = () => {
                 )}
               </td>
               <td>
-                <button className="edit-icon">
+                <button className="edit-icon" onClick={() => setShowModal(true)}>
                   <FaPen />
                 </button>
+                {showModal && <AddNoteModal onClose={() => setShowModal(false)} />}
               </td>
             </tr>
           ))}
         </tbody>
       </table>
+            
 
       <div className="back-link">
         <a href="#">Back to History</a>
