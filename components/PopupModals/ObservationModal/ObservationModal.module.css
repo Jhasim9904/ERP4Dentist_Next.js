@@ -1,0 +1,66 @@
+.toothGridContainer {
+  position: relative;
+  border: 1px solid #ccc;
+  padding: 10px;
+  margin-bottom: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.quadrantRow {
+  display: flex;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.quadrantBox {
+  flex: 1;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 8px;
+  padding: 10px;
+  border: 1px solid #ccc;
+  min-height: 120px;
+  box-sizing: border-box;
+}
+
+.toothWrapper {
+  text-align: center;
+  cursor: pointer;
+  width: 50px;
+}
+
+.toothImage {
+  width: 100%;
+  height: auto;
+  max-height: 55px;
+  object-fit: contain;
+}
+
+.toothLabel {
+  font-size: 12px;
+  margin-top: 4px;
+  color: #333;
+}
+
+.cross {
+  position: absolute;
+  top: 50%;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: #aaa;
+  z-index: 0;
+}
+
+.cross::after {
+  content: "";
+  position: absolute;
+  top: -50%;
+  left: 50%;
+  width: 1px;
+  height: 200%;
+  background: #aaa;
+}

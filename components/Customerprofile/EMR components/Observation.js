@@ -2,10 +2,14 @@
 import { useState } from "react";
 import { FaPlus, FaPen } from "react-icons/fa";
 import "./Observation.css";
-import ObservationModal from "@/components/Customerprofile/EMR components/ObservationModel";
+import ObservationModal from "@/components/PopupModals/ObservationModal/ObservationModal";
+import AddTreatmentModal from "@/components/PopupModals/AddTreatmentModal/AddTreatmentModal";
 
 const Observation = () => {
   const [show, setShow] = useState(false);
+  const [showModal, setShowModal] = useState(false);
+  const handleOpen = () => setShowModal(true);
+  const handleClose = () => setShowModal(false);
   return (
     <div className="observation-container">
       <h2 className="observation-heading">Observation</h2>
@@ -81,14 +85,16 @@ const Observation = () => {
               signs of wear due to bruxism.
             </td>
             <td>
-              <button className="action-btn">
+              <button className="action-btn" onClick={handleOpen}>
                 <FaPen style={{ marginRight: "6px" }} /> Add Treatment
               </button>
+              {showModal && <AddTreatmentModal onClose={handleClose} />}
             </td>
             <td>
-              <button className="edit-icon">
+              <button className="edit-icon" onClick={() => setShow(true)}>
                 <FaPen />
               </button>
+              
             </td>
           </tr>
         </tbody>

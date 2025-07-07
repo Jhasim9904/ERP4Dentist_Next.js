@@ -1,0 +1,248 @@
+.invoiceContainer {
+  margin: 0 auto;
+  width: 595px;
+  padding: 50px 20px;
+  font-family: "Inter", serif;
+  position: relative;
+}
+
+.clearfix::after {
+  content: "";
+  clear: both;
+  display: table;
+}
+
+.clm {
+  float: left;
+  width: 50%;
+}
+
+.logo {
+  margin-bottom: 0;
+}
+
+.ul,
+.ul li {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.li {
+  font-weight: 400;
+  color: #2a2a2a;
+  font-size: 11px;
+  padding-bottom: 10px;
+}
+
+.label {
+  float: left;
+  width: 112px;
+  font-weight: 700;
+}
+
+.headerText {
+  font-size: 12px;
+  text-align: center;
+}
+
+.headerText span {
+  font-weight: 700;
+}
+
+.patInfo {
+  padding: 20px 0;  
+}
+
+.h3 {
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.h4 {
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.clm1 {
+  width: 55%;
+  border-right: 1px solid #d7dae0;
+  padding-right: 5px;
+}
+
+.clm2 {
+  width: 45%;
+  padding-left: 15px;
+}
+
+.patientListItem {
+  font-size: 11px;
+  line-height: 18px;
+}
+
+.patientListItemLabel {
+  width: 77px;
+  float: left;
+  font-weight: 700;
+  position: relative;
+}
+
+.patientListItemLabel::after {
+  content: ":";
+  position: absolute;
+  right: 0;
+  top: 0;
+}
+
+.patientListItemText {
+  padding-left: 80px;
+}
+
+.table {
+  border-collapse: collapse;
+  width: 100%;
+}
+
+.th,
+.td {
+  border-top: 1px solid #ddd;
+  padding: 10px 3px;
+}
+
+.th {
+  font-size: 9px;
+  font-weight: 700;
+  text-align: left;
+}
+
+.td {
+  font-size: 10px;
+  font-weight: 400;
+}
+
+.textCenter {
+  text-align: center;
+}
+
+.signature {
+  text-align: center;
+  padding: 60px 40px 15px 0;
+}
+
+.signatureText {
+  float: right;
+  font-size: 10px;
+  font-family: "Inter", serif;
+  color: #2a2a2a;
+}
+
+.footer {
+  padding: 15px 0;
+  position: relative;
+  bottom: 0;
+  left: 20px;
+  right: 20px;
+}
+
+.footerText {
+  font-size: 10px;
+  text-align: center;
+  font-weight: 500;
+  color: #222;
+  margin-bottom: 20px;
+}
+
+.pageNo {
+  color: #5e6470;
+  font-size: 9px;
+  padding: 15px 0;
+  text-align: center;
+}
+
+.noPrint {
+  display: block;
+}
+
+@media print {
+  .noPrint {
+    display: none !important;
+  }
+}
+
+.buttonRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  padding: 40px 20px;
+}
+
+.leftBtn {
+  flex: 1;
+}
+
+.rightBtn {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 10px;
+}
+
+.noPrint {
+  display: block;
+}
+
+@media print {
+  .noPrint {
+    display: none !important;
+  }
+}
+
+/* ... your existing styles ... */
+
+.buttonFooterRow {
+  position: fixed;
+  bottom: 30px;
+  left: 0;
+  width: 100%;
+  padding: 0 30px;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  z-index: 999;
+}
+
+.actionBtn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  background: none;
+  border: none;
+  color: #000;
+  font-size: 13px;
+  cursor: pointer;
+  font-family: "Inter", sans-serif;
+}
+
+.actionBtn i {
+  font-size: 28px;
+  margin-bottom: 4px;
+}
+
+.actionBtn:hover {
+  color: #007bff;
+}
+
+.noPrint {
+  display: block;
+}
+
+@media print {
+  .noPrint {
+    display: none !important;
+  }
+
+  .buttonFooterRow {
+    display: none !important;
+  }
+}
