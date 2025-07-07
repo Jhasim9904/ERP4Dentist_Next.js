@@ -71,6 +71,7 @@ const EMR = ({ activeTab, setActiveTab, handleBookClick }) => {
           {activeTab1 === "lab-works" && <LabWorks />}
           {activeTab1 === "uploads" && <Uploads />}
           {activeTab1 === "billing" && <Billing />}
+                    {activeTab1 === "billing" && <Billing />}
         </div>
       </div>
     </div>

@@ -1,7 +1,7 @@
 import React from "react";
 import "./CalendarHeader.css";
 import Image from "next/image";
-import CalendarImg from "@/public/images/calendar.png"
+import CalendarImg from "@/public/images/calendar.png";
 
 // Accept props for current month/year and navigation functions
 const CalendarHeader = ({ currentMonthYear, onPrevWeek, onNextWeek }) => {
@@ -11,17 +11,20 @@ const CalendarHeader = ({ currentMonthYear, onPrevWeek, onNextWeek }) => {
         <div className="calendar-date-nav-wrapper">
           <span className="calendar-date-icon">
             {/* Calendar icon (Feather Icons style) */}
-                        <Image
-                          className="d-flex"
-                          src={CalendarImg}
-                          alt="CalendarImg"
-                          width={20}
-                          height={20}
-                        />
+            <Image
+              className="d-flex"
+              src={CalendarImg}
+              alt="CalendarImg"
+              width={20}
+              height={20}
+            />
           </span>
           {/* This span now displays the dynamic month/year from props */}
           <span className="calendar-date-text">{currentMonthYear}</span>
-          <button className="calendar-nav-button left-arrow" onClick={onPrevWeek}>
+          <button
+            className="calendar-nav-button left-arrow"
+            onClick={onPrevWeek}
+          >
             {/* Left arrow icon - onClick handler added */}
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -38,7 +41,10 @@ const CalendarHeader = ({ currentMonthYear, onPrevWeek, onNextWeek }) => {
               <polyline points="15 18 9 12 15 6"></polyline>
             </svg>
           </button>
-          <button className="calendar-nav-button right-arrow" onClick={onNextWeek}>
+          <button
+            className="calendar-nav-button right-arrow"
+            onClick={onNextWeek}
+          >
             {/* Right arrow icon - onClick handler added */}
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -62,6 +68,8 @@ const CalendarHeader = ({ currentMonthYear, onPrevWeek, onNextWeek }) => {
         <div className="month-select-wrapper">
           <select className="month-select">
             <option>Month</option>
+            <option>Week</option>
+            <option>Day</option>
             {/* You could also dynamically populate these options later */}
           </select>
           <span className="select-arrow">

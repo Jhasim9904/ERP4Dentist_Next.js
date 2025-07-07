@@ -37,7 +37,7 @@ const Sidebar = ({ isOpen, onToggleSidebar, sidebarOpen }) => {
           <div
             className={`sidebar-btn ${
               pathname === item.path ? "active" : ""
-            }`}
+            } `}
           >
             <Image
               src={item.icon}
