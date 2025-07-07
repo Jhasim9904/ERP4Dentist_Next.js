@@ -66,11 +66,56 @@
   background-color: #3a6351;
 }
 
+/* Action cell with relative positioning for dropdown */
 .action-cell {
+  position: relative; /* Crucial for positioning the dropdown */
   text-align: center;
-  cursor: pointer;
+  /* cursor: pointer; -- Moved to action-dots for precise clicking */
   font-size: 1.2rem;
 }
+
+.action-dots {
+  cursor: pointer;
+  padding: 0 5px; /* Add some padding for easier clicking */
+  display: inline-block; /* Allows padding */
+}
+
+/* Dropdown styling */
+.action-dropdown {
+  position: absolute;
+  top: 100%; /* Position below the ⋮ */
+  right: 0; /* Align to the right of the cell */
+  background-color: #fff;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  min-width: 150px;
+  z-index: 10; /* Ensure dropdown is above other content */
+  overflow: hidden; /* Ensures rounded corners apply */
+  margin-top: 5px; /* Small space between dots and dropdown */
+}
+
+.dropdown-item {
+  padding: 10px 15px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 0.9rem;
+  color: #333;
+  transition: background-color 0.2s ease;
+}
+
+.dropdown-item:hover {
+  background-color: #f0f0f0;
+}
+
+.dropdown-icon {
+  font-size: 1rem; /* Adjust icon size as needed */
+  /* If you are using Font Awesome or other icon libraries,
+     replace 🗑️ with their specific class (e.g., <i class="fas fa-trash"></i>) */
+}
+
 
 .back-link {
   margin-top: 2rem;

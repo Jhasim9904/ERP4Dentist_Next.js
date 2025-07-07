@@ -11,7 +11,8 @@
 .time-column {
   display: flex;
   flex-direction: column;
-  width: 80px; /* Standard width for time column (adjust as desired, e.g., 100px) */
+  align-items: center;
+  width: 120px; /* Standard width for time column (adjust as desired, e.g., 100px) */
   /* Removed fixed height; it will grow with content */
   border-right: 1px solid #e2e8f0;
   background-color: white;
@@ -35,7 +36,7 @@
   height: 200px; /* Height for each hour slot */
   /* Removed fixed width; it will take up the width of .time-column */
   display: flex;
-  align-items: flex-start; /* Align text to top of slot */
+  align-items: center; /* Align text to top of slot */
   justify-content: center;
   padding-top: 8px; /* Padding for time text from top of slot */
   font-size: 12px;

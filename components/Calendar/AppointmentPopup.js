@@ -1,5 +1,12 @@
 import React from "react";
 import "./AppointmentPopup.css";
+import Image from "next/image";
+import Arrowupright from "@/public/images/arrow-up-right.png";
+import Edit from "@/public/images/edit.png"
+import Delete from "@/public/images/delete.png"
+import Email from "@/public/images/email.png"
+import Phone from "@/public/images/phone.png"
+
 
 const AppointmentPopup = ({
   appointment,
@@ -34,23 +41,45 @@ const AppointmentPopup = ({
           <span className="popup-patient-name">{appointment.patientName}</span>
           <div className="popup-actions">
             {/* Edit */}
-            <svg xmlns="http://www.w3.org/2000/svg" className="popup-icon" viewBox="0 0 24 24">
-              <path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z" />
-            </svg>
+            <Image
+              className="d-flex"
+              src={Edit}
+              alt="Edit"
+              width={20}
+              height={20}
+            />
             {/* Delete */}
-            <svg xmlns="http://www.w3.org/2000/svg" className="popup-icon" viewBox="0 0 24 24">
-              <polyline points="3 6 5 6 21 6"></polyline>
-              <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
-              <line x1="10" y1="11" x2="10" y2="17"></line>
-              <line x1="14" y1="11" x2="14" y2="17"></line>
-            </svg>
+            <Image
+              className="d-flex"
+              src={Delete}
+              alt="Delete"
+              width={20}
+              height={20}
+            />
           </div>
         </div>
 
         <div className="popup-contact-info">
+          <div className="d-flex">
+
+                      <Image
+              className="d-flex mx-1"
+              src={Phone}
+              alt="Phone"
+              width={20}
+              height={20}
+              />
           <span>+91 9425854202</span>
-          <span className="dot-separator">•</span>
+              
+            <Image
+              className="d-flex mx-1"
+              src={Email}
+              alt="Email"
+              width={20}
+              height={20}
+              />
           <span>ewalker12@mail.com</span>
+              </div>
         </div>
 
         <div className="popup-details">
@@ -82,10 +111,13 @@ const AppointmentPopup = ({
 
         <button className="see-patient-details-btn">
           See Patient Details
-          <svg xmlns="http://www.w3.org/2000/svg" className="arrow-icon" viewBox="0 0 24 24">
-            <line x1="7" y1="17" x2="17" y2="7"></line>
-            <polyline points="7 7 17 7 17 17"></polyline>
-          </svg>
+            <Image
+              className="d-flex"
+              src={Arrowupright}
+              alt="Arrowupright"
+              width={20}
+              height={20}
+            />
         </button>
       </div>
     </div>
