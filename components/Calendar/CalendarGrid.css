@@ -1,0 +1,140 @@
+.calendar-grid-container {
+  display: flex;
+  flex-grow: 1; /* Allows the grid to take up available horizontal space */
+  background-color: white;
+  border: 1px solid #e2e8f0;
+  border-radius: 6px;
+  /* Removed fixed width and height to allow it to grow */
+  /* overflow: hidden; */ /* Keep this if you want border-radius to apply without content spilling */
+}
+
+.time-column {
+  display: flex;
+  flex-direction: column;
+  width: 80px; /* Standard width for time column (adjust as desired, e.g., 100px) */
+  /* Removed fixed height; it will grow with content */
+  border-right: 1px solid #e2e8f0;
+  background-color: white;
+  padding-top: 60px; /* Aligns with the first hour line of the grid body */
+}
+
+.time-header-label {
+  /* Removed fixed width; it will take up the width of .time-column */
+  height: 70px; /* Matches height of day header row */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  font-weight: 600;
+  color: #4a5568;
+  border-bottom: 1px solid #e2e8f0;
+  margin-top: -60px; /* Pulls it up to align with day headers */
+}
+
+.time-slot-label {
+  height: 200px; /* Height for each hour slot */
+  /* Removed fixed width; it will take up the width of .time-column */
+  display: flex;
+  align-items: flex-start; /* Align text to top of slot */
+  justify-content: center;
+  padding-top: 8px; /* Padding for time text from top of slot */
+  font-size: 12px;
+  font-weight: 600;
+  color: #4a5568;
+  border-bottom: 1px solid #e2e8f0;
+}
+
+.grid-body {
+  flex-grow: 1; /* Allows the grid body to take remaining horizontal space */
+  display: grid;
+  grid-template-rows: auto 1fr; /* Header row then content row */
+}
+
+.day-headers {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  border-bottom: 1px solid #e2e8f0;
+}
+
+.day-header-cell {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 8px;
+  border-right: 1px solid #e2e8f0;
+  background-color: white;
+}
+
+.day-header-cell:last-child {
+  border-right: none;
+}
+
+.day-header-name {
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.day-header-date {
+  margin-top: 4px;
+  font-size: 20px;
+  font-weight: 700;
+  color: #2d3748;
+}
+
+.day-header-today {
+  background-color: #3b82f6; /* Blue-600, same as add button */
+  color: white;
+  border-top-left-radius: 6px;
+  border-top-right-radius: 6px;
+}
+.day-header-today .day-header-date {
+  color: white;
+}
+
+.appointment-slots-grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  /* INCREASE THIS VALUE TO SHOW MORE HOURS VERTICALLY */
+  /* For example, for 10 hours (10 AM to 7 PM), it would be 60px * 10 = 600px */
+  height: calc(90px * 10); /* Example: increased to show 10 hours initially */
+  position: relative; /* For absolute positioning of children */
+}
+
+.day-slot-column {
+  position: relative; /* For absolute positioning of appointment cards */
+  border-right: 1px solid #e2e8f0;
+}
+
+.day-slot-column:last-child {
+  border-right: none;
+}
+
+.hour-cell-background {
+  height: 200px; /* Visual height of each hour slot */
+  border-bottom: 1px solid #e2e8f0;
+}
+
+.current-time-indicator {
+  position: absolute;
+  left: 0;
+  right: 0;
+  border-top: 2px dotted #3b82f6; /* Dotted blue line */
+  z-index: 5;
+  /* top value is set inline in JS */
+}
+
+.current-time-label {
+  position: absolute;
+  left: -8px; /* Offset to the left of the time column's boundary */
+  top: -8px; /* Adjust to sit just above the line */
+  background-color: #3b82f6; /* Blue background */
+  color: white;
+  font-size: 9px; /* Smaller font size */
+  padding: 1px 3px; /* Tighter padding */
+  border-radius: 3px; /* Slightly less rounded */
+  white-space: nowrap;
+  transform: translateX(
+    -100%
+  ); /* Push label completely to the left of its 'left' origin */
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1); /* Subtle shadow */
+}

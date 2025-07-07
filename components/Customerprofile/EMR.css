@@ -1,0 +1,40 @@
+.top-tabs {
+  display: flex;
+  gap: 12px;
+  padding: 12px 0;
+  flex-wrap: wrap;
+}
+
+.tab-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100px;
+  padding: 10px;
+  border: 1px solid #ddd;
+  border-radius: 12px;
+  cursor: pointer;
+  background-color: white;
+  color: #6c757d;
+  transition: all 0.2s ease-in-out;
+}
+
+.tab-item:hover {
+  background-color: #f0f0f0;
+}
+
+.tab-item.active {
+  background-color: #007bff;
+  color: white;
+  border-color: transparent;
+}
+
+.tab-icon {
+  font-size: 24px;
+  margin-bottom: 5px;
+}
+
+.tab-label {
+  font-size: 14px;
+  text-align: center;
+}

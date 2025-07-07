@@ -1,0 +1,32 @@
+.sidebar {
+  position:  sticky;
+  height: 100vh;
+  background-color: #fff;
+  border-right: 1px solid #ddd;
+  padding: 10px;
+  transition: width 0.3s ease;
+}
+
+.sidebar.open {
+  width: 180px;
+}
+
+.sidebar.collapsed {
+  width: 60px;
+}
+
+.sidebar-btn {
+  display: flex;
+  align-items: center;
+  border: none;
+  background: none;
+  width: 100%;
+  padding: 10px;
+  font-size: 14px;
+}
+
+.menu-icon {
+  width: 20px;
+  height: 20px;
+  margin-right: 10px;
+}

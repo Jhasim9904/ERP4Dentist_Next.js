@@ -1,0 +1,97 @@
+import React, { useState } from "react";
+import "./Treatment.css";
+
+const Treatment = () => {
+  const [treatmentPlans, setTreatmentPlans] = useState([
+    {
+      planNo: 1,
+      planDate: "2025-04-17",
+      doctor: "sabari",
+      color: "#556B2F",
+      teeth: "18,17,16,42,",
+      procedure: "Braces Consulting",
+      type: "Adjustment",
+      cost: 700,
+      discount: 100,
+      treatmentCost: 700,
+      invoicedAmount: 560,
+      balanceAmount: 240,
+    },
+    {
+      planNo: 2,
+      planDate: "2025-04-18",
+      doctor: "giri",
+      color: "#FF6600",
+      teeth: "11,21",
+      procedure: "Cavity Filling",
+      type: "Restoration",
+      cost: 1200,
+      discount: 200,
+      treatmentCost: 1200,
+      invoicedAmount: 800,
+      balanceAmount: 400,
+    },
+  ]);
+
+  const totalEstimated = treatmentPlans.reduce((sum, t) => sum + t.treatmentCost, 0);
+  const totalConfirmed = treatmentPlans.reduce((sum, t) => sum + t.treatmentCost, 0); // Adjust if logic changes
+
+  return (
+    <div className="treatment-container">
+      <h2 className="treatment-header">Treatment</h2>
+
+      <div className="treatment-summary">
+        <span>Total Estimated Plan Amount: ₹ {totalEstimated}</span>
+        <span>Total Confirmed Plan Amount: ₹ {totalConfirmed}</span>
+      </div>
+
+      <table className="treatment-table">
+        <thead>
+          <tr>
+            <th>Plan No</th>
+            <th>Plan Date</th>
+            <th>Dr</th>
+            <th>Tooth Number</th>
+            <th>Procedure</th>
+            <th>Type</th>
+            <th>Cost</th>
+            <th>Discount</th>
+            <th>Treatment Cost</th>
+            <th>Invoiced Amount</th>
+            <th>Balance Amount</th>
+            <th>Action</th>
+          </tr>
+        </thead>
+        <tbody>
+          {treatmentPlans.map((plan, index) => (
+            <tr key={index}>
+              <td>{plan.planNo}</td>
+              <td>{plan.planDate}</td>
+              <td>
+                <div className="doctor-badge">
+                  <span className="doctor-color" style={{ backgroundColor: plan.color }}></span>
+                  {plan.doctor}
+                </div>
+              </td>
+              <td>{plan.teeth}</td>
+              <td>{plan.procedure}</td>
+              <td>{plan.type}</td>
+              <td>₹ {plan.cost}</td>
+              <td>₹ {plan.discount}</td>
+              <td>₹ {plan.treatmentCost}</td>
+              <td>₹ {plan.invoicedAmount}</td>
+              <td>₹ {plan.balanceAmount}</td>
+              <td className="action-cell">⋮</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+
+      <div className="back-link">
+        <a href="#">Back to History</a>
+      </div>
+    </div>
+  );
+};
+
+export default Treatment;

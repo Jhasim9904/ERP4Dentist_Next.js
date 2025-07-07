@@ -1,0 +1,53 @@
+.receipts-container {
+  width: 95%;
+  margin: 2rem auto;
+  font-family: "Segoe UI", sans-serif;
+}
+
+.receipt-summary-bar {
+  display: flex;
+  justify-content: space-between;
+  background-color: #e7f1ff;
+  padding: 12px 18px;
+  border-radius: 6px;
+  font-weight: 500;
+  font-size: 0.95rem;
+  margin-bottom: 1rem;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.receipt-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.95rem;
+}
+
+.receipt-table th,
+.receipt-table td {
+  border: 1px solid #e0e0e0;
+  padding: 0.75rem;
+  text-align: left;
+}
+
+.receipt-table th {
+  background-color: #f9f9f9;
+  font-weight: bold;
+}
+
+.receipt-view-btn {
+  background: none;
+  border: none;
+  color: #4b56d2;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  cursor: pointer;
+  font-weight: 500;
+}
+
+.entries-text {
+  margin-top: 1rem;
+  color: #555;
+  font-size: 0.9rem;
+}

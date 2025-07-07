@@ -1,0 +1,236 @@
+.appointment-container {
+  padding: 1rem;
+  background-color: #fff;
+  border-radius: 10px;
+  box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.05);
+}
+
+.appointment-title {
+  font-weight: 600;
+  color: #333;
+}
+
+.count-badge {
+  background-color: #e6f0ff;
+  color: #2b8cff;
+  font-size: 13px;
+  font-weight: bold;
+  padding: 4px 10px;
+  border-radius: 20px;
+}
+
+.search-input {
+  min-width: 150px;
+}
+
+.search-btn {
+  background-color: #2b8cff;
+  color: white;
+  margin-left: 5px;
+}
+
+.date-input {
+  width: 150px;
+}
+
+.add-btn {
+  background-color: #2b8cff;
+  color: white;
+  font-weight: 500;
+  padding: 8px 12px;
+  border-radius: 6px;
+}
+.appointment-header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px; /* Reduce spacing between elements */
+}
+
+.appointment-title {
+  font-weight: 600;
+  color: #333;
+  margin-right: 10px; /* Reduce horizontal space */
+}
+
+.search-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 5px; /* Tighter gap between input and button */
+}
+
+.search-input {
+  min-width: 140px;
+  padding: 6px 10px;
+  font-size: 14px;
+}
+
+.search-btn {
+  background-color: #2b8cff;
+  color: white;
+  padding: 6px 12px;
+}
+
+.date-filter {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.date-input {
+  width: 135px;
+  padding: 6px 10px;
+}
+
+.add-btn {
+  background-color: #2b8cff;
+  color: white;
+  font-weight: 500;
+  padding: 7px 14px;
+  border-radius: 6px;
+}
+.striped{
+    background-color: aliceblue;
+}
+.custom-table th {
+  padding: 12px 16px;
+  text-align: left;
+  background-color: #f9fbfd;
+  color: #2b8cff;
+  font-weight: 600;
+  border-bottom: 1px solid #dee2e6;
+}
+.custom-table {
+  width: 100%;
+  border-collapse: collapse;
+  background-color: #fff;
+  font-size: 14px;
+  padding: 12px 16px;
+  border-bottom: 1px solid #f1f1f1;
+  vertical-align: middle;
+  color: #333;
+  white-space: nowrap;
+}
+.custom-table td {
+  padding: 12px 16px;
+  border-bottom: 1px solid #f1f1f1;
+  vertical-align: middle;
+  color: #333;
+  white-space: nowrap;
+}
+.custom-table tr.striped {
+  background-color: #f7fbff;
+}
+
+/* Hover effect */
+.custom-table tbody tr:hover {
+  background-color: #eef6ff;
+}
+.status-badge {
+  background-color: #e6ffed;
+  color: #28a745;
+  padding: 4px 10px;
+  border-radius: 20px;
+  font-size: 13px;
+  font-weight: 500;
+}
+
+.view-btn {
+  background-color: #FFCC0033;
+  color: #FFCC00;
+  border: none;
+  padding: 6px 10px;
+  border-radius: 6px;
+  font-size: 13px;
+  font-weight: 500;
+}
+
+.edit-btn {
+  background-color: #e7f3ff;
+  color: #007bff;
+  border: none;
+  padding: 6px 10px;
+  border-radius: 6px;
+  font-size: 13px;
+}
+
+.delete-btn {
+  background-color: #ffeded;
+  color: #dc3545;
+  border: none;
+  padding: 6px 10px;
+  border-radius: 6px;
+  font-size: 13px;
+}
+
+.pagination-wrapper {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-top: 1rem;
+  font-size: 14px;
+  color: #555;
+}
+
+.pagination-controls button {
+  background-color: #f4f4f4;
+  border: none;
+  margin: 0 2px;
+  padding: 6px 10px;
+  border-radius: 4px;
+  font-size: 14px;
+}
+
+.pagination-controls .active {
+  background-color: #2b8cff;
+  color: white;
+}
+/* View Button */
+.view-btn {
+  background-color: #ffcc0033;
+  color: #ffcc00;
+  border: none;
+  padding: 6px 10px;
+  border-radius: 6px;
+  font-size: 13px;
+  font-weight: 500;
+  transition: background-color 0.3s ease;
+}
+
+.view-btn:hover {
+  background-color: #ffcc00;
+  color: #fff;
+}
+
+/* Edit Button */
+.edit-btn {
+  background-color: #e7f3ff;
+  color: #007bff;
+  border: none;
+  padding: 6px 10px;
+  border-radius: 6px;
+  font-size: 13px;
+  transition: background-color 0.3s ease;
+}
+
+.edit-btn:hover {
+  background-color: #007bff;
+  color: #fff;
+}
+
+/* Delete Button */
+.delete-btn {
+  background-color: #ffeded;
+  color: #dc3545;
+  border: none;
+  padding: 6px 10px;
+  border-radius: 6px;
+  font-size: 13px;
+  transition: background-color 0.3s ease;
+}
+
+.delete-btn:hover {
+  background-color: #dc3545;
+  color: #fff;
+}

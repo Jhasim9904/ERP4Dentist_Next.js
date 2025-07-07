@@ -1,0 +1,61 @@
+.lab-container {
+  width: 95%;
+  margin: 2rem auto;
+  padding: 1.5rem 2rem;
+  background-color: #fff;
+  border-radius: 10px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+  font-family: 'Segoe UI', sans-serif;
+}
+
+.lab-title {
+  text-align: center;
+  margin-bottom: 1.5rem;
+  font-size: 1.75rem;
+  color: #333;
+}
+
+.lab-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: 1rem;
+  font-size: 0.95rem;
+}
+
+.lab-table th,
+.lab-table td {
+  border: 1px solid #ddd;
+  padding: 0.75rem 1rem;
+  text-align: left;
+}
+
+.lab-table th {
+  background-color: #f1f5f9;
+  font-weight: 600;
+}
+
+.doctor-badge {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.color-box {
+  width: 18px;
+  height: 18px;
+  border-radius: 4px;
+}
+
+.edit-action {
+  color: #333;
+  cursor: pointer;
+}
+
+.back-link {
+  margin-top: 1rem;
+}
+
+.back-link a {
+  color: #007bff;
+  text-decoration: none;
+}

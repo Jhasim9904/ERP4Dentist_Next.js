@@ -1,0 +1,88 @@
+.treatment-container {
+  width: 95%;
+  max-width: 1200px;
+  margin: 2rem auto;
+  padding: 2rem;
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+  font-family: 'Segoe UI', sans-serif;
+}
+
+.treatment-header {
+  text-align: center;
+  font-size: 1.8rem;
+  font-weight: bold;
+  color: #333;
+  margin-bottom: 1.5rem;
+}
+
+.treatment-summary {
+  display: flex;
+  justify-content: space-between;
+  background-color: #e8f0fe;
+  padding: 1rem 1.5rem;
+  font-size: 1rem;
+  font-weight: 500;
+  border-radius: 6px;
+  margin-bottom: 1rem;
+  color: #333;
+}
+
+.treatment-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.95rem;
+  margin-top: 1rem;
+}
+
+.treatment-table th,
+.treatment-table td {
+  border: 1px solid #ddd;
+  padding: 0.85rem 1rem;
+  text-align: left;
+  vertical-align: middle;
+}
+
+.treatment-table th {
+  background-color: #f9f9f9;
+  font-weight: 600;
+}
+
+.treatment-table td {
+  color: #333;
+}
+
+.doctor-badge {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.doctor-color {
+  width: 16px;
+  height: 16px;
+  border-radius: 4px;
+  background-color: #3a6351;
+}
+
+.action-cell {
+  text-align: center;
+  cursor: pointer;
+  font-size: 1.2rem;
+}
+
+.back-link {
+  margin-top: 2rem;
+  text-align: left;
+}
+
+.back-link a {
+  color: #007bff;
+  text-decoration: none;
+  font-size: 0.95rem;
+}
+
+.back-link a:hover {
+  text-decoration: underline;
+}

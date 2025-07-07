@@ -1,0 +1,28 @@
+.login-container {
+  background-color: white;
+  width: 50vw;
+  height: 100vh;
+  padding: 75px 100px 100px 120px;
+}
+
+.login-form-box {
+  height: 600px;
+  width: 560px;
+  border: 2px solid #888888;
+  border-radius: 6px;
+  padding: 30px 0px 0px 10px;
+}
+
+.login-input {
+  margin-bottom: 1rem;
+}
+
+.password-toggle-icon {
+  font-size: 16px;
+  color: #888;
+  opacity: 0.8;
+}
+.form2{
+    border: 1px solid #888888;
+    height: 37px;
+}

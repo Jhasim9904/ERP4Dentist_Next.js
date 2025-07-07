@@ -1,0 +1,139 @@
+/* Overall Header Container */
+.calendar-header-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 20px; /* Matched to image padding */
+  background-color: #fff;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05); /* Subtle shadow */
+  border-bottom: 1px solid #e0e0e0; /* Light border */
+}
+
+/* Left Section: Date Navigation */
+.calendar-left-section {
+  display: flex;
+  align-items: center;
+}
+
+.calendar-date-nav-wrapper {
+  display: flex;
+  align-items: center;
+  border: 1px solid #e0e0e0; /* Border around the entire block */
+  border-radius: 8px; /* Consistent rounded corners */
+  overflow: hidden;
+  background-color: #fcfcfc; /* Very light background */
+}
+
+.calendar-date-icon {
+  display: flex;
+  align-items: center;
+  padding: 8px 10px;
+  color: #6b7280; /* Gray color for icon */
+  border-right: 1px solid #e0e0e0; /* Separator for the icon */
+}
+
+.calendar-date-icon svg {
+  width: 18px;
+  height: 18px;
+}
+
+.calendar-date-text {
+  padding: 8px 12px;
+  font-weight: 500;
+  font-size: 14px;
+  color: #374151; /* Dark gray text */
+  white-space: nowrap;
+}
+
+.calendar-nav-button {
+  background: none;
+  border: none;
+  padding: 8px 10px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #6b7280; /* Gray color for arrows */
+}
+
+.calendar-nav-button:hover {
+  background-color: #f3f4f6; /* Subtle hover effect */
+}
+
+.calendar-nav-button.left-arrow {
+  border-left: 1px solid #e0e0e0; /* Separator for left arrow */
+}
+.calendar-nav-button.right-arrow {
+  border-left: 1px solid #e0e0e0; /* Separator for right arrow */
+}
+
+
+/* Right Section: Month Select and Add Appointment Button */
+.calendar-right-section {
+  display: flex;
+  align-items: center;
+  gap: 10px; /* Space between select and button */
+}
+
+.month-select-wrapper {
+  position: relative;
+  display: inline-block;
+}
+
+.month-select {
+  padding: 8px 30px 8px 12px; /* Adjusted padding for custom arrow */
+  border-radius: 8px;
+  border: 1px solid #d1d5db;
+  background: #fff;
+  font-size: 14px;
+  color: #374151;
+  cursor: pointer;
+  appearance: none; /* Remove default browser select arrow */
+  -webkit-appearance: none;
+  -moz-appearance: none;
+}
+
+.month-select:focus {
+  outline: none;
+  border-color: #93c5fd;
+  box-shadow: 0 0 0 2px rgba(96, 165, 250, 0.25);
+}
+
+.select-arrow {
+  position: absolute;
+  top: 50%;
+  right: 10px;
+  transform: translateY(-50%);
+  pointer-events: none;
+  color: #6b7280;
+}
+
+.select-arrow svg {
+  width: 16px;
+  height: 16px;
+}
+
+.add-appointment-btn {
+  background-color: #3b82f6; /* Blue button */
+  color: #fff;
+  border: none;
+  padding: 8px 16px;
+  font-weight: 500;
+  font-size: 14px;
+  display: flex;
+  align-items: center;
+  border-radius: 8px;
+  cursor: pointer;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+}
+
+.add-appointment-btn:hover {
+  background-color: #2563eb;
+}
+
+.add-appointment-btn svg {
+  width: 18px;
+  height: 18px;
+  margin-right: 6px;
+  fill: currentColor;
+}

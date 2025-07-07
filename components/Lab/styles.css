@@ -1,0 +1,299 @@
+/* Lab/styles.css */
+
+.lab-container {
+  padding: 2rem;
+  font-family: "Inter", sans-serif;
+  background-color: #f2f3f8;
+}
+
+.lab-header {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 1rem;
+}
+
+.search-section input {
+  padding: 8px;
+  margin-right: 5px;
+}
+
+/* .search-btn, .clear-btn, .create-btn {
+  padding: 8px 14px;
+  margin-right: 8px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+} */
+
+.search-btn {
+  background-color: rgba(43, 140, 255, 1);
+  color: #fff;
+}
+
+.clear-btn {
+  background-color: #00bcd4;
+  color: #fff;
+}
+
+.create-btn {
+  background-color: rgba(43, 140, 255, 1) !important;
+  color: white !important;
+  border-radius: 6px;
+  border: none;
+}
+
+.lab-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.lab-table th {
+  border: 1px solid #ddd;
+  padding: 12px;
+  text-align: left;
+  font-size: 13.6px;
+}
+
+.lab-table td {
+  border: 1px solid #ddd;
+  padding: 12px;
+  text-align: left;
+  font-size: 13.008px;
+  font-weight:normal;
+}
+.lab-table th {
+  background-color: #ffffff;
+}
+
+.edit-btn,
+.delete-btn {
+  padding: 6px 12px;
+  margin-right: 8px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.edit-btn {
+  background-color: #49B6F51A; /* Light blue */
+  color: #49B6F5; /* Darker text */
+}
+
+.delete-btn {
+  background-color: #E6533C1A; /* Light red */
+  color: #E6533C;
+}
+
+
+.form-actions {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 1rem;
+}
+
+.form-actions button {
+  margin-left: 1rem;
+  padding: 8px 16px;
+}
+
+
+.save-btn {
+  padding: 4.16px 8px;
+  background-color: #26BF94;
+  color: white;
+  border: none;
+  border-radius: 6px;
+}
+
+.cancel-btn {
+  background: #ccc;
+  border: none;
+  padding: 10px 16px;
+  border-radius: 6px;
+}
+
+.lab-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+  gap: 10px;
+}
+
+.lab-count {
+  font-weight: 600;
+  font-size: 18px;
+}
+
+.count-badge {
+  background-color: #e6e6fa;
+  color: #5e35b1;
+  border-radius: 20px;
+  padding: 4px 10px;
+  font-size: 14px;
+  margin-left: 5px;
+}
+
+.search-bar {
+  display: flex;
+  align-items: left;
+  gap: 10px;
+  margin: auto;
+}
+
+.search-bar input {
+  padding: 4px;
+}
+
+.search-btn {
+  background-color: rgba(43, 140, 255, 1);
+  color: #fff;
+}
+
+.clear-btn {
+  background-color: #00bcd4;
+  color: #fff;
+}
+
+/* Lab/styles.css */
+
+.form-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.4);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 9999;
+}
+
+.form-container {
+  margin-top: 60px;
+  background-color: #fff;
+  padding: 2rem;
+  border-radius: 8px;
+  width: 85%;
+  margin-bottom: 30px;
+  height: 650px;
+  max-width: 1000px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.btn-custom-save {
+  background-color: rgba(43, 140, 255, 1);
+  color: white;
+}
+
+.lab-content-box {
+  background-color: #ffffff;
+  padding: 20px;
+  border-radius: 12px;
+  box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.1);
+  margin-top: 1rem;
+}
+
+.entry-summary {
+  font-size: 14px;
+  color: #555;
+  margin-top: 10px;
+  text-align: left;
+}
+
+button {
+  outline: none;
+  box-shadow: none;
+  border: none;
+}
+
+button:focus {
+  outline: none !important;
+  box-shadow: none !important;
+}
+
+/* General hover effect for all buttons */
+button:hover,
+.btn:hover {
+  filter: brightness(1.1); /* Brighten by 10% */
+  transition: filter 0.2s ease-in-out;
+}
+
+/* Optionally, target only the custom buttons */
+.search-btn:hover, 
+.clear-btn:hover,
+.create-btn:hover {
+  filter: brightness(1.1);
+  transition: filter 0.2s ease-in-out;
+}
+
+.edit-btn:hover {
+  background-color: rgba(43, 140, 255, 1); /* Original blue */
+  color: white;
+  transition: background-color 0.2s ease-in-out;
+}
+
+.delete-btn:hover {
+  background-color: #e53935; /* Deeper red */
+  color: white;
+  transition: background-color 0.2s ease-in-out;
+}
+button:hover:not(.edit-btn):not(.delete-btn),
+.btn:hover:not(.edit-btn):not(.delete-btn) {
+  filter: brightness(1.1);
+  transition: filter 0.2s ease-in-out;
+}
+
+/* ✅ FIX: Make modal scrollable and responsive */
+.form-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.4);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 9999;
+  overflow-y: auto; /* ✅ allow scrolling on tall forms */
+  padding: 1rem;     /* ✅ spacing to prevent cut-off edges */
+}
+
+.form-container {
+  background-color: #fff;
+  padding: 2rem;
+  border-radius: 8px;
+  width: 100%;
+  max-width: 950px;
+  max-height: 90vh;        /* ✅ limits height of modal */
+  overflow-y: auto;        /* ✅ enables internal scroll */
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+/* ✅ FIX: Ensure error message is left-aligned */
+.invalid-feedback {
+  text-align: left !important;
+  font-size: 13px;
+  color: #dc3545; /* standard Bootstrap error color */
+  display: block;
+  margin-top: 4px;
+}
+
+.form-label {
+  text-align: left !important;
+  display: block;
+}
+
+/* ✅ Optional improvement: Make buttons always visible using sticky footer (if needed) */
+/* .form-actions-sticky {
+  position: sticky;
+  bottom: 0;
+  background: white;
+  padding-top: 1rem;
+  padding-bottom: 1rem;
+} */
+
+/* You can also use a wrapper inside .form-container if button visibility still becomes an issue */
+

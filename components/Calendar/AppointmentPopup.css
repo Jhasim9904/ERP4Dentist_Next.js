@@ -1,0 +1,144 @@
+.appointment-popup-wrapper {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none; /* Prevent interactions unless explicitly needed */
+  z-index: 1000;
+}
+
+.appointment-popup-content {
+  position: absolute;
+  background-color: white;
+  border-radius: 10px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+  padding: 16px;
+  width: 300px;
+  font-size: 14px;
+  color: #374151;
+  pointer-events: auto;
+  z-index: 1001;
+}
+
+/* Arrow pointing to card */
+.popup-arrow {
+  position: absolute;
+  top: 12px;
+  width: 12px;
+  height: 12px;
+  background-color: white;
+  transform: rotate(45deg);
+  box-shadow: -1px 1px 2px rgba(0, 0, 0, 0.1);
+  z-index: -1;
+}
+
+/* Default arrow pointing left (popup to the right of the card) */
+.appointment-popup-content:not(.flipped) .popup-arrow {
+  left: -6px;
+}
+
+/* Flipped arrow pointing right (popup to the left of the card) */
+.appointment-popup-content.flipped .popup-arrow {
+  right: -6px;
+  left: auto;
+  box-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1);
+}
+
+
+.popup-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.popup-patient-name {
+  font-weight: 700;
+  font-size: 15px;
+}
+
+.popup-actions {
+  display: flex;
+  gap: 12px;
+  color: #6b7280;
+}
+
+.popup-icon {
+  width: 16px;
+  height: 16px;
+  stroke: #6b7280;
+  cursor: pointer;
+}
+
+.popup-contact-info {
+  font-size: 12px;
+  color: #6b7280;
+  margin-bottom: 10px;
+}
+
+.dot-separator {
+  margin: 0 6px;
+}
+
+.popup-details {
+  border-top: 1px solid #e5e7eb;
+  padding-top: 12px;
+  margin-bottom: 16px;
+}
+
+.detail-row {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 8px;
+}
+
+.detail-label {
+  color: #6b7280;
+  font-size: 13px;
+}
+
+.detail-value {
+  font-weight: 500;
+  font-size: 13px;
+  text-align: right;
+}
+
+.doctor-name {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.doctor-dot {
+  width: 8px;
+  height: 8px;
+  background-color: #3b82f6;
+  border-radius: 9999px;
+}
+
+.see-patient-details-btn {
+  width: 100%;
+  background-color: #f3f4f6;
+  color: #374151;
+  border: none;
+  padding: 10px;
+  border-radius: 6px;
+  font-weight: 600;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  transition: background-color 0.2s ease;
+}
+
+.see-patient-details-btn:hover {
+  background-color: #e5e7eb;
+}
+
+.arrow-icon {
+  width: 16px;
+  height: 16px;
+  stroke: #374151;
+}
