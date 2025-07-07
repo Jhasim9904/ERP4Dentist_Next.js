@@ -33,8 +33,35 @@ const Treatment = () => {
     },
   ]);
 
+  // State to manage which dropdown is open. Stores the index of the plan, or null if none are open.
+  const [openDropdownIndex, setOpenDropdownIndex] = useState(null);
+
   const totalEstimated = treatmentPlans.reduce((sum, t) => sum + t.treatmentCost, 0);
   const totalConfirmed = treatmentPlans.reduce((sum, t) => sum + t.treatmentCost, 0); // Adjust if logic changes
+
+  // Function to toggle dropdown visibility for a specific row
+  const toggleDropdown = (index) => {
+    setOpenDropdownIndex(openDropdownIndex === index ? null : index);
+  };
+
+  // Functions for dropdown actions (currently just console logs)
+  const handleAddNote = (planNo) => {
+    console.log(`Add Note for Plan No: ${planNo}`);
+    setOpenDropdownIndex(null); // Close dropdown after action
+  };
+
+  const handleAddLabWork = (planNo) => {
+    console.log(`Add Lab Work for Plan No: ${planNo}`);
+    setOpenDropdownIndex(null); // Close dropdown after action
+  };
+
+  const handleDelete = (planNo) => {
+    if (window.confirm(`Are you sure you want to delete Plan No: ${planNo}?`)) {
+      setTreatmentPlans(treatmentPlans.filter(plan => plan.planNo !== planNo));
+    }
+    setOpenDropdownIndex(null); // Close dropdown after action
+  };
+
 
   return (
     <div className="treatment-container">
@@ -81,7 +108,22 @@ const Treatment = () => {
               <td>₹ {plan.treatmentCost}</td>
               <td>₹ {plan.invoicedAmount}</td>
               <td>₹ {plan.balanceAmount}</td>
-              <td className="action-cell">⋮</td>
+              <td className="action-cell">
+                <span onClick={() => toggleDropdown(index)} className="action-dots">⋮</span>
+                {openDropdownIndex === index && (
+                  <div className="action-dropdown">
+                    <div className="dropdown-item" onClick={() => handleAddNote(plan.planNo)}>
+                      <span className="dropdown-icon">🗑️</span> Add Note
+                    </div>
+                    <div className="dropdown-item" onClick={() => handleAddLabWork(plan.planNo)}>
+                      <span className="dropdown-icon">🗑️</span> Add Lab Work
+                    </div>
+                    <div className="dropdown-item" onClick={() => handleDelete(plan.planNo)}>
+                      <span className="dropdown-icon">🗑️</span> Delete
+                    </div>
+                  </div>
+                )}
+              </td>
             </tr>
           ))}
         </tbody>
