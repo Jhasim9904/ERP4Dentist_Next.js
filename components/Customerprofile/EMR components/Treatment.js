@@ -1,7 +1,10 @@
 import React, { useState } from "react";
 import "./Treatment.css";
+import AddNoteModal from "@/components/PopupModals/AddNoteModal/AddNoteModal";
+import AddLabWorkModal from "@/components/PopupModals/AddLabWorkModal/AddLabWorkModal";
 
 const Treatment = () => {
+  const [showModal, setShowModal] = useState(false);
   const [treatmentPlans, setTreatmentPlans] = useState([
     {
       planNo: 1,
@@ -112,14 +115,14 @@ const Treatment = () => {
                 <span onClick={() => toggleDropdown(index)} className="action-dots">⋮</span>
                 {openDropdownIndex === index && (
                   <div className="action-dropdown">
-                    <div className="dropdown-item" onClick={() => handleAddNote(plan.planNo)}>
-                      <span className="dropdown-icon">🗑️</span> Add Note
+                    <div className="dropdown-item" onClick={() => setShowModal(true)}>
+                      <span className="dropdown-icon"></span> Add Note
                     </div>
-                    <div className="dropdown-item" onClick={() => handleAddLabWork(plan.planNo)}>
-                      <span className="dropdown-icon">🗑️</span> Add Lab Work
+                    <div className="dropdown-item" onClick={() => setShowModal(true)}>
+                      <span className="dropdown-icon"></span> Add Lab Work
                     </div>
                     <div className="dropdown-item" onClick={() => handleDelete(plan.planNo)}>
-                      <span className="dropdown-icon">🗑️</span> Delete
+                      <span className="dropdown-icon"></span> Delete
                     </div>
                   </div>
                 )}
@@ -128,6 +131,9 @@ const Treatment = () => {
           ))}
         </tbody>
       </table>
+
+      {showModal && <AddNoteModal onClose={() => setShowModal(false)} />}
+      {showModal && <AddLabWorkModal onClose={() => setShowModal(false)} />}
 
       <div className="back-link">
         <a href="#">Back to History</a>
