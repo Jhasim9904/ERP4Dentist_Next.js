@@ -3,6 +3,7 @@ import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import "bootstrap/dist/css/bootstrap.css";
 import { AppointmentProvider } from "@/context/SetContext"; // ✅ Corrected import
+import '@fortawesome/fontawesome-free/css/all.min.css';
 
 const geistSans = Geist({
   variable: "--font-geist-sans",

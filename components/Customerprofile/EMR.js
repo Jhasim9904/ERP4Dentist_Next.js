@@ -8,7 +8,7 @@ import Prescriptions from "./EMR components/Prescriptions";
 import LabWorks from "./EMR components/LabWorks";
 import Uploads from "./EMR components/Uploads";
 import Billing from "./EMR components/Billing/Billing";
-
+import InvoiceView from "./EMR components/InvoiceView/InvoiceView";
 const tabs = [
   { id: "examination", label: "Examination", icon: "🩺" },
   { id: "observation", label: "Observation", icon: "🔬" },
@@ -71,7 +71,8 @@ const EMR = ({ activeTab, setActiveTab, handleBookClick }) => {
           {activeTab1 === "lab-works" && <LabWorks />}
           {activeTab1 === "uploads" && <Uploads />}
           {activeTab1 === "billing" && <Billing />}
-                    {activeTab1 === "billing" && <Billing />}
+          {activeTab1 === "invoice" && <InvoiceView />}
+
         </div>
       </div>
     </div>

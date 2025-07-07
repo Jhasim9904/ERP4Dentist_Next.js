@@ -1,9 +1,11 @@
 .invoiceContainer {
   margin: 0 auto;
-  width: 595px;
-  padding: 50px 20px;
+  width: 800px;
+  padding: 50px 40px;
   font-family: "Inter", serif;
+  background: #fff;
   position: relative;
+  border-radius: 6px;
 }
 
 .clearfix::after {
@@ -37,21 +39,8 @@
 
 .label {
   float: left;
-  width: 112px;
+  width: 120px;
   font-weight: 700;
-}
-
-.headerText {
-  font-size: 12px;
-  text-align: center;
-}
-
-.headerText span {
-  font-weight: 700;
-}
-
-.patInfo {
-  padding: 20px 0;  
 }
 
 .h3 {
@@ -67,7 +56,7 @@
 .clm1 {
   width: 55%;
   border-right: 1px solid #d7dae0;
-  padding-right: 5px;
+  padding-right: 10px;
 }
 
 .clm2 {
@@ -81,7 +70,7 @@
 }
 
 .patientListItemLabel {
-  width: 77px;
+  width: 90px;
   float: left;
   font-weight: 700;
   position: relative;
@@ -90,17 +79,18 @@
 .patientListItemLabel::after {
   content: ":";
   position: absolute;
-  right: 0;
+  right: -4px;
   top: 0;
 }
 
 .patientListItemText {
-  padding-left: 80px;
+  padding-left: 100px;
 }
 
 .table {
   border-collapse: collapse;
   width: 100%;
+  margin-top: 20px;
 }
 
 .th,
@@ -124,39 +114,27 @@
   text-align: center;
 }
 
-.signature {
-  text-align: center;
-  padding: 60px 40px 15px 0;
-}
-
 .signatureText {
   float: right;
   font-size: 10px;
-  font-family: "Inter", serif;
   color: #2a2a2a;
+  margin-top: 40px;
 }
 
 .footer {
-  padding: 15px 0;
-  position: relative;
-  bottom: 0;
-  left: 20px;
-  right: 20px;
+  padding: 20px 0;
+  text-align: center;
 }
 
 .footerText {
   font-size: 10px;
-  text-align: center;
   font-weight: 500;
   color: #222;
-  margin-bottom: 20px;
 }
 
 .pageNo {
-  color: #5e6470;
   font-size: 9px;
-  padding: 15px 0;
-  text-align: center;
+  color: #5e6470;
 }
 
 .noPrint {
@@ -173,76 +151,32 @@
   display: flex;
   justify-content: space-between;
   align-items: flex-end;
-  padding: 40px 20px;
+  margin-top: 30px;
 }
 
-.leftBtn {
-  flex: 1;
-}
-
+.leftBtn,
 .rightBtn {
   display: flex;
   flex-direction: column;
-  align-items: flex-end;
   gap: 10px;
-}
-
-.noPrint {
-  display: block;
-}
-
-@media print {
-  .noPrint {
-    display: none !important;
-  }
-}
-
-/* ... your existing styles ... */
-
-.buttonFooterRow {
-  position: fixed;
-  bottom: 30px;
-  left: 0;
-  width: 100%;
-  padding: 0 30px;
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-end;
-  z-index: 999;
 }
 
 .actionBtn {
   display: flex;
   flex-direction: column;
   align-items: center;
-  text-align: center;
   background: none;
   border: none;
   color: #000;
   font-size: 13px;
   cursor: pointer;
-  font-family: "Inter", sans-serif;
 }
 
 .actionBtn i {
-  font-size: 28px;
+  font-size: 24px;
   margin-bottom: 4px;
 }
 
 .actionBtn:hover {
   color: #007bff;
-}
-
-.noPrint {
-  display: block;
-}
-
-@media print {
-  .noPrint {
-    display: none !important;
-  }
-
-  .buttonFooterRow {
-    display: none !important;
-  }
 }

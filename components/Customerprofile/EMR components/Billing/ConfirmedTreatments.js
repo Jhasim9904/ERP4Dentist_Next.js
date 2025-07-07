@@ -1,9 +1,11 @@
 import React, { useState } from "react";
 import "./ConfirmedTreatments.css";
 import { FaEdit } from "react-icons/fa";
+import CreateBillModal from "@/components/PopupModals/CreateBillModal/CreateBillModal";
 
 const ConfirmedTreatments = () => {
   const [selectedTab, setSelectedTab] = useState("confirmed");
+  const [showModal, setShowModal] = useState(false);
 
   const data = [
     {
@@ -60,9 +62,10 @@ const ConfirmedTreatments = () => {
                 <input type="checkbox" checked={item.confirmed} readOnly />
               </td>
               <td>
-                <button className="edit-btn">
+                <button className="edit-btn" onClick={() => setShowModal(true)}>
                   <FaEdit />
                 </button>
+                {showModal && <CreateBillModal onClose={() => setShowModal(false)} />}
               </td>
             </tr>
           ))}
