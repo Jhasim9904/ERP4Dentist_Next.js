@@ -3,14 +3,19 @@ import "./CalendarHeader.css";
 import Image from "next/image";
 import CalendarImg from "@/public/images/calendar.png";
 
-// Accept props for current month/year and navigation functions
-const CalendarHeader = ({ currentMonthYear, onPrevWeek, onNextWeek }) => {
+// Accept new props for current period display, view control, and generic navigation
+const CalendarHeader = ({
+  currentPeriodDisplay, // Renamed from currentMonthYear for flexibility
+  currentView,         // 'month', 'week', or 'day'
+  onViewChange,        // Function to set the current view
+  onPrev,              // Generic previous handler (adapts in Page.js)
+  onNext,              // Generic next handler (adapts in Page.js)
+}) => {
   return (
     <div className="calendar-header-container">
       <div className="calendar-left-section">
         <div className="calendar-date-nav-wrapper">
           <span className="calendar-date-icon">
-            {/* Calendar icon (Feather Icons style) */}
             <Image
               className="d-flex"
               src={CalendarImg}
@@ -19,13 +24,12 @@ const CalendarHeader = ({ currentMonthYear, onPrevWeek, onNextWeek }) => {
               height={20}
             />
           </span>
-          {/* This span now displays the dynamic month/year from props */}
-          <span className="calendar-date-text">{currentMonthYear}</span>
+          {/* This span now displays the dynamic period/date from props */}
+          <span className="calendar-date-text">{currentPeriodDisplay}</span>
           <button
             className="calendar-nav-button left-arrow"
-            onClick={onPrevWeek}
+            onClick={onPrev} // Use generic previous handler
           >
-            {/* Left arrow icon - onClick handler added */}
             <svg
               xmlns="http://www.w3.org/2000/svg"
               width="16"
@@ -43,9 +47,8 @@ const CalendarHeader = ({ currentMonthYear, onPrevWeek, onNextWeek }) => {
           </button>
           <button
             className="calendar-nav-button right-arrow"
-            onClick={onNextWeek}
+            onClick={onNext} // Use generic next handler
           >
-            {/* Right arrow icon - onClick handler added */}
             <svg
               xmlns="http://www.w3.org/2000/svg"
               width="16"
@@ -66,14 +69,16 @@ const CalendarHeader = ({ currentMonthYear, onPrevWeek, onNextWeek }) => {
 
       <div className="calendar-right-section">
         <div className="month-select-wrapper">
-          <select className="month-select">
-            <option>Month</option>
-            <option>Week</option>
-            <option>Day</option>
-            {/* You could also dynamically populate these options later */}
+          <select
+            className="month-select"
+            value={currentView} // Make select a controlled component
+            onChange={(e) => onViewChange(e.target.value)} // Update view state in parent
+          >
+            <option value="month">Month</option>
+            <option value="week">Week</option>
+            <option value="day">Day</option>
           </select>
           <span className="select-arrow">
-            {/* Custom dropdown arrow */}
             <svg
               xmlns="http://www.w3.org/2000/svg"
               width="16"
@@ -91,7 +96,6 @@ const CalendarHeader = ({ currentMonthYear, onPrevWeek, onNextWeek }) => {
           </span>
         </div>
         <button className="add-appointment-btn">
-          {/* Plus icon */}
           <svg
             xmlns="http://www.w3.org/2000/svg"
             width="20"

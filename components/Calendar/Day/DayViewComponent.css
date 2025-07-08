@@ -1,0 +1,98 @@
+/* components/Calendar/Day/DayViewComponent.css */
+
+.day-view-container {
+  display: flex;
+  flex-grow: 1; /* Allows it to take available height */
+  background-color: white;
+  border: 1px solid #e2e8f0;
+  border-radius: 6px;
+  overflow: hidden;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+}
+
+/* Left Time Column */
+.day-view-time-column {
+  display: flex;
+  flex-direction: column;
+  width: 80px; /* Fixed width for time labels, similar to CalendarGrid */
+  flex-shrink: 0;
+  border-right: 1px solid #e2e8f0;
+  background-color: white;
+}
+
+.day-view-time-header-label {
+  height: 50px; /* Matches header height, can be adjusted */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+  font-weight: 600;
+  color: #4a5568;
+  border-bottom: 1px solid #e2e8f0;
+}
+
+.day-view-time-slot-label {
+  height: 100px; /* Height of each hour slot in day view */
+  display: flex;
+  align-items: flex-start; /* Align time label to the top of its slot */
+  justify-content: center;
+  padding-top: 5px;
+  font-size: 12px;
+  font-weight: 600;
+  color: #718096;
+  border-bottom: 1px dashed #e2e8f0;
+}
+
+/* Right Appointments Column */
+.day-view-appointments-column {
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+  position: relative; /* For absolute positioning of appointments and time indicator */
+  overflow-y: scroll; /* Enable vertical scrolling */
+}
+
+.day-view-hour-slot {
+  height: 100px; /* Matches time slot height */
+  border-bottom: 1px dashed #e2e8f0;
+  position: relative; /* For positioning AppointmentCards within the slot */
+  padding: 5px; /* Add some padding for appointment cards */
+  box-sizing: border-box; /* Include padding in height */
+  background-color: #fafafa;
+}
+
+.day-view-hour-slot:nth-child(even) {
+  background-color: #fdfdfd;
+}
+
+/* Current Time Indicator for Day View */
+.day-view-current-time-indicator {
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background-color: #ef4444; /* Red line */
+  z-index: 10;
+}
+
+.day-view-current-time-label {
+  position: absolute;
+  left: -45px;
+  top: -8px;
+  background-color: #ef4444;
+  color: white;
+  padding: 2px 5px;
+  border-radius: 4px;
+  font-size: 10px;
+  white-space: nowrap;
+}
+
+/* Appointment Card positioning within Day View (example) */
+.day-view-hour-slot .appointment-card {
+  position: absolute; /* Allows precise positioning */
+  top: 5px; /* Adjust based on appointment start time within the hour */
+  left: 5px;
+  right: 5px;
+  width: auto; /* Take natural width */
+  z-index: 5; /* Ensure cards are above hour slot backgrounds */
+}

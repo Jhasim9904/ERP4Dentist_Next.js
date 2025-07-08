@@ -1,10 +1,12 @@
 "use client";
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import Navbar from "@/components/Navbar/Navbar";
 import Sidebar from "@/components/Sidebar/Sidebar";
 import Footer from "@/components/Footer/Footer";
 import CalendarHeader from "@/components/Calendar/CalendarHeader";
-import CalendarGrid from "@/components/Calendar/CalendarGrid";
+import CalendarGrid from "@/components/Calendar/CalendarGrid"; // Weekly view
+import MonthlyCalendar from "@/components/Calendar/Month/MonthlyCalendar"; // Monthly view
+import DayViewComponent from "@/components/Calendar/Day/DayViewComponent"; // Day view
 
 // Helper function to get the start of the week (Sunday) for a given date
 const getStartOfWeek = (date) => {
@@ -26,22 +28,23 @@ const getDatesForWeek = (startOfWeek) => {
   return { dates, fullDateObjects }; // Return both
 };
 
-const Page = () => { // Changed to 'Page' for consistency, ensure it matches your export
-  // State to hold the fetched appointments
+const Page = () => {
   const [appointments, setAppointments] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  // New state for dynamic calendar: current week's start date
-  // Initialize to the Sunday of the week containing Feb 16, 2025
-  // You can change new Date(2025, 1, 16) to new Date() to start at the current week
-  const [currentWeekStart, setCurrentWeekStart] = useState(getStartOfWeek(new Date(2025, 1, 16)));
+  // Primary date state, will be used for all views (month, week, day)
+  // Initialize to a specific date for consistent testing, or new Date() for current date
+  const [currentDisplayDate, setCurrentDisplayDate] = useState(new Date()); // Defaults to today
+
+  // New state to manage the current calendar view: 'month', 'week', 'day'
+  const [currentView, setCurrentView] = useState('month'); // Start with month view
 
   useEffect(() => {
     const fetchData = async () => {
       try {
         const response = await fetch(
-          "http://localhost/erp-calendar/all_events.php" // Ensure this URL is correct
+          "http://localhost/erp-calendar/all_events.php"
         );
 
         if (!response.ok) {
@@ -63,8 +66,8 @@ const Page = () => { // Changed to 'Page' for consistency, ensure it matches you
           id: event.id,
           patientName: event.patientName,
           treatment: event.treatment,
-          startTime: new Date(event.startTime), // Convert string to Date object
-          endTime: new Date(event.endTime),     // Convert string to Date object
+          startTime: new Date(event.startTime),
+          endTime: new Date(event.endTime),
           hasMore: Boolean(parseInt(event.hasMore)),
           hasDot: Boolean(parseInt(event.hasDot)),
         }));
@@ -79,37 +82,88 @@ const Page = () => { // Changed to 'Page' for consistency, ensure it matches you
     };
 
     fetchData();
-  }, []); // Empty dependency array means this runs once on mount
-
-  useEffect(() => {
-    if (appointments.length > 0) {
-      console.log("Appointments state updated:", appointments);
-    }
-  }, [appointments]);
+  }, []);
 
   const [sidebarOpen, setSidebarOpen] = useState(true);
-
   const toggleSidebar = () => {
     setSidebarOpen(!sidebarOpen);
   };
 
-  // New calculations derived from currentWeekStart state
-  const { dates: displayedDates, fullDateObjects: displayedFullDates } = getDatesForWeek(currentWeekStart);
-  const displayedMonthYear = currentWeekStart.toLocaleString('en-US', { month: 'long', year: 'numeric' });
+  // --- Calendar Navigation Logic based on currentView ---
 
-  // New functions for calendar navigation
-  const goToPreviousWeek = () => {
-    setCurrentWeekStart(prevDate => {
+  // Memoized derived state for week view based on currentDisplayDate
+  const currentWeekStart = useMemo(() => getStartOfWeek(currentDisplayDate), [currentDisplayDate]);
+  const { dates: displayedDates, fullDateObjects: displayedFullDates } = useMemo(
+    () => getDatesForWeek(currentWeekStart),
+    [currentWeekStart]
+  );
+
+  // Function to get the display string for the header based on currentView
+  const getHeaderDisplay = () => {
+    switch (currentView) {
+      case 'month':
+        return currentDisplayDate.toLocaleString('en-US', { month: 'long', year: 'numeric' });
+      case 'week': {
+        const start = currentWeekStart.toLocaleString('en-US', { month: 'short', day: 'numeric' });
+        const end = new Date(currentWeekStart);
+        end.setDate(currentWeekStart.getDate() + 6); // End of the week
+
+        const startYear = currentWeekStart.getFullYear();
+        const endYear = end.getFullYear();
+
+        // Format for week range, handling year and month transitions
+        if (startYear !== endYear) {
+          return `${currentWeekStart.toLocaleString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })} - ${end.toLocaleString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}`;
+        }
+        if (currentWeekStart.getMonth() !== end.getMonth()) {
+          return `${currentWeekStart.toLocaleString('en-US', { month: 'short', day: 'numeric' })} - ${end.toLocaleString('en-US', { month: 'short', day: 'numeric' })}, ${currentDisplayDate.getFullYear()}`;
+        }
+        return `${start} - ${end.toLocaleString('en-US', { day: 'numeric' })}, ${currentDisplayDate.getFullYear()}`;
+      }
+      case 'day':
+        return currentDisplayDate.toLocaleString('en-US', { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' });
+      default:
+        return '';
+    }
+  };
+
+  // Generic navigation handlers (prev/next) that adapt to the current view
+  const handlePrev = () => {
+    setCurrentDisplayDate(prevDate => {
       const newDate = new Date(prevDate);
-      newDate.setDate(newDate.getDate() - 7);
+      switch (currentView) {
+        case 'month':
+          newDate.setMonth(newDate.getMonth() - 1);
+          break;
+        case 'week':
+          newDate.setDate(newDate.getDate() - 7);
+          break;
+        case 'day':
+          newDate.setDate(newDate.getDate() - 1);
+          break;
+        default:
+          break;
+      }
       return newDate;
     });
   };
 
-  const goToNextWeek = () => {
-    setCurrentWeekStart(prevDate => {
+  const handleNext = () => {
+    setCurrentDisplayDate(prevDate => {
       const newDate = new Date(prevDate);
-      newDate.setDate(newDate.getDate() + 7);
+      switch (currentView) {
+        case 'month':
+          newDate.setMonth(newDate.getMonth() + 1);
+          break;
+        case 'week':
+          newDate.setDate(newDate.getDate() + 7);
+          break;
+        case 'day':
+          newDate.setDate(newDate.getDate() + 1);
+          break;
+        default:
+          break;
+      }
       return newDate;
     });
   };
@@ -129,7 +183,7 @@ const Page = () => { // Changed to 'Page' for consistency, ensure it matches you
         <p>Please ensure:</p>
         <ul>
           <li>XAMPP Apache and MySQL are running.</li>
-          <li>Your PHP files are correctly placed in `htdocs` (e.g., `http://localhost/erp-calendar/erp-calendar/`).</li>
+          <li>Your PHP files are correctly placed in `htdocs` (e.g., `http://localhost/erp-calendar/`).</li>
           <li>`database.php` has the correct credentials and port.</li>
           <li>`all_events.php` has the CORS headers at the very top and outputs pure JSON.</li>
           <li>Check your browser's console (F12) for more detailed network errors.</li>
@@ -147,20 +201,35 @@ const Page = () => { // Changed to 'Page' for consistency, ensure it matches you
       />
       <div className="main-content">
         <Navbar onToggleSidebar={toggleSidebar} sidebarOpen={sidebarOpen} />
-        <div className="container1 ">
-          {/* CalendarHeader now receives dynamic props */}
+        <div className="container1">
           <CalendarHeader
-            currentMonthYear={displayedMonthYear}
-            onPrevWeek={goToPreviousWeek}
-            onNextWeek={goToNextWeek}
+            currentPeriodDisplay={getHeaderDisplay()} // Display string based on current view
+            currentView={currentView} // Pass current view type ('month', 'week', 'day')
+            onViewChange={setCurrentView} // Function to update the current view
+            onPrev={handlePrev} // Generic previous handler
+            onNext={handleNext} // Generic next handler
           />
-          {/* CalendarGrid now receives dynamic props for the week */}
-          <CalendarGrid
-            appointments={appointments}
-            currentWeekStart={currentWeekStart}
-            displayedDates={displayedDates}
-            displayedFullDates={displayedFullDates} // Pass full date objects for robust filtering
-          />
+
+          {currentView === 'month' && (
+            <MonthlyCalendar
+              appointments={appointments}
+              currentDisplayDate={currentDisplayDate}
+            />
+          )}
+          {currentView === 'week' && (
+            <CalendarGrid
+              appointments={appointments}
+              currentWeekStart={currentWeekStart}
+              displayedDates={displayedDates}
+              displayedFullDates={displayedFullDates} // Pass full date objects for robustness
+            />
+          )}
+          {currentView === 'day' && (
+            <DayViewComponent
+              appointments={appointments}
+              currentDisplayDate={currentDisplayDate}
+            />
+          )}
         </div>
         <div style={{ marginTop: "200px" }}>
           <Footer />

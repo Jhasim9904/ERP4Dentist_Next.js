@@ -1,0 +1,71 @@
+/* components/AppointmentCard/MonthlyAppointmentCard.css */
+
+.monthly-appointment-card {
+  /* Basic styling for the card itself */
+  background-color: #e0f2f7; /* Light blue, consistent with previous design */
+  border-left: 3px solid #007bff; /* Accent color, consistent */
+  border-radius: 3px;
+  padding: 3px 6px; /* Compact padding */
+  margin-bottom: 3px; /* Small space between cards */
+
+  /* Ensure content stays on one line and shows ellipsis if too long */
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+
+  display: flex; /* Use flexbox for layout of time and name */
+  align-items: center; /* Vertically align items */
+  gap: 4px; /* Space between time and name */
+  font-size: 0.75rem; /* Small font size */
+  line-height: 1.2; /* Compact line height */
+}
+
+/* Style for the time part */
+.monthly-card-time {
+  font-weight: 500;
+  color: #4a5568; /* Darker grey for time */
+  flex-shrink: 0; /* Prevent time from shrinking */
+}
+
+/* Style for the patient name */
+.monthly-card-patient-name {
+  font-weight: 600;
+  color: #2c3e50; /* Even darker for patient name */
+  flex-grow: 1; /* Allow name to take available space */
+  overflow: hidden; /* Ensure ellipsis works */
+  text-overflow: ellipsis;
+}
+
+/* Optional: Styles for a small colored dot if `has-dot` class is applied */
+.monthly-appointment-card.has-dot {
+  position: relative;
+  padding-left: 12px; /* Make space for the dot */
+}
+
+.monthly-appointment-card.has-dot::before {
+  content: '';
+  position: absolute;
+  left: 4px; /* Position of the dot */
+  top: 50%;
+  transform: translateY(-50%);
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background-color: #007bff; /* Dot color, consistent with accent */
+}
+
+/* Media query adjustments for very small screens if needed */
+@media (max-width: 600px) {
+  .monthly-appointment-card {
+    font-size: 0.7rem;
+    padding: 2px 4px;
+  }
+  .monthly-appointment-card.has-dot {
+    padding-left: 10px;
+  }
+  .monthly-appointment-card.has-dot::before {
+    left: 3px;
+    width: 4px;
+    height: 4px;
+  }
+}
