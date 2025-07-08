@@ -1,7 +1,8 @@
-// components/UploadPopup.js
+// components/PopupModals/UploadPopup/UploadPopup.js
+"use client";
 import React, { useState } from 'react';
 import { MdCloudUpload } from 'react-icons/md';
-import './UploadPopup.css';
+import styles from './UploadPopup.module.css';
 
 const UploadPopup = ({ isOpen, onClose, onSave }) => {
   const [selectedFile, setSelectedFile] = useState(null);
@@ -64,19 +65,19 @@ const UploadPopup = ({ isOpen, onClose, onSave }) => {
   };
 
   return (
-    <div className="upload-popup-overlay">
-      <div className="upload-popup-content">
-        <div className="upload-popup-header">
+    <div className={styles.overlay}>
+      <div className={styles.popup}>
+        <div className={styles.header}>
           <h3>Upload File</h3>
-          <button className="upload-popup-close" onClick={handleClose}>&times;</button>
+          <button className={styles.close} onClick={handleClose}>&times;</button>
         </div>
-        <div className="upload-popup-body">
+        <div className={styles.body}>
           <div
-            className="upload-popup-dropzone"
+            className={styles.dropzone}
             onClick={() => document.getElementById('fileInput').click()}
           >
             {imagePreviewUrl ? (
-              <img src={imagePreviewUrl} alt="Preview" className="upload-popup-preview" />
+              <img src={imagePreviewUrl} alt="Preview" className={styles.preview} />
             ) : (
               <>
                 <MdCloudUpload size={80} color="#007bff" />
@@ -91,14 +92,14 @@ const UploadPopup = ({ isOpen, onClose, onSave }) => {
               accept=".png,.jpg,.jpeg,.pdf"
             />
           </div>
-          <p className="upload-popup-hint">Allowed: PNG, JPG, PDF. Max size: 3MB.</p>
+          <p className={styles.hint}>Allowed: PNG, JPG, PDF. Max size: 3MB.</p>
         </div>
-        <div className="upload-popup-footer">
-          <button className="upload-popup-btn cancel" onClick={handleClose}>
-            <span className="icon-cancel"></span> Cancel
+        <div className={styles.footer}>
+          <button className={`${styles.button} ${styles.cancel}`} onClick={handleClose}>
+            <span className={styles.iconCancel}></span> Cancel
           </button>
-          <button className="upload-popup-btn save" onClick={handleSave}>
-            <span className="icon-save"></span> Save
+          <button className={`${styles.button} ${styles.save}`} onClick={handleSave}>
+            <span className={styles.iconSave}></span> Save
           </button>
         </div>
       </div>

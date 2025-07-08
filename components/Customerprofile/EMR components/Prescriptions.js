@@ -2,11 +2,14 @@ import React, { useState } from "react";
 import { FaPen } from "react-icons/fa";
 import { LuPrinter } from "react-icons/lu";
 import { MdOutlineAdd } from "react-icons/md";
-import PrescriptionModal from "./PrescriptionModal";
 import "./Prescriptions.css";
+import AddNewPrescriptionModal from "@/components/PopupModals/AddNewPrescriptionModal/AddNewPrescriptionModal";
+import EditPrescriptionModal from "@/components/PopupModals/EditPrescriptionModal/EditPrescriptionModal";
 
 const Prescriptions = () => {
-  const [showModal, setShowModal] = useState(false);
+  const [showAddModal, setShowAddModal] = useState(false);
+  const [showEditModal, setShowEditModal] = useState(false);
+  const [selectedPrescription, setSelectedPrescription] = useState(null);
 
   const [prescriptions, setPrescriptions] = useState([
     {
@@ -42,10 +45,27 @@ const Prescriptions = () => {
     },
   ]);
 
+  // Handle save for newly added prescription
+  const handleAddSave = (newData) => {
+    setPrescriptions([...prescriptions, newData]);
+    setShowAddModal(false);
+  };
+
+  // Handle save for edited prescription
+  const handleEditSave = (updatedData) => {
+    const updatedList = prescriptions.map((prescription) =>
+      prescription === selectedPrescription ? updatedData : prescription
+    );
+    setPrescriptions(updatedList);
+    setShowEditModal(false);
+    setSelectedPrescription(null);
+  };
+
   return (
     <div className="prescription-container">
       <h2 className="prescription-heading">Prescriptions</h2>
-      <button onClick={() => setShowModal(true)} className="add-btn">
+
+      <button className="add-btn" onClick={() => setShowAddModal(true)}>
         <MdOutlineAdd className="add-icon" />
         Add New Prescriptions
       </button>
@@ -57,7 +77,7 @@ const Prescriptions = () => {
             <th>Date</th>
             <th>Dr</th>
             <th>Drug</th>
-            <th>Durg Type</th>
+            <th>Drug Type</th>
             <th>Dosage</th>
             <th>Duration</th>
             <th>Instructions</th>
@@ -85,7 +105,13 @@ const Prescriptions = () => {
               <td>{p.duration}</td>
               <td>{p.instructions}</td>
               <td>
-                <button className="icon-btn">
+                <button
+                  className="icon-btn"
+                  onClick={() => {
+                    setSelectedPrescription(p);
+                    setShowEditModal(true);
+                  }}
+                >
                   <FaPen />
                 </button>
               </td>
@@ -103,13 +129,27 @@ const Prescriptions = () => {
         <a href="#">Back to History</a>
       </div>
 
-      <PrescriptionModal
-        isOpen={showModal}
-        onClose={() => setShowModal(false)}
-        onSave={(newData) => {
-          setPrescriptions([...prescriptions, newData]);
-        }}
-      />
+      {/* ADD MODAL */}
+      {showAddModal && (
+        <AddNewPrescriptionModal
+          isOpen={true}
+          onClose={() => setShowAddModal(false)}
+          onSave={handleAddSave}
+        />
+      )}
+
+      {/* EDIT MODAL */}
+      {showEditModal && selectedPrescription && (
+        <EditPrescriptionModal
+          isOpen={true}
+          initialData={selectedPrescription}
+          onClose={() => {
+            setShowEditModal(false);
+            setSelectedPrescription(null);
+          }}
+          onSave={handleEditSave}
+        />
+      )}
     </div>
   );
 };
