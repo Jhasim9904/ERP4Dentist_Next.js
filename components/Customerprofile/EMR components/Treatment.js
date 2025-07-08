@@ -4,7 +4,10 @@ import AddNoteModal from "@/components/PopupModals/AddNoteModal/AddNoteModal";
 import AddLabWorkModal from "@/components/PopupModals/AddLabWorkModal/AddLabWorkModal";
 
 const Treatment = () => {
-  const [showModal, setShowModal] = useState(false);
+  const [showNoteModal, setShowNoteModal] = useState(false);
+  const [showLabWorkModal, setShowLabWorkModal] = useState(false);
+  const [openDropdownIndex, setOpenDropdownIndex] = useState(null);
+
   const [treatmentPlans, setTreatmentPlans] = useState([
     {
       planNo: 1,
@@ -36,35 +39,31 @@ const Treatment = () => {
     },
   ]);
 
-  // State to manage which dropdown is open. Stores the index of the plan, or null if none are open.
-  const [openDropdownIndex, setOpenDropdownIndex] = useState(null);
-
   const totalEstimated = treatmentPlans.reduce((sum, t) => sum + t.treatmentCost, 0);
   const totalConfirmed = treatmentPlans.reduce((sum, t) => sum + t.treatmentCost, 0); // Adjust if logic changes
 
-  // Function to toggle dropdown visibility for a specific row
   const toggleDropdown = (index) => {
     setOpenDropdownIndex(openDropdownIndex === index ? null : index);
   };
 
-  // Functions for dropdown actions (currently just console logs)
   const handleAddNote = (planNo) => {
     console.log(`Add Note for Plan No: ${planNo}`);
-    setOpenDropdownIndex(null); // Close dropdown after action
+    setShowNoteModal(true);
+    setOpenDropdownIndex(null);
   };
 
   const handleAddLabWork = (planNo) => {
     console.log(`Add Lab Work for Plan No: ${planNo}`);
-    setOpenDropdownIndex(null); // Close dropdown after action
+    setShowLabWorkModal(true);
+    setOpenDropdownIndex(null);
   };
 
   const handleDelete = (planNo) => {
     if (window.confirm(`Are you sure you want to delete Plan No: ${planNo}?`)) {
-      setTreatmentPlans(treatmentPlans.filter(plan => plan.planNo !== planNo));
+      setTreatmentPlans(treatmentPlans.filter((plan) => plan.planNo !== planNo));
     }
-    setOpenDropdownIndex(null); // Close dropdown after action
+    setOpenDropdownIndex(null);
   };
-
 
   return (
     <div className="treatment-container">
@@ -99,7 +98,10 @@ const Treatment = () => {
               <td>{plan.planDate}</td>
               <td>
                 <div className="doctor-badge">
-                  <span className="doctor-color" style={{ backgroundColor: plan.color }}></span>
+                  <span
+                    className="doctor-color"
+                    style={{ backgroundColor: plan.color }}
+                  ></span>
                   {plan.doctor}
                 </div>
               </td>
@@ -115,10 +117,10 @@ const Treatment = () => {
                 <span onClick={() => toggleDropdown(index)} className="action-dots">⋮</span>
                 {openDropdownIndex === index && (
                   <div className="action-dropdown">
-                    <div className="dropdown-item" onClick={() => setShowModal(true)}>
+                    <div className="dropdown-item" onClick={() => handleAddNote(plan.planNo)}>
                       <span className="dropdown-icon"></span> Add Note
                     </div>
-                    <div className="dropdown-item" onClick={() => setShowModal(true)}>
+                    <div className="dropdown-item" onClick={() => handleAddLabWork(plan.planNo)}>
                       <span className="dropdown-icon"></span> Add Lab Work
                     </div>
                     <div className="dropdown-item" onClick={() => handleDelete(plan.planNo)}>
@@ -132,8 +134,9 @@ const Treatment = () => {
         </tbody>
       </table>
 
-      {showModal && <AddNoteModal onClose={() => setShowModal(false)} />}
-      {showModal && <AddLabWorkModal onClose={() => setShowModal(false)} />}
+      {/* Modals */}
+      {showNoteModal && <AddNoteModal onClose={() => setShowNoteModal(false)} />}
+      {showLabWorkModal && <AddLabWorkModal onClose={() => setShowLabWorkModal(false)} />}
 
       <div className="back-link">
         <a href="#">Back to History</a>
