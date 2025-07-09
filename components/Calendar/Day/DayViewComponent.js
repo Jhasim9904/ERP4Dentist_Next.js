@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
-// import AppointmentCard from '../AppointmentCard'; // REMOVE this line
-import DayViewAppointmentCard from './DayViewAppointmentCard'; // ADD this line
+import DayViewAppointmentCard from './DayViewAppointmentCard'; // Correct path
+// import AppointmentPopup from '../AppointmentPopup'; // REMOVE this import
 import './DayViewComponent.css';
 
 const DayViewComponent = ({ appointments, currentDisplayDate }) => {
@@ -9,6 +9,11 @@ const DayViewComponent = ({ appointments, currentDisplayDate }) => {
   const timeSlots = Array.from({ length: 10 }, (_, i) => calendarStartHour + i); // 10 AM to 7 PM
 
   const [currentTime, setCurrentTime] = useState(new Date());
+
+  // REMOVED: Popup state management
+  // const [showPopup, setShowPopup] = useState(false);
+  // const [selectedAppointment, setSelectedAppointment] = useState(null);
+  // const [popupStyle, setPopupStyle] = useState({});
 
   useEffect(() => {
     const timer = setInterval(() => {
@@ -23,10 +28,6 @@ const DayViewComponent = ({ appointments, currentDisplayDate }) => {
     if (hour < 12) return `${hour}:00 AM`;
     return `${hour - 12}:00 PM`;
   };
-
-  // This function is no longer needed to filter by hour, as we'll loop through all appointments
-  // and calculate their position globally within the column.
-  // const getAppointmentsForHour = (hour) => { /* ... */ };
 
   const calculateCurrentTimeIndicatorPosition = () => {
     const currentHour = currentTime.getHours();
@@ -47,7 +48,6 @@ const DayViewComponent = ({ appointments, currentDisplayDate }) => {
 
   const currentTimeTop = calculateCurrentTimeIndicatorPosition();
 
-  // New function to get appointments for the entire day, sorted by start time
   const getAppointmentsForDay = () => {
     const targetYear = currentDisplayDate.getFullYear();
     const targetMonth = currentDisplayDate.getMonth();
@@ -55,17 +55,18 @@ const DayViewComponent = ({ appointments, currentDisplayDate }) => {
 
     return appointments
       .filter(app => {
-        // Ensure app.startTime is a Date object
         const appStartTime = app.startTime instanceof Date ? app.startTime : new Date(app.startTime);
-
         return appStartTime.getFullYear() === targetYear &&
                appStartTime.getMonth() === targetMonth &&
                appStartTime.getDate() === targetDay;
       })
-      .sort((a, b) => a.startTime.getTime() - b.startTime.getTime()); // Sort by start time
+      .sort((a, b) => a.startTime.getTime() - b.startTime.getTime());
   };
 
-  // Get all appointments for the displayed day
+  // REMOVED: handleAppointmentCardClick and handleClosePopup functions
+  // const handleAppointmentCardClick = (appointment, event) => { /* ... */ };
+  // const handleClosePopup = () => { /* ... */ };
+
   const dayAppointments = getAppointmentsForDay();
 
   return (
@@ -106,20 +107,17 @@ const DayViewComponent = ({ appointments, currentDisplayDate }) => {
           const appTop = (startMinutesFromCalendarStart / 60) * pixelsPerHour;
           const appHeight = (durationMinutes / 60) * pixelsPerHour;
 
-          // You might need to add logic here for handling overlapping appointments
-          // For now, they will just overlap if they share the same time slot and don't fit.
-          // This typically involves calculating 'left' and 'width' based on overlap.
-          // For simplicity, we'll just stack them.
-
           return (
             <DayViewAppointmentCard
               key={app.id}
               appointment={app}
               style={{ top: `${appTop}px`, height: `${appHeight}px` }} // Pass calculated styles
+              // Removed onCardClick prop, as DayViewAppointmentCard now handles its own popup
             />
           );
         })}
       </div>
+
     </div>
   );
 };

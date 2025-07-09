@@ -1,6 +1,8 @@
 // components/AppointmentCard/DayViewAppointmentCard.js
-import React from 'react';
-import './DayViewAppointmentCard.css'; // Dedicated CSS for day view card
+"use client";
+import React, { useState, useEffect, useRef } from 'react';
+import './DayViewAppointmentCard.css';
+import AppointmentPopup from '../AppointmentPopup';
 
 const colorMap = {
   "Teeth Cleaning": "app-card-blue",
@@ -13,16 +15,19 @@ const colorMap = {
   "Jaw Alignment": "app-card-purple",
   "Bridge Repair": "app-card-blue",
   "Plaque Removal": "app-card-green",
-  // *** ADDED: Color for Invisalign Scan ***
-  "Invisalign Scan": "app-card-blue", // You can choose any color from your CSS
+  "Invisalign Scan": "app-card-blue",
 };
 
 const DayViewAppointmentCard = ({ appointment, style }) => {
+  const [showPopup, setShowPopup] = useState(false);
+  const [popupPosition, setPopupPosition] = useState({ top: 0, left: 0 });
+  const cardRef = useRef(null);
+  const popupRef = useRef(null);
+
   if (!appointment) {
     return null;
   }
 
-  // *** CRUCIAL FIX: Use appointment.treatment for color lookup ***
   const colorClass = colorMap[appointment.treatment] || "app-card-default";
 
   const startTime = appointment.startTime instanceof Date ? appointment.startTime : new Date(appointment.startTime);
@@ -31,18 +36,93 @@ const DayViewAppointmentCard = ({ appointment, style }) => {
   const formattedStartTime = startTime.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: true });
   const formattedEndTime = endTime.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: true });
 
+  const handleClosePopup = () => {
+    setShowPopup(false);
+  };
+
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (showPopup && cardRef.current && popupRef.current &&
+          !cardRef.current.contains(event.target) &&
+          !popupRef.current.contains(event.target)
+      ) {
+        handleClosePopup();
+      }
+    };
+
+    if (showPopup) {
+      document.addEventListener("mousedown", handleClickOutside);
+    }
+
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [showPopup, cardRef, popupRef]);
+
+  const handleClick = () => {
+    if (cardRef.current) {
+      const rect = cardRef.current.getBoundingClientRect();
+      const popupWidth = 320;
+      const spacing = 10;
+
+      let top = rect.top + window.scrollY;
+      const approxPopupHeight = 250;
+      if (top + approxPopupHeight > window.innerHeight + window.scrollY) {
+          top = window.innerHeight + window.scrollY - approxPopupHeight - spacing;
+          if (top < window.scrollY) top = window.scrollY + spacing;
+      }
+
+      // --- IMPROVED HORIZONTAL POSITIONING LOGIC ---
+      let left;
+      const spaceRight = window.innerWidth - (rect.right + spacing);
+      const spaceLeft = rect.left - spacing;
+
+      if (spaceRight >= popupWidth) {
+          left = rect.right + window.scrollX + spacing;
+      } else if (spaceLeft >= popupWidth) {
+          left = rect.left + window.scrollX - popupWidth - spacing;
+      } else {
+          left = window.scrollX + spacing;
+          if (left + popupWidth > window.innerWidth + window.scrollX) {
+              left = window.innerWidth + window.scrollX - popupWidth - spacing;
+              if (left < window.scrollX) left = window.scrollX + spacing;
+          }
+      }
+      // --- END IMPROVED HORIZONTAL POSITIONING LOGIC ---
+
+      setPopupPosition({ top, left });
+      setShowPopup((prev) => !prev);
+    }
+  };
+
   return (
-    <div className={`day-view-appointment-card ${colorClass}`} style={style}>
-      <div className="day-view-card-header">
-        <span className="day-view-card-patient-name">{appointment.patientName}</span>
+    <>
+      <div
+        ref={cardRef}
+        className={`day-view-appointment-card ${colorClass}`}
+        style={style}
+        onClick={handleClick}
+      >
+        <div className="day-view-card-header">
+          <span className="day-view-card-patient-name">{appointment.patientName}</span>
+        </div>
+        <div className="day-view-card-details">
+          <p className="day-view-card-time-range">{formattedStartTime} - {formattedEndTime}</p>
+          {appointment.treatment && <p className="day-view-card-type">{appointment.treatment}</p>}
+          {appointment.description && <p className="day-view-card-description">{appointment.description}</p>}
+        </div>
       </div>
-      <div className="day-view-card-details">
-        <p className="day-view-card-time-range">{formattedStartTime} - {formattedEndTime}</p>
-        {/* *** UPDATED: Display appointment.treatment instead of appointment.type *** */}
-        {appointment.treatment && <p className="day-view-card-type">{appointment.treatment}</p>}
-        {appointment.description && <p className="day-view-card-description">{appointment.description}</p>}
-      </div>
-    </div>
+
+      {showPopup && (
+        <AppointmentPopup
+          appointment={appointment}
+          style={{ top: popupPosition.top, left: popupPosition.left }}
+          onClose={handleClosePopup}
+          setShowPopup={setShowPopup}
+          popupRef={popupRef}
+        />
+      )}
+    </>
   );
 };
 

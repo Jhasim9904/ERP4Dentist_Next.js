@@ -13,34 +13,35 @@ const AppointmentPopup = ({
   style,
   onClose,
   setShowPopup,
+  popupRef, // NEW: Accept the popupRef
 }) => {
   if (!appointment) return null;
 
-  const handleMouseEnter = () => {
-    setShowPopup(true); // Keep popup open on hover
-  };
-    const handleMouseLeave = () => {
-    setShowPopup(false); // Keep popup open on hover
+  const patientPhoneNumber = appointment.phoneNumber || "+91 9425854202";
+  const patientEmail = appointment.email || "ewalker12@mail.com";
+
+  const formatTimeForPopup = (date) => {
+    if (!(date instanceof Date)) {
+        date = new Date(date);
+    }
+    return date.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit", hour12: true });
   };
 
   return (
-    <div
-      className="appointment-popup-wrapper"
-      onClick={onClose}
-      onMouseEnter={handleMouseEnter}
-      onMouseLeave={handleMouseLeave}
-    >
+    // IMPORTANT: Removed onClick={onClose} from this wrapper.
+    // The click-outside logic is now solely handled by the document listener in AppointmentCard.
+    <div className="appointment-popup-wrapper">
       <div
+        ref={popupRef} // NEW: Attach the ref to the popup content div
         className="appointment-popup-content"
         style={style}
-        onClick={(e) => e.stopPropagation()}
+        onClick={(e) => e.stopPropagation()} // Prevent clicks inside content from bubbling up
       >
         <div className="popup-arrow"></div>
 
         <div className="popup-header">
           <span className="popup-patient-name">{appointment.patientName}</span>
           <div className="popup-actions">
-            {/* Edit */}
             <Image
               className="d-flex"
               src={Edit}
@@ -48,7 +49,6 @@ const AppointmentPopup = ({
               width={20}
               height={20}
             />
-            {/* Delete */}
             <Image
               className="d-flex"
               src={Delete}
@@ -61,25 +61,24 @@ const AppointmentPopup = ({
 
         <div className="popup-contact-info">
           <div className="d-flex">
-
-                      <Image
+            <Image
               className="d-flex mx-1"
               src={Phone}
               alt="Phone"
               width={20}
               height={20}
-              />
-          <span>+91 9425854202</span>
-              
+            />
+            <span>{patientPhoneNumber}</span>
+            
             <Image
               className="d-flex mx-1"
               src={Email}
               alt="Email"
               width={20}
               height={20}
-              />
-          <span>ewalker12@mail.com</span>
-              </div>
+            />
+            <span>{patientEmail}</span>
+          </div>
         </div>
 
         <div className="popup-details">
@@ -96,28 +95,21 @@ const AppointmentPopup = ({
           <div className="detail-row">
             <span className="detail-label">Time</span>
             <span className="detail-value">
-              {appointment.startTime.toLocaleTimeString([], {
-                hour: "2-digit",
-                minute: "2-digit",
-              })}{" "}
-              -{" "}
-              {appointment.endTime.toLocaleTimeString([], {
-                hour: "2-digit",
-                minute: "2-digit",
-              })}
+              {formatTimeForPopup(appointment.startTime)} -{" "}
+              {formatTimeForPopup(appointment.endTime)}
             </span>
           </div>
         </div>
 
         <button className="see-patient-details-btn">
           See Patient Details
-            <Image
-              className="d-flex"
-              src={Arrowupright}
-              alt="Arrowupright"
-              width={20}
-              height={20}
-            />
+          <Image
+            className="d-flex"
+            src={Arrowupright}
+            alt="Arrowupright"
+            width={20}
+            height={20}
+          />
         </button>
       </div>
     </div>
