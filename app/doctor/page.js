@@ -13,11 +13,6 @@ const doctor = () => {
       };
   return (
               <div className="app-layout">
-                <Sidebar
-                  isOpen={sidebarOpen}
-                  onToggleSidebar={toggleSidebar}
-                  sidebarOpen={sidebarOpen}
-                />
                 <div className="main-content">
                   <Navbar
                     onToggleSidebar={toggleSidebar}
