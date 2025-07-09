@@ -1,16 +1,17 @@
 "use client";
 import React, { useState } from "react";
-import Navbar from '@/components/Navbar/Navbar';
-import Sidebar from '@/components/Sidebar/Sidebar';
-import Footer from '@/components/Footer/Footer';
-import Doctor from '@/components/Doctor/Doctor';
+import Navbar from "@/components/Navbar/Navbar";
+import Sidebar from "@/components/Sidebar/Sidebar";
+import Footer from "@/components/Footer/Footer";
+import Drug from "@/components/Drug/Drug";
 
-const doctor = () => {
-      const [sidebarOpen, setSidebarOpen] = useState(true);
+const page = () => {
+  const [sidebarOpen, setSidebarOpen] = useState(true);
 
   const toggleSidebar = () => {
     setSidebarOpen(!sidebarOpen);
   };
+
   return (
     <div>
       <div className="app-layout">
@@ -22,7 +23,7 @@ const doctor = () => {
         <div className="main-content">
           <Navbar onToggleSidebar={toggleSidebar} sidebarOpen={sidebarOpen} />
           <div className="container1">
-            <Doctor />
+            <Drug />
           </div>
           <div style={{ marginTop: "200px" }}>
             <Footer />
@@ -31,6 +32,6 @@ const doctor = () => {
       </div>
     </div>
   );
-}
+};
 
-export default doctor;
+export default page;
