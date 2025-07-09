@@ -2,8 +2,10 @@
 
 .monthly-appointment-card {
   /* Basic styling for the card itself */
-  background-color: #e0f2f7; /* Light blue, consistent with previous design */
-  border-left: 3px solid #007bff; /* Accent color, consistent */
+  /* Using a default background and border-left to ensure consistency,
+     which will then be overridden by the specific color classes. */
+  background-color: white; /* Default background */
+  border-left: 3px solid #d1d5db; /* Default border-left color, similar to gray */
   border-radius: 3px;
   padding: 3px 6px; /* Compact padding */
   margin-bottom: 3px; /* Small space between cards */
@@ -18,21 +20,57 @@
   gap: 4px; /* Space between time and name */
   font-size: 0.75rem; /* Small font size */
   line-height: 1.2; /* Compact line height */
+  color: #333; /* Default text color */
 }
+
+/* --- Color Classes - Now matching the provided AppointmentCard.css --- */
+.app-card-blue {
+    background-color: #e0f7fa; /* Light blue */
+    color: #006064; /* Dark teal text */
+    /* border-left-color is handled by the base .monthly-appointment-card or a specific override if needed */
+}
+
+.app-card-green {
+    background-color: #e8f5e9; /* Light green */
+    color: #2e7d32; /* Dark green text */
+}
+
+.app-card-purple {
+    background-color: #f3e5f5; /* Light purple */
+    color: #6a1b9a; /* Dark purple text */
+}
+
+.app-card-lime {
+    background-color: #f0f4c3; /* Light lime/yellowish */
+    color: #9e9d24; /* Dark olive green text */
+}
+
+.app-card-gray {
+    background-color: #f0f0f0; /* Light gray */
+    color: #333; /* Dark gray text */
+}
+
+/* Fallback if appointment.treatment is not found in the colorMap */
+.app-card-default {
+    background-color: #f0f0f0; /* Default neutral background */
+    color: #333; /* Default text color */
+    border-left-color: #a0a0a0; /* Neutral border for default */
+}
+
 
 /* Style for the time part */
 .monthly-card-time {
   font-weight: 500;
-  color: #4a5568; /* Darker grey for time */
-  flex-shrink: 0; /* Prevent time from shrinking */
+  /* Color inherited from .monthly-appointment-card or specific color class */
+  flex-shrink: 0;
 }
 
 /* Style for the patient name */
 .monthly-card-patient-name {
   font-weight: 600;
-  color: #2c3e50; /* Even darker for patient name */
-  flex-grow: 1; /* Allow name to take available space */
-  overflow: hidden; /* Ensure ellipsis works */
+  /* Color inherited from .monthly-appointment-card or specific color class */
+  flex-grow: 1;
+  overflow: hidden;
   text-overflow: ellipsis;
 }
 
@@ -51,10 +89,10 @@
   width: 5px;
   height: 5px;
   border-radius: 50%;
-  background-color: #007bff; /* Dot color, consistent with accent */
+  background-color: currentColor; /* Dot color will match the text color of the card */
 }
 
-/* Media query adjustments for very small screens if needed */
+/* Media query adjustments for very small screens */
 @media (max-width: 600px) {
   .monthly-appointment-card {
     font-size: 0.7rem;

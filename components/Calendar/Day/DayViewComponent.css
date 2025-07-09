@@ -47,23 +47,39 @@
 .day-view-appointments-column {
   flex-grow: 1;
   display: flex;
-  flex-direction: column;
-  position: relative; /* For absolute positioning of appointments and time indicator */
-  overflow-y: scroll; /* Enable vertical scrolling */
+  flex-direction: column; /* This column holds both background and absolutely positioned appointments */
+  position: relative; /* Crucial: For absolute positioning of appointments and time indicator */
+  overflow-y: scroll; /* Enable vertical scrolling if content exceeds height */
+  /* Remove individual hour slot paddings if appointments are directly children */
 }
 
-.day-view-hour-slot {
+/* New: Background hour slot lines (instead of making day-view-hour-slot the container) */
+.day-view-hour-slot-background {
   height: 100px; /* Matches time slot height */
   border-bottom: 1px dashed #e2e8f0;
-  position: relative; /* For positioning AppointmentCards within the slot */
-  padding: 5px; /* Add some padding for appointment cards */
   box-sizing: border-box; /* Include padding in height */
   background-color: #fafafa;
+  flex-shrink: 0; /* Prevents shrinking */
 }
 
+.day-view-hour-slot-background:nth-child(2n) { /* Alternating background colors */
+  background-color: #fdfdfd;
+}
+
+/* Remove the old .day-view-hour-slot styles that interfered with positioning */
+/*
+.day-view-hour-slot {
+  height: 100px;
+  border-bottom: 1px dashed #e2e8f0;
+  position: relative;
+  padding: 5px;
+  box-sizing: border-box;
+  background-color: #fafafa;
+}
 .day-view-hour-slot:nth-child(even) {
   background-color: #fdfdfd;
 }
+*/
 
 /* Current Time Indicator for Day View */
 .day-view-current-time-indicator {
@@ -77,7 +93,7 @@
 
 .day-view-current-time-label {
   position: absolute;
-  left: -45px;
+  left: -45px; /* Adjust to position label next to the line */
   top: -8px;
   background-color: #ef4444;
   color: white;
@@ -87,12 +103,14 @@
   white-space: nowrap;
 }
 
-/* Appointment Card positioning within Day View (example) */
+/* REMOVE this block - these styles are now in DayViewAppointmentCard.css */
+/*
 .day-view-hour-slot .appointment-card {
-  position: absolute; /* Allows precise positioning */
-  top: 5px; /* Adjust based on appointment start time within the hour */
+  position: absolute;
+  top: 5px;
   left: 5px;
   right: 5px;
-  width: auto; /* Take natural width */
-  z-index: 5; /* Ensure cards are above hour slot backgrounds */
+  width: auto;
+  z-index: 5;
 }
+*/
