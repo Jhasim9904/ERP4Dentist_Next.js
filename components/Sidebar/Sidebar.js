@@ -18,6 +18,7 @@ const items = [
   { label: "Procedure Type", icon: frame5, path: "/proceduretype" },
   { label: "Lab", icon: frame5, path: "/lab" },
   { label: "Doctors", icon: frame4, path: "/doctor" },
+  { label: "Drug", icon: frame3, path: "/drug" },
 ];
 
 const Sidebar = ({ isOpen, onToggleSidebar, sidebarOpen }) => {
