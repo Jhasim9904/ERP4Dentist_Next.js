@@ -1,7 +1,8 @@
-// components/Drug/DrugForm.js
+
+
 "use client";
 import React, { useState, useEffect } from "react";
-import "./styles.css";
+import "./DrugStyles.css";
 
 const initialForm = {
   name: "",
@@ -59,16 +60,13 @@ const DrugForm = ({ setShowForm, setDrugs, editingDrug }) => {
   return (
     <div className="form-overlay">
       <div className="form-container">
-        <div className="d-flex justify-content-between align-items-center mb-3">
-          <h5 className="modal-title">
-            {isEdit ? "Edit Drug" : "Add Drug to Catalog"}
-          </h5>
+        <div className="form-header">
+          <h5>{isEdit ? "Edit Drug" : "Add Drug to Catalog"}</h5>
           <button className="btn-close" onClick={() => setShowForm(false)} />
         </div>
 
-        <div className="modal-body px-2">
+        <div className="modal-body">
           <div className="row gy-3">
-
             <div className="col-md-6">
               <label className="form-label">Drug Name</label>
               <input
@@ -78,9 +76,7 @@ const DrugForm = ({ setShowForm, setDrugs, editingDrug }) => {
                 className={`form-control ${errors.name ? "is-invalid" : ""}`}
                 placeholder="Enter Drug Name"
               />
-              {errors.name && (
-                <div className="invalid-feedback">{errors.name}</div>
-              )}
+              {errors.name && <div className="invalid-feedback">{errors.name}</div>}
             </div>
 
             <div className="col-md-6">
@@ -92,9 +88,7 @@ const DrugForm = ({ setShowForm, setDrugs, editingDrug }) => {
                 className={`form-control ${errors.type ? "is-invalid" : ""}`}
                 placeholder="Tablet"
               />
-              {errors.type && (
-                <div className="invalid-feedback">{errors.type}</div>
-              )}
+              {errors.type && <div className="invalid-feedback">{errors.type}</div>}
             </div>
 
             <div className="col-12">
@@ -121,7 +115,7 @@ const DrugForm = ({ setShowForm, setDrugs, editingDrug }) => {
             </div>
           </div>
 
-          <div className="d-flex justify-content-end mt-4">
+          <div className="form-footer mt-4">
             <button className="btn btn-light me-2" onClick={() => setShowForm(false)}>
               Cancel
             </button>

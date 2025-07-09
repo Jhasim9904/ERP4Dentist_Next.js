@@ -1,6 +1,6 @@
-// components/Drug/DrugTable.js
 "use client";
 import React from "react";
+import "./DrugStyles.css";
 
 const DrugTable = ({ drugs, setDrugs, onEdit }) => {
   const handleDelete = (id) => {
@@ -10,7 +10,7 @@ const DrugTable = ({ drugs, setDrugs, onEdit }) => {
   };
 
   return (
-    <table className="lab-table">
+    <table className="drug-table">
       <thead>
         <tr>
           <th>Drug Name</th>
@@ -28,12 +28,8 @@ const DrugTable = ({ drugs, setDrugs, onEdit }) => {
             <td>{drug.strength}</td>
             <td>{drug.instructions}</td>
             <td>
-              <button className="edit-btn" onClick={() => onEdit(drug)}>
-                Edit
-              </button>
-              <button className="delete-btn" onClick={() => handleDelete(drug.id)}>
-                Delete
-              </button>
+              <button className="edit-btn" onClick={() => onEdit(drug)}>Edit</button>
+              <button className="delete-btn" onClick={() => handleDelete(drug.id)}>Delete</button>
             </td>
           </tr>
         ))}

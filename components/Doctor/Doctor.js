@@ -1,5 +1,5 @@
 "use client";
-import React, { useContext, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { FaUserPlus, FaPhoneAlt, FaEnvelope, FaCalendarAlt } from 'react-icons/fa';
 import CreateDoctorModal from './CreateDoctor.js';
 import './Doctor.css';
@@ -13,6 +13,19 @@ const Doctor = () => {
   const [showModal, setShowModal] = useState(false);
   const [editingIndex, setEditingIndex] = useState(null);
 
+  // ✅ Load from localStorage on first render
+  useEffect(() => {
+    const storedDoctors = localStorage.getItem("erp4Doctors");
+    if (storedDoctors) {
+      setDoctors(JSON.parse(storedDoctors));
+    }
+  }, []);
+
+  // ✅ Save to localStorage whenever doctors change
+  useEffect(() => {
+    localStorage.setItem("erp4Doctors", JSON.stringify(doctors));
+  }, [doctors]);
+
   const handleAddDoctor = (doctorData) => {
     const newDoctor = {
       name: doctorData.name,
@@ -23,7 +36,8 @@ const Doctor = () => {
       date: doctorData.joinDate,
       status: doctorData.status,
       img: doctorData.profileImage || 'https://via.placeholder.com/50',
-      color: doctorData.color
+      color: doctorData.color,
+      signature: doctorData.signature || "", // ✅ Signature saved
     };
 
     if (editingIndex !== null) {
@@ -141,6 +155,7 @@ const Doctor = () => {
                 {doc.role && <div className="doctor-role">{doc.role}</div>}
               </div>
             </div>
+
             <div className="info-row">
               <FaPhoneAlt className="icon" /> {doc.phone}
             </div>
@@ -151,6 +166,19 @@ const Doctor = () => {
               <FaCalendarAlt className="icon" /> {doc.date}
               <span className="status">{doc.status}</span>
             </div>
+
+            {/* ✅ Signature Preview */}
+            {doc.signature && (
+              <div className="signature-preview">
+                <strong>Signature:</strong>
+                <img
+                  src={doc.signature}
+                  alt="E-Signature"
+                  style={{ width: '100px', marginTop: '8px' }}
+                />
+              </div>
+            )}
+
             <div className="actions">
               <button className="edit-btn" onClick={() => handleEditDoctor(index)}>Edit</button>
               <button className="delete-btn" onClick={() => handleDeleteDoctor(index)}>Delete</button>

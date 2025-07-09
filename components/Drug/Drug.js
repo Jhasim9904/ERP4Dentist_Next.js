@@ -1,9 +1,8 @@
-// components/Drug/Drug.js
 "use client";
 import React, { useState, useEffect } from "react";
 import DrugTable from "./DrugTable";
 import DrugForm from "./DrugForm";
-import "./styles.css";
+import "./DrugStyles.css";
 
 const Drug = () => {
   const [searchTerm, setSearchTerm] = useState("");
@@ -26,11 +25,11 @@ const Drug = () => {
   };
 
   return (
-    <div className="lab-container">
+    <div className="drug-container">
       <h4 className="text-start mb-3">Drugs</h4>
-      <div className="lab-content-box">
-        <div className="lab-header">
-          <div className="lab-count">
+      <div className="drug-content-box">
+        <div className="drug-header">
+          <div className="drug-count">
             Drugs <span className="count-badge">{drugs.length}</span>
           </div>
           <div className="search-bar">

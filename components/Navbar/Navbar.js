@@ -1,5 +1,6 @@
 "use client";
-import React from "react";
+import React, { useState, useRef, useEffect } from "react";
+import { useRouter } from "next/navigation";
 import Image from "next/image";
 import "./Navbar.css";
 import MyImage from "../images/Frame.png";
@@ -9,15 +10,35 @@ import logo from "../images/logo.png";
 import dp from "../images/dp.png";
 
 const Navbar = ({ onToggleSidebar, sidebarOpen }) => {
+  const [showDropdown, setShowDropdown] = useState(false);
+  const profileRef = useRef(null);
+  const router = useRouter();
+
+  const handleProfileClick = () => {
+    router.push("/profile");
+    setShowDropdown(false);
+  };
+
+  const handleLogout = () => {
+    router.push("/login");
+    setShowDropdown(false);
+  };
+
+  // Close dropdown on outside click
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (profileRef.current && !profileRef.current.contains(event.target)) {
+        setShowDropdown(false);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
+
   return (
     <div className="sticky-top">
       <nav className="custom-navbar navbar navbar-expand-lg navbar-light">
         <div className="container-fluid m-3 d-flex">
-          {/* Sidebar Toggle Button (optional) */}
-          {/* <button className="btn btn-outline-primary me-3" onClick={onToggleSidebar}>
-            {sidebarOpen ? "X" : "☰"}
-          </button> */}
-
           {/* Brand Logo */}
           <a className="navbar-brand" href="#">
             <Image src={logo} alt="Logo" width={100} height={40} />
@@ -65,8 +86,31 @@ const Navbar = ({ onToggleSidebar, sidebarOpen }) => {
                     <span style={{ color: "green" }}>Online</span>
                   </div>
                 </li>
-                <li className="nav-item dp">
-                  <Image src={dp} alt="User DP" width={40} height={40} className="dp" />
+                <li className="nav-item mx-2" ref={profileRef} style={{ position: "relative" }}>
+                  <Image
+                    src={dp}
+                    alt="User DP"
+                    width={40}
+                    height={40}
+                    className="dp"
+                    onClick={() => setShowDropdown(!showDropdown)}
+                    style={{ cursor: "pointer" }}
+                  />
+                  {showDropdown && (
+                    <div className="dropdown-menu-custom">
+                      <div className="dropdown-user">
+                        <strong>sinnamuthu</strong>
+                        <span>Admin</span>
+                      </div>
+                      <hr />
+                      <button className="dropdown-item-custom" onClick={handleProfileClick}>
+                        <i className="bi bi-person me-2"></i> My Profile
+                      </button>
+                      <button className="dropdown-item-custom" onClick={handleLogout}>
+                        <i className="bi bi-box-arrow-right me-2"></i> Log Out
+                      </button>
+                    </div>
+                  )}
                 </li>
               </ul>
             </div>
