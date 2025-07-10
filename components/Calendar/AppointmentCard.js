@@ -1,10 +1,8 @@
 // components/AppointmentCard/AppointmentCard.js
-// This file remains exactly the same as in the previous response.
-// No changes are needed here.
 "use client";
 import React, { useState, useEffect, useRef } from "react";
 import "./AppointmentCard.css";
-import AppointmentPopup from "./AppointmentPopup";
+import AppointmentPopup from "./AppointmentPopup"; // Ensure this path is correct
 
 const colorMap = {
   "Teeth Cleaning": "app-card-blue",
@@ -29,6 +27,8 @@ const AppointmentCard = ({ patients, calendarStartHour, pixelsPerHour }) => {
   const [endTimeStr, setEndTimeStr] = useState("");
   const cardRef = useRef(null);
   const popupRef = useRef(null);
+  const showTimeoutRef = useRef(null); // Added for hover delay
+  const hideTimeoutRef = useRef(null); // Added for hover delay
 
   useEffect(() => {
     const start = patients.startTime instanceof Date ? patients.startTime : new Date(patients.startTime);
@@ -40,7 +40,6 @@ const AppointmentCard = ({ patients, calendarStartHour, pixelsPerHour }) => {
 
   const startOfDayMinutes = calendarStartHour * 60;
 
-  // This will now be 200 / 60 = 3.33... pixels per minute
   const pixelsPerMinute = pixelsPerHour / 60;
 
   const startMin =
@@ -74,40 +73,82 @@ const AppointmentCard = ({ patients, calendarStartHour, pixelsPerHour }) => {
     };
   }, [showPopup, cardRef, popupRef]);
 
-  const handleClick = () => {
-    if (cardRef.current) {
-      const rect = cardRef.current.getBoundingClientRect();
-      const popupWidth = 320;
-      const spacing = 10;
+  // --- New Hover Handlers (Same as previous examples) ---
+  const handleMouseEnterCard = () => {
+    // Clear any pending hide timeout when mouse enters the card (or re-enters from popup)
+    if (hideTimeoutRef.current) {
+      clearTimeout(hideTimeoutRef.current);
+    }
+    // Clear any existing show timeout to prevent multiple triggers
+    if (showTimeoutRef.current) {
+      clearTimeout(showTimeoutRef.current);
+    }
 
-      let top = rect.top + window.scrollY;
-      const approxPopupHeight = 250;
-      if (top + approxPopupHeight > window.innerHeight + window.scrollY) {
-          top = window.innerHeight + window.scrollY - approxPopupHeight - spacing;
-          if (top < window.scrollY) top = window.scrollY + spacing;
-      }
+    // Set a timeout before showing the popup
+    showTimeoutRef.current = setTimeout(() => {
+      if (cardRef.current) {
+        const rect = cardRef.current.getBoundingClientRect();
+        const popupWidth = 320;
+        const spacing = 10;
 
-      let left;
-      const spaceRight = window.innerWidth - (rect.right + spacing);
-      const spaceLeft = rect.left - spacing;
+        let top = rect.top + window.scrollY;
+        const approxPopupHeight = 250;
+        if (top + approxPopupHeight > window.innerHeight + window.scrollY) {
+            top = window.innerHeight + window.scrollY - approxPopupHeight - spacing;
+            if (top < window.scrollY) top = window.scrollY + spacing;
+        }
 
-      if (spaceRight >= popupWidth) {
-          left = rect.right + window.scrollX + spacing;
+        let left;
+        const spaceRight = window.innerWidth - (rect.right + spacing);
+        const spaceLeft = rect.left - spacing;
+
+        if (spaceRight >= popupWidth) {
+            left = rect.right + window.scrollX + spacing;
+        } else if (spaceLeft >= popupWidth) {
+            left = rect.left + window.scrollX - popupWidth - spacing;
+        } else {
+            left = window.scrollX + spacing;
+            if (left + popupWidth > window.innerWidth + window.scrollX) {
+                left = window.innerWidth + window.scrollX - popupWidth - spacing;
+                if (left < window.scrollX) left = window.scrollX + spacing;
+            }
+        }
+
+        setPopupPosition({ top, left });
+        setShowPopup(true);
       }
-      else if (spaceLeft >= popupWidth) {
-          left = rect.left + window.scrollX - popupWidth - spacing;
-      }
-      else {
-          left = window.scrollX + spacing;
-          if (left + popupWidth > window.innerWidth + window.scrollX) {
-              left = window.innerWidth + window.scrollX - popupWidth - spacing;
-              if (left < window.scrollX) left = window.scrollX + spacing;
-          }
-      }
-      setPopupPosition({ top, left });
-      setShowPopup((prev) => !prev);
+    }, 300); // 300ms delay before showing popup
+  };
+
+  const handleMouseLeaveCard = () => {
+    // Clear the show timeout immediately
+    if (showTimeoutRef.current) {
+      clearTimeout(showTimeoutRef.current);
+    }
+
+    // Set a small delay before hiding the popup, to allow moving mouse to popup
+    hideTimeoutRef.current = setTimeout(() => {
+        // Only hide if the mouse is not currently over the popup
+        if (popupRef.current && !popupRef.current.matches(':hover')) {
+            setShowPopup(false);
+        }
+    }, 100); // Small delay before hiding
+  };
+
+  // Handlers for the popup itself
+  const handleMouseEnterPopup = () => {
+    // When mouse enters popup, clear the hide timeout on the card
+    if (hideTimeoutRef.current) {
+      clearTimeout(hideTimeoutRef.current);
     }
   };
+
+  const handleMouseLeavePopup = () => {
+    // When mouse leaves popup, hide the popup
+    setShowPopup(false);
+  };
+  // --- End New Hover Handlers ---
+
 
   return (
     <div>
@@ -115,7 +156,9 @@ const AppointmentCard = ({ patients, calendarStartHour, pixelsPerHour }) => {
         ref={cardRef}
         className={`appointment-card ${colorClass}`}
         style={{ top: `${topOffset}px`, height: `${height}px` }}
-        onClick={handleClick}
+        onMouseEnter={handleMouseEnterCard} // <--- Use onMouseEnter
+        onMouseLeave={handleMouseLeaveCard} // <--- Use onMouseLeave
+        // onClick handler is removed from here for hover functionality
       >
         <p className="patient-name">{patients.patientName}</p>
         <p className="treatment-type">{patients.treatment}</p>
@@ -132,6 +175,9 @@ const AppointmentCard = ({ patients, calendarStartHour, pixelsPerHour }) => {
           onClose={handleClosePopup}
           setShowPopup={setShowPopup}
           popupRef={popupRef}
+          // Add hover events to the popup itself
+          onMouseEnter={handleMouseEnterPopup} // Allow mouse to move onto popup
+          onMouseLeave={handleMouseLeavePopup} // Hide popup when mouse leaves popup
         />
       )}
     </div>
