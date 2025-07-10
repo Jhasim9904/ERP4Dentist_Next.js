@@ -48,18 +48,34 @@ const TourOverlay = () => {
   useEffect(() => {
     if (!isTourActive) return;
 
-    const target = document.getElementById(steps[currentStep]?.id);
-    if (!target || !tooltipRef.current) return;
-
-    const rect = target.getBoundingClientRect();
+    const element = document.getElementById(steps[currentStep]?.id);
     const tooltip = tooltipRef.current;
 
-    tooltip.style.top = `${rect.top + window.scrollY + rect.height / 2}px`;
-    tooltip.style.left = `${rect.left + rect.width + 20}px`;
+    if (!element || !tooltip) return;
 
-    // Scroll into view
-    target.scrollIntoView({ behavior: "smooth", block: "center" });
-  }, [currentStep, isTourActive]);
+    const rect = element.getBoundingClientRect();
+    const tooltipWidth = 280;
+    const tooltipHeight = 150;
+
+    let top = rect.top + window.scrollY;
+    let left = rect.left + rect.width + 20;
+
+    // Adjust if tooltip overflows right
+    if (left + tooltipWidth > window.innerWidth) {
+      left = rect.left - tooltipWidth - 20;
+    }
+
+    // Adjust if tooltip overflows bottom
+    if (top + tooltipHeight > window.innerHeight + window.scrollY) {
+      top = rect.top + window.scrollY - tooltipHeight - 20;
+    }
+
+    tooltip.style.top = `${top}px`;
+    tooltip.style.left = `${left}px`;
+
+    // Scroll to element
+    element.scrollIntoView({ behavior: "smooth", block: "center" });
+  }, [isTourActive, currentStep]);
 
   if (!isTourActive) return null;
 
@@ -70,9 +86,7 @@ const TourOverlay = () => {
       <div className={styles.overlay}></div>
 
       <div ref={tooltipRef} className={styles.tooltip}>
-        <button className={styles.closeBtn} onClick={endTour}>
-          ×
-        </button>
+        <button className={styles.closeBtn} onClick={endTour}>×</button>
         <h4>{step.title}</h4>
         <p>{step.desc}</p>
 
@@ -83,7 +97,7 @@ const TourOverlay = () => {
               className={`${styles.dot} ${
                 i === currentStep ? styles.active : ""
               }`}
-            ></span>
+            />
           ))}
         </div>
 
