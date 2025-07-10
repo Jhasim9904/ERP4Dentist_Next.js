@@ -27,33 +27,15 @@ const CardGrid = () => {
     <div className="card-grid-container">
       {cardImages.map((img, index) => (
         <div className="card-grid-item" key={index}>
-          <div className="d-flex">
-            {/* Card Image */}
-            <Image
-              className="d-flex"
-              src={img}
-              alt={`Card ${index + 1}`}
-              width={60}
-              height={60}
-            />
+          <div className="d-flex align-items-center">
+            <Image src={img} alt={`Card ${index + 1}`} width={60} height={60} />
 
-            {/* Text */}
             <div className="mx-3">
               <div>{categories[index]}</div>
               <div style={{ fontSize: "25px" }}>10</div>
             </div>
 
-            {/* Arrow Icon */}
-            <div
-              style={{
-                marginTop: "15px",
-                marginLeft:
-                  categories[index] === "Patient Records" ||
-                  categories[index] === "Appointments"
-                    ? "20px"
-                    : "60px",
-              }}
-            >
+            <div className="ml-auto mt-2">
               <Image src={arrow} alt="Arrow Icon" width={30} height={30} />
             </div>
           </div>

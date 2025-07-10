@@ -230,7 +230,7 @@ const { patients, setPatients, setEditPatient } = useContext(MyContext);
                 <td>{item.doctor}</td>
                 <td>{item.datetime}</td>
                 <td>
-                  <span className="status-badge">{item.status}</span>
+                  <span className="status-badge">{item.status === true ? "active":"not"}</span>
                 </td>
                 <td>
                   <Link href="/customerprofile">

@@ -1,10 +1,8 @@
-// components/AppointmentCard/AppointmentCard.js
-// This file remains exactly the same as in the previous response.
-// No changes are needed here.
+// components/AppointmentCard/DayViewAppointmentCard.js
 "use client";
-import React, { useState, useEffect, useRef } from "react";
-import "./AppointmentCard.css";
-import AppointmentPopup from "./AppointmentPopup";
+import React, { useState, useEffect, useRef } from 'react';
+import './DayViewAppointmentCard.css';
+import AppointmentPopup from '../AppointmentPopup';
 
 const colorMap = {
   "Teeth Cleaning": "app-card-blue",
@@ -20,36 +18,23 @@ const colorMap = {
   "Invisalign Scan": "app-card-blue",
 };
 
-// Receive calendarStartHour and pixelsPerHour as props
-const AppointmentCard = ({ patients, calendarStartHour, pixelsPerHour }) => {
-  const colorClass = colorMap[patients.treatment] || "app-card-default";
+const DayViewAppointmentCard = ({ patients, style }) => {
   const [showPopup, setShowPopup] = useState(false);
   const [popupPosition, setPopupPosition] = useState({ top: 0, left: 0 });
-  const [startTimeStr, setStartTimeStr] = useState("");
-  const [endTimeStr, setEndTimeStr] = useState("");
   const cardRef = useRef(null);
   const popupRef = useRef(null);
 
-  useEffect(() => {
-    const start = patients.startTime instanceof Date ? patients.startTime : new Date(patients.startTime);
-    const end = patients.endTime instanceof Date ? patients.endTime : new Date(patients.endTime);
-    const options = { hour: "2-digit", minute: "2-digit", hour12: true };
-    setStartTimeStr(start.toLocaleTimeString([], options));
-    setEndTimeStr(end.toLocaleTimeString([], options));
-  }, [patients.startTime, patients.endTime]);
+  if (!patients) {
+    return null;
+  }
 
-  const startOfDayMinutes = calendarStartHour * 60;
+  const colorClass = colorMap[patients.treatment] || "app-card-default";
 
-  // This will now be 200 / 60 = 3.33... pixels per minute
-  const pixelsPerMinute = pixelsPerHour / 60;
+  const startTime = patients.startTime instanceof Date ? patients.startTime : new Date(patients.startTime);
+  const endTime = patients.endTime instanceof Date ? patients.endTime : new Date(patients.endTime);
 
-  const startMin =
-    patients.startTime.getHours() * 60 + patients.startTime.getMinutes();
-  const endMin =
-    patients.endTime.getHours() * 60 + patients.endTime.getMinutes();
-
-  const topOffset = (startMin - startOfDayMinutes) * pixelsPerMinute;
-  const height = (endMin - startMin) * pixelsPerMinute;
+  const formattedStartTime = startTime.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: true });
+  const formattedEndTime = endTime.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: true });
 
   const handleClosePopup = () => {
     setShowPopup(false);
@@ -93,38 +78,39 @@ const AppointmentCard = ({ patients, calendarStartHour, pixelsPerHour }) => {
 
       if (spaceRight >= popupWidth) {
           left = rect.right + window.scrollX + spacing;
-      }
-      else if (spaceLeft >= popupWidth) {
+      } else if (spaceLeft >= popupWidth) {
           left = rect.left + window.scrollX - popupWidth - spacing;
-      }
-      else {
+      } else {
           left = window.scrollX + spacing;
           if (left + popupWidth > window.innerWidth + window.scrollX) {
               left = window.innerWidth + window.scrollX - popupWidth - spacing;
               if (left < window.scrollX) left = window.scrollX + spacing;
           }
       }
+
       setPopupPosition({ top, left });
       setShowPopup((prev) => !prev);
     }
   };
 
   return (
-    <div>
+    <>
       <div
         ref={cardRef}
-        className={`appointment-card ${colorClass}`}
-        style={{ top: `${topOffset}px`, height: `${height}px` }}
+        className={`day-view-appointment-card ${colorClass}`}
+        style={style}
         onClick={handleClick}
       >
-        <p className="patient-name">{patients.patientName}</p>
-        <p className="treatment-type">{patients.treatment}</p>
-        <p className="time-range">
-          {startTimeStr} - {endTimeStr}
-        </p>
-        {patients.hasMore && <div className="badge-count">3+</div>}
-        {patients.hasDot && <div className="dot-indicator"></div>}
+        <div className="day-view-card-header">
+          <span className="day-view-card-patient-name">{patients.patientName}</span>
+        </div>
+        <div className="day-view-card-details">
+          <p className="day-view-card-time-range">{formattedStartTime} - {formattedEndTime}</p>
+          {patients.treatment && <p className="day-view-card-type">{patients.treatment}</p>}
+          {patients.description && <p className="day-view-card-description">{patients.description}</p>}
+        </div>
       </div>
+
       {showPopup && (
         <AppointmentPopup
           patients={patients}
@@ -134,8 +120,8 @@ const AppointmentCard = ({ patients, calendarStartHour, pixelsPerHour }) => {
           popupRef={popupRef}
         />
       )}
-    </div>
+    </>
   );
 };
 
-export default AppointmentCard;
+export default DayViewAppointmentCard;

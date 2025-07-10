@@ -1,12 +1,26 @@
 /* PatientTable.css */
-.table1{
-    margin: 0px 80px;
-    color: #2A8CFF;
+.patient-card {
+  width: 100%;
+  max-width: 100%;
+  overflow-x: auto;
 }
-.table2{
-    margin: 0px 80px;
-    color: #3A3A3C;
+
+.table-cell {
+  flex: 1;
+  text-align: center;
+  margin: 0;
+  color: #3a3a3c;
 }
-.striped{
-    background-color: aliceblue;
+
+.header {
+  color: #2a8cff;
+  font-weight: bold;
+}
+
+.striped {
+  background-color: aliceblue;
+}
+
+.table-header {
+  background-color: #f0f0f0;
 }

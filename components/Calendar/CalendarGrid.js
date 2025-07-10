@@ -1,22 +1,26 @@
+// components/CalendarGrid.js
+"use client";
 import React, { useState, useEffect } from 'react';
 import AppointmentCard from './AppointmentCard';
 import './CalendarGrid.css';
 
 // CalendarGrid now accepts currentWeekStart and displayedDates as props
-const CalendarGrid = ({ appointments, currentWeekStart, displayedDates }) => {
+const CalendarGrid = ({ patients, currentWeekStart, displayedDates }) => {
   const daysOfWeek = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
-  // 'dates' is now populated dynamically from the 'displayedDates' prop
   const dates = displayedDates;
 
-  const calendarStartHour = 10;
-  const timeSlots = Array.from({ length: 10 }, (_, i) => calendarStartHour + i);
+  const calendarStartHour = 0; // Start at 00:00 (12 AM)
+  const timeSlots = Array.from({ length: 24 }, (_, i) => calendarStartHour + i); // 24 hours in a day
+
+  // --- CHANGE MADE HERE: pixelsPerHour now 200 ---
+  const pixelsPerHour = 200; // Assuming 200px height per hour slot in your CSS
 
   const [currentTime, setCurrentTime] = useState(new Date());
 
   useEffect(() => {
     const timer = setInterval(() => {
       setCurrentTime(new Date());
-    }, 60 * 1000);
+    }, 60 * 1000); // Update every minute
     return () => clearInterval(timer);
   }, []);
 
@@ -27,22 +31,13 @@ const CalendarGrid = ({ appointments, currentWeekStart, displayedDates }) => {
     return `${hour - 12}:00 PM`;
   };
 
-  // This function now uses the dynamic `currentWeekStart` to determine target month/year
   const getAppointmentsForDay = (dateDayNumber) => {
-    // These now come from the currentWeekStart prop, which changes with navigation
     const targetYear = currentWeekStart.getFullYear();
-    const targetMonth = currentWeekStart.getMonth(); // 0-indexed month
+    const targetMonth = currentWeekStart.getMonth();
 
-    return appointments.filter(
+    return patients.filter(
       (app) =>
         app.startTime.getDate() === dateDayNumber &&
-        // Important: When a week spans across months (e.g., end of Feb to beginning of Mar),
-        // the `dateDayNumber` might belong to the next month, even though `currentWeekStart`
-        // is in the previous month. The safest way is to ensure the appointment's
-        // full date (year, month, and day) matches one of the days in the current week.
-        // For simplicity and given the `getDatesForWeek` only returns day numbers,
-        // we'll stick to matching month and year from `currentWeekStart` for now.
-        // A more robust solution would pass full date objects for each day of the week.
         app.startTime.getFullYear() === targetYear &&
         app.startTime.getMonth() === targetMonth
     );
@@ -52,9 +47,8 @@ const CalendarGrid = ({ appointments, currentWeekStart, displayedDates }) => {
     const currentHour = currentTime.getHours();
     const currentMinute = currentTime.getMinutes();
 
-    if (currentHour >= calendarStartHour && currentHour <= timeSlots[timeSlots.length - 1]) {
+    if (currentHour >= calendarStartHour && currentHour < calendarStartHour + timeSlots.length) {
       const hoursFromStart = currentHour - calendarStartHour;
-      const pixelsPerHour = 60; // Assuming 60px height per hour slot in CSS
       const topPosition = (hoursFromStart * pixelsPerHour) + (currentMinute / 60) * pixelsPerHour;
       return topPosition;
     }
@@ -62,7 +56,7 @@ const CalendarGrid = ({ appointments, currentWeekStart, displayedDates }) => {
   };
 
   const currentTimeTop = calculateCurrentTimeIndicatorPosition();
-  // Check if today (current real-world date) falls within the currently displayed week
+
   const isTodayDisplayed = dates.includes(currentTime.getDate()) &&
                            currentTime.getMonth() === currentWeekStart.getMonth() &&
                            currentTime.getFullYear() === currentWeekStart.getFullYear();
@@ -86,7 +80,6 @@ const CalendarGrid = ({ appointments, currentWeekStart, displayedDates }) => {
           {daysOfWeek.map((day, index) => (
             <div
               key={day}
-              // Highlight today's date if it's in the displayed week
               className={`day-header-cell ${
                 dates[index] === currentTime.getDate() && isTodayDisplayed
                   ? 'day-header-today'
@@ -94,7 +87,7 @@ const CalendarGrid = ({ appointments, currentWeekStart, displayedDates }) => {
               }`}
             >
               <span className="day-header-name">{day}</span>
-              <span className="day-header-date">{dates[index]}</span> {/* Dynamic day number */}
+              <span className="day-header-date">{dates[index]}</span>
             </div>
           ))}
         </div>
@@ -120,8 +113,13 @@ const CalendarGrid = ({ appointments, currentWeekStart, displayedDates }) => {
               )}
 
               {/* Appointments for this specific day */}
-              {getAppointmentsForDay(dateDayNumber).map((appointment) => (
-                <AppointmentCard key={appointment.id} appointment={appointment} />
+              {getAppointmentsForDay(dateDayNumber).map((patient) => (
+                <AppointmentCard
+                  key={patient.id}
+                  patients={patient}
+                  calendarStartHour={calendarStartHour}
+                  pixelsPerHour={pixelsPerHour} // Pass the updated pixelsPerHour
+                />
               ))}
             </div>
           ))}

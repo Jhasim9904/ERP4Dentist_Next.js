@@ -1,0 +1,111 @@
+/* components/AppointmentCard/DayViewAppointmentCard.css */
+
+.day-view-appointment-card {
+  position: absolute; /* Crucial for time-based positioning within the column */
+  left: 5px; /* Margin from the left edge of the column */
+  right: 5px; /* Margin from the right edge of the column */
+  /* top and height will be set dynamically via inline style prop from DayViewComponent */
+
+  /* General styling for the card */
+  border: 1px solid #d1d5db; /* Default border color (light gray) */
+  border-left: 4px solid #a0a0a0; /* Default border-left color (neutral gray) - will be overridden by color classes */
+  border-radius: 4px;
+  padding: 8px 12px;
+  box-sizing: border-box; /* Include padding and border in element's total width and height */
+  z-index: 5; /* Ensure appointments appear above background grid lines and time indicator */
+  overflow: hidden; /* Hide overflowing text */
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start; /* Align content to the top within the card */
+  cursor: pointer; /* Indicate clickable */
+  
+  /* Default background and text color, overridden by specific color classes */
+  background-color: white; 
+  color: #333; 
+}
+
+.day-view-appointment-card:hover {
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.day-view-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 4px;
+}
+
+.day-view-card-patient-name {
+  font-weight: 700;
+  font-size: 0.9rem; /* Slightly smaller than main card for compactness */
+  white-space: nowrap; /* Ensures name stays on one line */
+  overflow: hidden; /* Hides overflowing text */
+  text-overflow: ellipsis; /* Adds ellipsis for overflow */
+}
+
+.day-view-card-details {
+  font-size: 0.75rem; /* Smaller details */
+  /* color property inherited from card or overridden by color class */
+}
+
+.day-view-card-details p {
+  margin: 0;
+  line-height: 1.3;
+}
+
+/* Optional: Adjust for very short appointments */
+.day-view-appointment-card.short-appointment {
+  padding: 4px 8px; /* Less padding for very short ones */
+}
+
+/* --- Color Classes - Matching your established palette --- */
+.app-card-blue {
+    background-color: #e0f7fa; /* Light blue */
+    color: #006064; /* Dark teal text */
+    border-left-color: #007bff; /* Stronger blue accent border */
+}
+
+.app-card-green {
+    background-color: #e8f5e9; /* Light green */
+    color: #2e7d32; /* Dark green text */
+    border-left-color: #28a745; /* Stronger green accent border */
+}
+
+.app-card-purple {
+    background-color: #f3e5f5; /* Light purple */
+    color: #6a1b9a; /* Dark purple text */
+    border-left-color: #6f42c1; /* Stronger purple accent border */
+}
+
+.app-card-lime {
+    background-color: #f0f4c3; /* Light lime/yellowish */
+    color: #9e9d24; /* Dark olive green text */
+    border-left-color: #79c06a; /* Stronger lime green accent border */
+}
+
+.app-card-gray {
+    background-color: #f0f0f0; /* Light gray */
+    color: #333; /* Dark gray text */
+    border-left-color: #6c757d; /* Stronger gray accent border */
+}
+
+/* Fallback if appointment type is not found in colorMap */
+.app-card-default {
+    background-color: #f0f0f0; /* Default neutral background */
+    color: #333; /* Default text color */
+    border-left-color: #a0a0a0; /* Default neutral border */
+}
+
+/* Media Queries for responsiveness if needed */
+@media (max-width: 768px) {
+  .day-view-appointment-card {
+    padding: 6px 10px;
+    font-size: 0.8rem;
+  }
+  .day-view-card-patient-name {
+    font-size: 0.8rem;
+  }
+  .day-view-card-details {
+    font-size: 0.65rem;
+  }
+}

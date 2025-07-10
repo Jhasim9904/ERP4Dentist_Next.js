@@ -1,0 +1,171 @@
+/* components/Calendar/Month/MonthlyCalendar.css */
+
+/* Consistent container styling (renamed) */
+.monthly-calendar-wrapper { /* Renamed class */
+  display: flex;
+  flex-grow: 1; /* Allows it to take available height */
+  background-color: white;
+  border: 1px solid #e2e8f0; /* Consistent outer border */
+  border-radius: 6px;
+  overflow: hidden; /* Ensures borders/shadows are contained */
+}
+
+/* No time-column for monthly view, so grid-body is the main content area (renamed) */
+.monthly-view-grid-body { /* Renamed class */
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Day Headers Row - Styling directly adopted from CalendarGrid.css (renamed classes) */
+.monthly-view-day-headers { /* Renamed class */
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  border-bottom: 1px solid #e2e8f0; /* Separator from the grid body */
+  background-color: white; /* Consistent with CalendarGrid header background */
+}
+
+.monthly-view-day-header-cell { /* Renamed class */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center; /* Center content vertically */
+  padding: 8px 0; /* Consistent padding */
+  border-right: 1px solid #e2e8f0; /* Consistent column separators */
+  height: 50px; /* Fixed height for header cells, matching CalendarGrid's header aesthetics */
+  box-sizing: border-box; /* Include padding and border in element's total width and height */
+}
+
+.monthly-view-day-header-cell:last-child { /* Renamed class */
+  border-right: none; /* No border on the last header cell */
+}
+
+.monthly-view-day-header-name { /* Renamed class */
+  font-size: 14px; /* Consistent font size with CalendarGrid */
+  font-weight: 500;
+  color: #6b7280; /* Consistent grey text color */
+  text-transform: uppercase;
+}
+
+/* The main grid for monthly day cells (class unchanged) */
+.monthly-appointment-slots-grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  /* Adjust min-height for rows to allow adequate space for appointments */
+  grid-auto-rows: minmax(150px, auto); /* Flexible height for month cells */
+  flex-grow: 1; /* Allows grid to fill container height */
+  overflow-y: auto; /* Enable scrolling if content exceeds height */
+  position: relative; /* For positioning day numbers */
+}
+
+.monthly-day-cell { /* Class unchanged */
+  position: relative; /* For absolute positioning of day number */
+  border: 1px solid #f2f2f2; /* Lighter border for individual cells */
+  border-top: none; /* Remove top border as header already provides a separator */
+  border-left: none; /* Remove left border to mimic CalendarGrid's first column no left border */
+  padding: 8px; /* Padding inside each day cell */
+  min-height: 150px; /* Consistent minimum height for cells */
+  display: flex;
+  flex-direction: column;
+  box-sizing: border-box;
+  background-color: white; /* Clean white background for active cells */
+}
+
+/* Add left border to the first column cells */
+.monthly-day-cell:nth-child(7n + 1) {
+    border-left: 1px solid #f2f2f2;
+}
+
+/* Ensure no right border on the last column */
+.monthly-day-cell:nth-child(7n) {
+  border-right: none;
+}
+/* Ensure no bottom border on the last row (approx) */
+.monthly-appointment-slots-grid > *:nth-last-child(-n + 7) {
+    border-bottom: none;
+}
+
+
+/* Styling for days from previous/next months - muted appearance (class unchanged) */
+.monthly-day-cell.prev-month,
+.monthly-day-cell.next-month {
+  color: #b0b0b0; /* Lighter text color */
+  background-color: #fcfcfc; /* Very light, muted background */
+}
+
+/* Highlighting for today's date - Mimics CalendarGrid's day-header-today (class unchanged) */
+.monthly-day-cell.today {
+  background-color: #e0f2f7; /* Light blue background for today's cell */
+  border: 1px solid #007bff; /* Blue border for emphasis */
+  color: #007bff; /* Blue text color for day number */
+  font-weight: bold;
+}
+/* Ensure `today` styles override `prev/next-month` if today is in an overflow month */
+.monthly-day-cell.today.prev-month,
+.monthly-day-cell.today.next-month {
+  background-color: #e0f2f7;
+  border: 1px solid #007bff;
+  color: #007bff;
+}
+
+
+/* Styling for the day number within the cell (renamed) */
+.monthly-day-cell .monthly-day-cell-number { /* Renamed class */
+    position: absolute;
+    top: 8px; /* Distance from top */
+    right: 10px; /* Distance from right */
+    font-size: 1.2rem; /* Larger font for number, similar to CalendarGrid date */
+    font-weight: 700; /* Bolder */
+    color: #2d3748; /* Darker color for legibility, consistent with CalendarGrid date */
+    /* Add subtle background/padding for prominence, like CalendarGrid's date number */
+    background-color: #f0f0f0; /* Light grey background */
+    border-radius: 4px; /* Slightly rounded corners */
+    padding: 2px 7px; /* Ample padding */
+    z-index: 2; /* Ensure number is above appointments */
+    line-height: 1; /* Adjust line height for better vertical centering */
+}
+
+.monthly-day-cell.today .monthly-day-cell-number { /* Renamed class */
+    color: #007bff; /* Blue color for today's number */
+    background-color: #a7d9ed; /* Slightly darker light blue for today's number background */
+}
+
+/* Container for appointments within a day cell (renamed) */
+.monthly-day-appointments-container { /* Renamed class */
+    flex-grow: 1; /* Allows it to take remaining vertical space */
+    width: 100%; /* Important for horizontal stretching */
+    overflow-y: auto; /* Enable scroll if too many appointments */
+    padding-top: 35px; /* Space between day number and first appointment */
+    display: flex;
+    flex-direction: column;
+    gap: 3px; /* Small gap between appointment cards */
+}
+
+/* Styles for AppointmentCard with isSmall=true within the monthly view (compact look) */
+/* These remain unchanged as they target a generic AppointmentCard class that you would reuse */
+
+
+/* Media query adjustments for smaller screens if needed */
+@media (max-width: 768px) {
+    .monthly-appointment-slots-grid {
+        grid-auto-rows: minmax(120px, auto);
+    }
+    .monthly-day-cell {
+        min-height: 120px;
+        padding: 5px;
+    }
+    .monthly-day-cell .monthly-day-cell-number { /* Renamed class */
+        font-size: 1rem;
+        top: 3px;
+        right: 3px;
+        padding: 1px 4px;
+    }
+    .monthly-day-appointments-container { /* Renamed class */
+        padding-top: 25px;
+        gap: 2px;
+    }
+    .monthly-day-cell .appointment-card.small-card {
+        padding: 1px 3px;
+        font-size: 0.65rem;
+    }
+}
