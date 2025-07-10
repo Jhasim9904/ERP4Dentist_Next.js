@@ -103,14 +103,14 @@ export const AppointmentProvider = ({ children }) => {
           title: patient.title,
           status: patient.status,         // Assuming this is "Active"/"Completed" string from PHP
           color: patient.color,           // Include color
+          patientName: patient.patientName, // From old column
+          treatment: patient.treatment,     // From old column
+          hasMore: false, // Defaulting as no DB column for it
+          hasDot: false,  // Defaulting as no DB column for it
           
           // If you *still* need hasMore/hasDot for your UI, and they aren't in the DB:
-          // hasMore: false, // Defaulting as no DB column for it
-          // hasDot: false,  // Defaulting as no DB column for it
 
           // If you need the old patientName and treatment directly for some reason (less ideal for new schema):
-          // patientName: patient.patientName, // From old column
-          // treatment: patient.treatment,     // From old column
         }));
 
         setPatients(transformedData);

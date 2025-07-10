@@ -77,13 +77,17 @@ const dasboard = () => {
 
           {/* Main Content */}
           <div
+            className="d-flex"
             style={{
               display: "flex",
               padding: "0px 0px 0px 5px",
               gap: "20px",
+              width: "100%",
+              maxWidth: "100%",
+              boxSizing: "border-box",
             }}
           >
-            <div style={{ width: "842px" }}>
+            <div style={{ flex: 1}}>
               <CardGrid />
               <PatientTable />
             </div>

@@ -18,25 +18,25 @@ const colorMap = {
   "Invisalign Scan": "app-card-blue",
 };
 
-const MonthlyAppointmentCard = ({ appointment }) => {
+const MonthlyAppointmentCard = ({ patients }) => {
   const [showPopup, setShowPopup] = useState(false);
   const [popupPosition, setPopupPosition] = useState({ top: 0, left: 0 });
   const cardRef = useRef(null);
   const popupRef = useRef(null);
 
-  if (!appointment) {
+  if (!patients) {
     return null;
   }
 
-  const startTime = appointment.startTime instanceof Date ? appointment.startTime : new Date(appointment.startTime);
+  const startTime = patients.startTime instanceof Date ? patients.startTime : new Date(patients.startTime);
   const formattedTime = startTime.toLocaleTimeString('en-US', {
     hour: '2-digit',
     minute: '2-digit',
     hour12: true,
   });
 
-  const colorClass = colorMap[appointment.treatment] || 'app-card-default';
-  const hasDot = appointment.type;
+  const colorClass = colorMap[patients.treatment] || 'app-card-default';
+  const hasDot = patients.type;
 
   const handleClosePopup = () => {
     setShowPopup(false);
@@ -105,12 +105,12 @@ const MonthlyAppointmentCard = ({ appointment }) => {
         onClick={handleClick}
       >
         <span className="monthly-card-time">{formattedTime.replace(':00 ', ' ')}</span>
-        <span className="monthly-card-patient-name">{appointment.patientName}</span>
+        <span className="monthly-card-patient-name">{patients.patientName}</span>
       </div>
 
       {showPopup && (
         <AppointmentPopup
-          appointment={appointment}
+          patients={patients}
           style={{ top: popupPosition.top, left: popupPosition.left }}
           onClose={handleClosePopup}
           setShowPopup={setShowPopup}

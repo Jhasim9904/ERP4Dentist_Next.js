@@ -18,20 +18,20 @@ const colorMap = {
   "Invisalign Scan": "app-card-blue",
 };
 
-const DayViewAppointmentCard = ({ appointment, style }) => {
+const DayViewAppointmentCard = ({ patients, style }) => {
   const [showPopup, setShowPopup] = useState(false);
   const [popupPosition, setPopupPosition] = useState({ top: 0, left: 0 });
   const cardRef = useRef(null);
   const popupRef = useRef(null);
 
-  if (!appointment) {
+  if (!patients) {
     return null;
   }
 
-  const colorClass = colorMap[appointment.treatment] || "app-card-default";
+  const colorClass = colorMap[patients.treatment] || "app-card-default";
 
-  const startTime = appointment.startTime instanceof Date ? appointment.startTime : new Date(appointment.startTime);
-  const endTime = appointment.endTime instanceof Date ? appointment.endTime : new Date(appointment.endTime);
+  const startTime = patients.startTime instanceof Date ? patients.startTime : new Date(patients.startTime);
+  const endTime = patients.endTime instanceof Date ? patients.endTime : new Date(patients.endTime);
 
   const formattedStartTime = startTime.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: true });
   const formattedEndTime = endTime.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: true });
@@ -72,7 +72,6 @@ const DayViewAppointmentCard = ({ appointment, style }) => {
           if (top < window.scrollY) top = window.scrollY + spacing;
       }
 
-      // --- IMPROVED HORIZONTAL POSITIONING LOGIC ---
       let left;
       const spaceRight = window.innerWidth - (rect.right + spacing);
       const spaceLeft = rect.left - spacing;
@@ -88,7 +87,6 @@ const DayViewAppointmentCard = ({ appointment, style }) => {
               if (left < window.scrollX) left = window.scrollX + spacing;
           }
       }
-      // --- END IMPROVED HORIZONTAL POSITIONING LOGIC ---
 
       setPopupPosition({ top, left });
       setShowPopup((prev) => !prev);
@@ -104,18 +102,18 @@ const DayViewAppointmentCard = ({ appointment, style }) => {
         onClick={handleClick}
       >
         <div className="day-view-card-header">
-          <span className="day-view-card-patient-name">{appointment.patientName}</span>
+          <span className="day-view-card-patient-name">{patients.patientName}</span>
         </div>
         <div className="day-view-card-details">
           <p className="day-view-card-time-range">{formattedStartTime} - {formattedEndTime}</p>
-          {appointment.treatment && <p className="day-view-card-type">{appointment.treatment}</p>}
-          {appointment.description && <p className="day-view-card-description">{appointment.description}</p>}
+          {patients.treatment && <p className="day-view-card-type">{patients.treatment}</p>}
+          {patients.description && <p className="day-view-card-description">{patients.description}</p>}
         </div>
       </div>
 
       {showPopup && (
         <AppointmentPopup
-          appointment={appointment}
+          patients={patients}
           style={{ top: popupPosition.top, left: popupPosition.left }}
           onClose={handleClosePopup}
           setShowPopup={setShowPopup}

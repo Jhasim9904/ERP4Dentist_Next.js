@@ -9,16 +9,16 @@ import Phone from "@/public/images/phone.png"
 
 
 const AppointmentPopup = ({
-  appointment,
+  patients,
   style,
   onClose,
   setShowPopup,
   popupRef, // NEW: Accept the popupRef
 }) => {
-  if (!appointment) return null;
+  if (!patients) return null;
 
-  const patientPhoneNumber = appointment.phoneNumber || "+91 9425854202";
-  const patientEmail = appointment.email || "ewalker12@mail.com";
+  const patientPhoneNumber = patients.phoneNumber || "+91 9425854202";
+  const patientEmail = patients.email || "ewalker12@mail.com";
 
   const formatTimeForPopup = (date) => {
     if (!(date instanceof Date)) {
@@ -40,7 +40,7 @@ const AppointmentPopup = ({
         <div className="popup-arrow"></div>
 
         <div className="popup-header">
-          <span className="popup-patient-name">{appointment.patientName}</span>
+          <span className="popup-patient-name">{patients.name}</span>
           <div className="popup-actions">
             <Image
               className="d-flex"
@@ -84,7 +84,7 @@ const AppointmentPopup = ({
         <div className="popup-details">
           <div className="detail-row">
             <span className="detail-label">Type Treatments</span>
-            <span className="detail-value">{appointment.treatment}</span>
+            <span className="detail-value">{patients.treatment}</span>
           </div>
           <div className="detail-row">
             <span className="detail-label">Doctor</span>
@@ -95,8 +95,8 @@ const AppointmentPopup = ({
           <div className="detail-row">
             <span className="detail-label">Time</span>
             <span className="detail-value">
-              {formatTimeForPopup(appointment.startTime)} -{" "}
-              {formatTimeForPopup(appointment.endTime)}
+              {formatTimeForPopup(patients.startTime)} -{" "}
+              {formatTimeForPopup(patients.endTime)}
             </span>
           </div>
         </div>

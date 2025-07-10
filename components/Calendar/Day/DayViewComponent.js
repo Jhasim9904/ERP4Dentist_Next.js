@@ -1,19 +1,16 @@
+// components/DayViewComponent.js
 import React, { useState, useEffect } from 'react';
-import DayViewAppointmentCard from './DayViewAppointmentCard'; // Correct path
-// import AppointmentPopup from '../AppointmentPopup'; // REMOVE this import
+import DayViewAppointmentCard from './DayViewAppointmentCard';
 import './DayViewComponent.css';
 
-const DayViewComponent = ({ appointments, currentDisplayDate }) => {
-  const calendarStartHour = 10; // Day view starts at 10 AM
+const DayViewComponent = ({ patients, currentDisplayDate }) => {
+  // --- CHANGES FOR 24/7 TIMING START HERE ---
+  const calendarStartHour = 0; // Start at 00:00 (12 AM) for 24/7 day view
   const pixelsPerHour = 100; // This must match .day-view-hour-slot height in DayViewComponent.css
-  const timeSlots = Array.from({ length: 10 }, (_, i) => calendarStartHour + i); // 10 AM to 7 PM
+  const timeSlots = Array.from({ length: 24 }, (_, i) => calendarStartHour + i); // 24 hours in a day
+  // --- CHANGES FOR 24/7 TIMING END HERE ---
 
   const [currentTime, setCurrentTime] = useState(new Date());
-
-  // REMOVED: Popup state management
-  // const [showPopup, setShowPopup] = useState(false);
-  // const [selectedAppointment, setSelectedAppointment] = useState(null);
-  // const [popupStyle, setPopupStyle] = useState({});
 
   useEffect(() => {
     const timer = setInterval(() => {
@@ -23,6 +20,7 @@ const DayViewComponent = ({ appointments, currentDisplayDate }) => {
   }, []);
 
   const formatTime = (hour) => {
+    // This function already handles AM/PM conversion for 0-23 hours correctly
     if (hour === 0) return '12:00 AM';
     if (hour === 12) return '12:00 PM';
     if (hour < 12) return `${hour}:00 AM`;
@@ -38,7 +36,8 @@ const DayViewComponent = ({ appointments, currentDisplayDate }) => {
       currentDisplayDate.getMonth() === currentTime.getMonth() &&
       currentDisplayDate.getFullYear() === currentTime.getFullYear();
 
-    if (isTodayDisplayed && currentHour >= calendarStartHour && currentHour <= timeSlots[timeSlots.length - 1]) {
+    // Adjusted condition to cover 0-23 hours based on calendarStartHour (which is 0)
+    if (isTodayDisplayed && currentHour >= calendarStartHour && currentHour < calendarStartHour + timeSlots.length) {
       const hoursFromStart = currentHour - calendarStartHour;
       const topPosition = (hoursFromStart * pixelsPerHour) + (currentMinute / 60) * pixelsPerHour;
       return topPosition;
@@ -53,7 +52,7 @@ const DayViewComponent = ({ appointments, currentDisplayDate }) => {
     const targetMonth = currentDisplayDate.getMonth();
     const targetDay = currentDisplayDate.getDate();
 
-    return appointments
+    return patients
       .filter(app => {
         const appStartTime = app.startTime instanceof Date ? app.startTime : new Date(app.startTime);
         return appStartTime.getFullYear() === targetYear &&
@@ -62,10 +61,6 @@ const DayViewComponent = ({ appointments, currentDisplayDate }) => {
       })
       .sort((a, b) => a.startTime.getTime() - b.startTime.getTime());
   };
-
-  // REMOVED: handleAppointmentCardClick and handleClosePopup functions
-  // const handleAppointmentCardClick = (appointment, event) => { /* ... */ };
-  // const handleClosePopup = () => { /* ... */ };
 
   const dayAppointments = getAppointmentsForDay();
 
@@ -101,23 +96,23 @@ const DayViewComponent = ({ appointments, currentDisplayDate }) => {
           const appStartTime = app.startTime instanceof Date ? app.startTime : new Date(app.startTime);
           const appEndTime = app.endTime instanceof Date ? app.endTime : new Date(app.endTime);
 
+          // Calculate start position relative to 00:00 (calendarStartHour)
           const startMinutesFromCalendarStart = (appStartTime.getHours() - calendarStartHour) * 60 + appStartTime.getMinutes();
           const durationMinutes = (appEndTime.getTime() - appStartTime.getTime()) / (60 * 1000);
 
+          // Calculate top and height using pixelsPerHour
           const appTop = (startMinutesFromCalendarStart / 60) * pixelsPerHour;
           const appHeight = (durationMinutes / 60) * pixelsPerHour;
 
           return (
             <DayViewAppointmentCard
               key={app.id}
-              appointment={app}
+              patients={app}
               style={{ top: `${appTop}px`, height: `${appHeight}px` }} // Pass calculated styles
-              // Removed onCardClick prop, as DayViewAppointmentCard now handles its own popup
             />
           );
         })}
       </div>
-
     </div>
   );
 };

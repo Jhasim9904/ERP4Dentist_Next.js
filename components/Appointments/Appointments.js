@@ -225,12 +225,12 @@ const { patients, setPatients, setEditPatient } = useContext(MyContext);
             {filteredPatients.map((item, idx) => (
               <tr key={idx} className={idx % 2 !== 0 ? "striped" : ""}>
                 <td>{item.id}</td>
-                <td>{item.patientName}</td>
+                <td>{item.name}</td>
                 <td>{item.phone}</td>
                 <td>{item.doctor}</td>
                 <td>{item.datetime}</td>
                 <td>
-                  <span className="status-badge">{item.status}</span>
+                  <span className="status-badge">{item.status === true ? "active":"not"}</span>
                 </td>
                 <td>
                   <Link href="/customerprofile">

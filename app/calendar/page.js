@@ -7,6 +7,8 @@ import CalendarHeader from "@/components/Calendar/CalendarHeader";
 import CalendarGrid from "@/components/Calendar/CalendarGrid"; // Weekly view
 import MonthlyCalendar from "@/components/Calendar/Month/MonthlyCalendar"; // Monthly view
 import DayViewComponent from "@/components/Calendar/Day/DayViewComponent"; // Day view
+import { useContext } from "react";
+import { MyContext } from "@/context/SetContext";
 
 // Helper function to get the start of the week (Sunday) for a given date
 const getStartOfWeek = (date) => {
@@ -30,6 +32,7 @@ const getDatesForWeek = (startOfWeek) => {
 
 const Page = () => {
   const [appointments, setAppointments] = useState([]);
+  const { patients, setPatients, setEditPatient } = useContext(MyContext);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
@@ -212,13 +215,13 @@ const Page = () => {
 
           {currentView === 'month' && (
             <MonthlyCalendar
-              appointments={appointments}
+              patients={patients}
               currentDisplayDate={currentDisplayDate}
             />
           )}
           {currentView === 'week' && (
             <CalendarGrid
-              appointments={appointments}
+              patients={patients}
               currentWeekStart={currentWeekStart}
               displayedDates={displayedDates}
               displayedFullDates={displayedFullDates} // Pass full date objects for robustness
@@ -226,7 +229,7 @@ const Page = () => {
           )}
           {currentView === 'day' && (
             <DayViewComponent
-              appointments={appointments}
+              patients={patients}
               currentDisplayDate={currentDisplayDate}
             />
           )}

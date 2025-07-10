@@ -2,7 +2,7 @@ import React from 'react';
 import MonthlyAppointmentCard from './MonthlyAppointmentCard'; // Ensure this path is correct
 import './MonthlyCalendar.css'; // This CSS will be used with new class names
 
-const MonthlyCalendar = ({ appointments, currentDisplayDate }) => {
+const MonthlyCalendar = ({ patients, currentDisplayDate }) => {
 
   const daysOfWeek = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
 
@@ -23,7 +23,7 @@ const MonthlyCalendar = ({ appointments, currentDisplayDate }) => {
 
   // Helper function to get appointments for a specific day
   const getAppointmentsForDay = (year, month, day) => {
-    return appointments.filter(app => {
+    return patients.filter(app => {
       return app.startTime.getFullYear() === year &&
              app.startTime.getMonth() === month && // month is 0-indexed
              app.startTime.getDate() === day;
@@ -77,7 +77,7 @@ const MonthlyCalendar = ({ appointments, currentDisplayDate }) => {
           <span className="monthly-day-cell-number">{i}</span>
           <div className="monthly-day-appointments-container">
             {dayAppointments.map(app => (
-              <MonthlyAppointmentCard key={app.id} appointment={app} />
+              <MonthlyAppointmentCard key={app.id} patients={app} />
             ))}
           </div>
         </div>
