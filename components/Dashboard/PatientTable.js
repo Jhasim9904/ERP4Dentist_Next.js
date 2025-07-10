@@ -1,3 +1,4 @@
+// PatientTable.js
 import React from "react";
 import "./PatientTable.css";
 const PatientTable = () => {
@@ -12,7 +13,7 @@ const PatientTable = () => {
     <div className="card" style={{ width: "53rem"
      }}>
       <div className="card-body">
-        <h5 className="card-title">Todays Patient's</h5>
+        <h5 className="card-title">Todays Patients</h5>
       </div>
       <ul className="list-group list-group-flush">
         <li className="list-group-item d-flex">

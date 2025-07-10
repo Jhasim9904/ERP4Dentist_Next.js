@@ -11,6 +11,7 @@ import frame4 from "../images/Frame (4).png";
 import frame5 from "../images/Frame (5).png";
 import frame8 from "../images/Frame (8).png";
 
+// Sidebar item list
 const items = [
   { label: "Dashboard", icon: frame1, path: "/dashboard" },
   { label: "Calender", icon: frame8, path: "/calendar" },
@@ -21,8 +22,26 @@ const items = [
   { label: "Drug", icon: frame3, path: "/drug" },
 ];
 
+// Utility to assign unique tour IDs
+const getTourId = (label) => {
+  switch (label) {
+    case "Doctors":
+      return "sidebar-doctor";
+    case "Calender":
+      return "sidebar-calendar";
+    case "Appointments":
+      return "sidebar-appointments";
+    case "Lab":
+      return "sidebar-lab";
+    case "Drug":
+      return "sidebar-drug";
+    default:
+      return null;
+  }
+};
+
 const Sidebar = ({ isOpen, onToggleSidebar, sidebarOpen }) => {
-  const pathname = usePathname(); // ✅ current route path
+  const pathname = usePathname(); // current route
 
   return (
     <div className={`sidebar ${isOpen ? "open" : "collapsed"}`}>
@@ -33,24 +52,29 @@ const Sidebar = ({ isOpen, onToggleSidebar, sidebarOpen }) => {
         {sidebarOpen ? "X" : "☰"}
       </button>
 
-      {items.map((item, index) => (
-        <Link href={item.path} key={index}>
-          <div
-            className={`sidebar-btn ${
-              pathname === item.path ? "active" : ""
-            } `}
-          >
-            <Image
-              src={item.icon}
-              alt={item.label}
-              className={`menu-icon`}
-              width={20}
-              height={20}
-            />
-            {isOpen && <span className={`label-text`}>{item.label}</span>}
-          </div>
-        </Link>
-      ))}
+      {items.map((item, index) => {
+        const tourId = getTourId(item.label);
+
+        return (
+          <Link href={item.path} key={index}>
+            <div
+              className={`sidebar-btn ${
+                pathname === item.path ? "active" : ""
+              }`}
+              id={tourId ? tourId : undefined} // ✅ only add id if needed
+            >
+              <Image
+                src={item.icon}
+                alt={item.label}
+                className="menu-icon"
+                width={20}
+                height={20}
+              />
+              {isOpen && <span className="label-text">{item.label}</span>}
+            </div>
+          </Link>
+        );
+      })}
     </div>
   );
 };

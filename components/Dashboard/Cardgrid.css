@@ -1,8 +1,10 @@
+/* Cardgrid.css */
 .card-grid-container {
   display: grid;
   grid-template-columns: repeat(3,270px);
   gap: 16px;
   padding: 10px;
+  
 }
 
 .card-grid-item {

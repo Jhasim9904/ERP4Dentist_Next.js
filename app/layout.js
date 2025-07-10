@@ -1,9 +1,13 @@
 // app/layout.js
+
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import "bootstrap/dist/css/bootstrap.css";
-import { AppointmentProvider } from "@/context/SetContext"; // ✅ Corrected import
 import '@fortawesome/fontawesome-free/css/all.min.css';
+
+import { AppointmentProvider } from "@/context/SetContext"; // ✅ Your existing provider
+import { TourProvider } from "@/context/TourContext";        // ✅ New tour provider
+import TourOverlay from "@/components/TourOverlay/TourOverlay"; // ✅ New overlay component
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -25,7 +29,10 @@ export default function RootLayout({ children }) {
     <html lang="en">
       <body className={`${geistSans.variable} ${geistMono.variable}`}>
         <AppointmentProvider>
-          {children}
+          <TourProvider>
+            <TourOverlay />
+            {children}
+          </TourProvider>
         </AppointmentProvider>
       </body>
     </html>
