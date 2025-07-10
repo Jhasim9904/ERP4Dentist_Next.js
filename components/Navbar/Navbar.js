@@ -24,7 +24,6 @@ const Navbar = ({ onToggleSidebar, sidebarOpen }) => {
     setShowDropdown(false);
   };
 
-  // Close dropdown on outside click
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (profileRef.current && !profileRef.current.contains(event.target)) {
@@ -71,21 +70,26 @@ const Navbar = ({ onToggleSidebar, sidebarOpen }) => {
 
             <div className="collapse navbar-collapse pd-4" id="navbarSupportedContent">
               <ul className="navbar-nav me-auto mb-2 mb-lg-0 d-flex align-items-center">
-                <li className="nav-item">
-                  <Image src={MyImage} alt="Icon 1" width={24} height={24} />
+                {/* ✅ Notification Icon with ID */}
+                <li id="notification-icon" className="nav-item">
+                  <Image src={MyImage} alt="Notifications" width={24} height={24} />
                 </li>
+
                 <li className="nav-item mx-2">
                   <Image src={MyImage2} alt="Icon 2" width={24} height={24} />
                 </li>
+
                 <li className="nav-item mx-2">
                   <Image src={MyImage3} alt="Icon 3" width={24} height={24} />
                 </li>
+
                 <li className="nav-item mx-2">
                   <div className="d-flex flex-column navfont">
                     <span>Dental Clinic</span>
                     <span style={{ color: "green" }}>Online</span>
                   </div>
                 </li>
+
                 <li className="nav-item mx-2" ref={profileRef} style={{ position: "relative" }}>
                   <Image
                     src={dp}

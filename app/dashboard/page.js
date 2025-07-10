@@ -12,8 +12,11 @@ import Footer from "@/components/Footer/Footer";
 import headingbtnlogo from "@/components/images/headingbtnlogo.png";
 import arrow from "@/components/images/arrow.png";
 
-const dasboard = () => {
+import { useTour } from "@/context/TourContext"; // ✅ Import the tour context
+
+const Dashboard = () => {
   const [sidebarOpen, setSidebarOpen] = useState(true);
+  const { startTour } = useTour(); // ✅ Access startTour function
 
   const toggleSidebar = () => {
     setSidebarOpen(!sidebarOpen);
@@ -48,7 +51,10 @@ const dasboard = () => {
             >
               <h2>Welcome Sinnamuth</h2>
               <div className="d-flex gap-2">
-                <button className="btn btn-primary d-flex align-items-center">
+                <button
+                  id="add-appointment" // ✅ Highlightable in tour
+                  className="btn btn-primary d-flex align-items-center"
+                >
                   <Image
                     src={headingbtnlogo}
                     alt="Add Icon"
@@ -58,7 +64,12 @@ const dasboard = () => {
                   />
                   Add Appointment
                 </button>
-                <button className="btn btn-outline-primary d-flex align-items-center">
+
+                <button
+                  id="start-tour-btn"
+                  onClick={startTour} // ✅ Use context function
+                  className="btn btn-outline-primary d-flex align-items-center"
+                >
                   Start Tour
                   <Image
                     src={arrow}
@@ -101,4 +112,4 @@ const dasboard = () => {
   );
 };
 
-export default dasboard;
+export default Dashboard;

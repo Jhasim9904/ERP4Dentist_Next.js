@@ -1,3 +1,4 @@
+// RightInfoCard.js
 import React from "react";
 import "./RightInfoCard.css";
 
