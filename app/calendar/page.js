@@ -1,3 +1,4 @@
+// app/calendar/page.js
 "use client";
 import React, { useState, useEffect, useMemo } from "react";
 import Navbar from "@/components/Navbar/Navbar";
@@ -7,6 +8,8 @@ import CalendarHeader from "@/components/Calendar/CalendarHeader";
 import CalendarGrid from "@/components/Calendar/CalendarGrid"; // Weekly view
 import MonthlyCalendar from "@/components/Calendar/Month/MonthlyCalendar"; // Monthly view
 import DayViewComponent from "@/components/Calendar/Day/DayViewComponent"; // Day view
+import AppModel from '@/components/Appointments/Appmodel';
+import Swal from 'sweetalert2';
 import { useContext } from "react";
 import { MyContext } from "@/context/SetContext";
 
@@ -31,17 +34,31 @@ const getDatesForWeek = (startOfWeek) => {
 };
 
 const Page = () => {
-  const [appointments, setAppointments] = useState([]);
   const { patients, setPatients, setEditPatient } = useContext(MyContext);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  // Primary date state, will be used for all views (month, week, day)
-  // Initialize to a specific date for consistent testing, or new Date() for current date
-  const [currentDisplayDate, setCurrentDisplayDate] = useState(new Date()); // Defaults to today
+  const [currentDisplayDate, setCurrentDisplayDate] = useState(new Date());
+  const [currentView, setCurrentView] = useState('month');
 
-  // New state to manage the current calendar view: 'month', 'week', 'day'
-  const [currentView, setCurrentView] = useState('month'); // Start with month view
+  const [showModal, setShowModal] = useState(false);
+  const [formData, setFormData] = useState({
+    date: "",
+    inTime: "",
+    outTime: "",
+    title: "Mr.",
+    firstName: "",
+    lastName: "",
+    age: "",
+    gender: "Male",
+    email: "",
+    phone: "",
+    doctor: "",
+    reason: "",
+    note: "",
+    status: "Active",
+  });
+  const [errors, setErrors] = useState({});
 
   useEffect(() => {
     const fetchData = async () => {
@@ -71,11 +88,18 @@ const Page = () => {
           treatment: event.treatment,
           startTime: new Date(event.startTime),
           endTime: new Date(event.endTime),
-          hasMore: Boolean(parseInt(event.hasMore)),
-          hasDot: Boolean(parseInt(event.hasDot)),
+          firstName: event.firstName || '',
+          lastName: event.lastName || '',
+          age: event.age || '',
+          gender: event.gender || 'Male',
+          email: event.email || '',
+          phone: event.phone || '',
+          doctor: event.doctor || '',
+          reason: event.reason || '',
+          status: event.status || 'Active',
         }));
 
-        setAppointments(transformedData);
+        setPatients(transformedData);
       } catch (err) {
         console.error("Error fetching data:", err);
         setError(err);
@@ -85,23 +109,19 @@ const Page = () => {
     };
 
     fetchData();
-  }, []);
+  }, [setPatients]);
 
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const toggleSidebar = () => {
     setSidebarOpen(!sidebarOpen);
   };
 
-  // --- Calendar Navigation Logic based on currentView ---
-
-  // Memoized derived state for week view based on currentDisplayDate
   const currentWeekStart = useMemo(() => getStartOfWeek(currentDisplayDate), [currentDisplayDate]);
   const { dates: displayedDates, fullDateObjects: displayedFullDates } = useMemo(
     () => getDatesForWeek(currentWeekStart),
     [currentWeekStart]
   );
 
-  // Function to get the display string for the header based on currentView
   const getHeaderDisplay = () => {
     switch (currentView) {
       case 'month':
@@ -109,12 +129,11 @@ const Page = () => {
       case 'week': {
         const start = currentWeekStart.toLocaleString('en-US', { month: 'short', day: 'numeric' });
         const end = new Date(currentWeekStart);
-        end.setDate(currentWeekStart.getDate() + 6); // End of the week
+        end.setDate(currentWeekStart.getDate() + 6);
 
         const startYear = currentWeekStart.getFullYear();
         const endYear = end.getFullYear();
 
-        // Format for week range, handling year and month transitions
         if (startYear !== endYear) {
           return `${currentWeekStart.toLocaleString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })} - ${end.toLocaleString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}`;
         }
@@ -130,7 +149,6 @@ const Page = () => {
     }
   };
 
-  // Generic navigation handlers (prev/next) that adapt to the current view
   const handlePrev = () => {
     setCurrentDisplayDate(prevDate => {
       const newDate = new Date(prevDate);
@@ -171,6 +189,150 @@ const Page = () => {
     });
   };
 
+  const formatDateForInput = (date) => {
+    const year = date.getFullYear();
+    const month = (date.getMonth() + 1).toString().padStart(2, '0');
+    const day = date.getDate().toString().padStart(2, '0');
+    return `${year}-${month}-${day}`;
+  };
+
+  const formatTimeForInput = (date) => {
+    const hours = date.getHours().toString().padStart(2, '0');
+    const minutes = date.getMinutes().toString().padStart(2, '0');
+    return `${hours}:${minutes}`;
+  };
+
+  // This function is passed to CalendarGrid, MonthlyCalendar, and DayViewComponent
+  const handleTimeSlotClick = (clickedDateTime) => {
+    const initialDate = formatDateForInput(clickedDateTime);
+    const initialInTime = formatTimeForInput(clickedDateTime);
+
+    const outDateTime = new Date(clickedDateTime.getTime() + 60 * 60 * 1000);
+    const initialOutTime = formatTimeForInput(outDateTime);
+
+    setFormData({
+      ...formData,
+      date: initialDate,
+      inTime: initialInTime,
+      outTime: initialOutTime,
+    });
+    setShowModal(true);
+  };
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData((prev) => ({ ...prev, [name]: value }));
+  };
+
+  const validateForm = () => {
+    const newErrors = {};
+    if (!formData.date) newErrors.date = "Date is required";
+    if (!formData.inTime) newErrors.inTime = "In time is required";
+    if (!formData.outTime) newErrors.outTime = "Out time is required";
+    if (!formData.firstName) newErrors.firstName = "First name is required";
+    if (!formData.lastName) newErrors.lastName = "Last name is required";
+    if (!formData.age) newErrors.age = "Age is required";
+    if (!formData.email) newErrors.email = "Email is required";
+    if (!formData.phone) newErrors.phone = "Phone number is required";
+    if (!formData.doctor) newErrors.doctor = "Doctor selection is required";
+    if (!formData.reason) newErrors.reason = "Reason is required";
+
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
+
+  const handleSubmit = async () => {
+    if (!validateForm()) {
+      Swal.fire({
+        icon: "error",
+        title: "Validation Error!",
+        text: "Please fill in all required fields.",
+        confirmButtonColor: "#1669f2",
+      });
+      return;
+    }
+
+    const newAppointmentData = {
+        date: formData.date,
+        inTime: formData.inTime,
+        outTime: formData.outTime,
+        title: formData.title,
+        firstName: formData.firstName,
+        lastName: formData.lastName,
+        age: formData.age,
+        gender: formData.gender,
+        email: formData.email,
+        phone: formData.phone,
+        doctor: formData.doctor,
+        reason: formData.reason,
+        note: formData.note,
+        status: formData.status,
+    };
+
+    try {
+        const response = await fetch("http://localhost/erp-calendar/add_event.php", {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(newAppointmentData),
+        });
+
+        if (!response.ok) {
+            const errorText = await response.text();
+            throw new Error(`HTTP error! Status: ${response.status}. Response: ${errorText}`);
+        }
+
+        const result = await response.json();
+
+        if (result.success) {
+            Swal.fire({
+                icon: "success",
+                title: "Appointment Booked!",
+                text: "The appointment has been successfully added.",
+                confirmButtonColor: "#1669f2",
+            });
+            setShowModal(false);
+            setFormData({
+                date: "", inTime: "", outTime: "", title: "Mr.", firstName: "", lastName: "", age: "",
+                gender: "Male", email: "", phone: "", doctor: "", reason: "", note: "", status: "Active",
+            });
+            setErrors({});
+
+            const refetchResponse = await fetch("http://localhost/erp-calendar/all_events.php");
+            const refetchData = await refetchResponse.json();
+            const transformedRefetchData = refetchData.map((event) => ({
+                id: event.id,
+                patientName: event.patientName,
+                treatment: event.treatment,
+                startTime: new Date(event.startTime),
+                endTime: new Date(event.endTime),
+                firstName: event.firstName || '',
+                lastName: event.lastName || '',
+                age: event.age || '',
+                gender: event.gender || 'Male',
+                email: event.email || '',
+                phone: event.phone || '',
+                doctor: event.doctor || '',
+                reason: event.reason || '',
+                status: event.status || 'Active',
+            }));
+            setPatients(transformedRefetchData);
+
+        } else {
+            throw new Error(result.message || "Failed to add appointment.");
+        }
+    } catch (err) {
+        console.error("Error adding appointment:", err);
+        Swal.fire({
+            icon: "error",
+            title: "Submission Error!",
+            text: err.message || "There was an error adding the appointment.",
+            confirmButtonColor: "#1669f2",
+        });
+    }
+  };
+
   if (loading) {
     return (
       <div className="app-layout">
@@ -206,17 +368,18 @@ const Page = () => {
         <Navbar onToggleSidebar={toggleSidebar} sidebarOpen={sidebarOpen} />
         <div className="container1">
           <CalendarHeader
-            currentPeriodDisplay={getHeaderDisplay()} // Display string based on current view
-            currentView={currentView} // Pass current view type ('month', 'week', 'day')
-            onViewChange={setCurrentView} // Function to update the current view
-            onPrev={handlePrev} // Generic previous handler
-            onNext={handleNext} // Generic next handler
+            currentPeriodDisplay={getHeaderDisplay()}
+            currentView={currentView}
+            onViewChange={setCurrentView}
+            onPrev={handlePrev}
+            onNext={handleNext}
           />
 
           {currentView === 'month' && (
             <MonthlyCalendar
               patients={patients}
               currentDisplayDate={currentDisplayDate}
+              onTimeSlotClick={handleTimeSlotClick}
             />
           )}
           {currentView === 'week' && (
@@ -224,13 +387,15 @@ const Page = () => {
               patients={patients}
               currentWeekStart={currentWeekStart}
               displayedDates={displayedDates}
-              displayedFullDates={displayedFullDates} // Pass full date objects for robustness
+              displayedFullDates={displayedFullDates}
+              onTimeSlotClick={handleTimeSlotClick}
             />
           )}
           {currentView === 'day' && (
             <DayViewComponent
               patients={patients}
               currentDisplayDate={currentDisplayDate}
+              onTimeSlotClick={handleTimeSlotClick}
             />
           )}
         </div>
@@ -238,6 +403,16 @@ const Page = () => {
           <Footer />
         </div>
       </div>
+
+      {showModal && (
+        <AppModel
+          formData={formData}
+          handleChange={handleChange}
+          handleSubmit={handleSubmit}
+          onClose={() => setShowModal(false)}
+          errors={errors}
+        />
+      )}
     </div>
   );
 };

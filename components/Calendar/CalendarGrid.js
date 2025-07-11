@@ -1,18 +1,17 @@
-// components/CalendarGrid.js
+// components/Calendar/CalendarGrid.js
 "use client";
 import React, { useState, useEffect } from 'react';
 import AppointmentCard from './AppointmentCard';
 import './CalendarGrid.css';
 
-// CalendarGrid now accepts currentWeekStart and displayedDates as props
-const CalendarGrid = ({ patients, currentWeekStart, displayedDates }) => {
+// CalendarGrid now accepts currentWeekStart, displayedDates, and onTimeSlotClick as props
+const CalendarGrid = ({ patients, currentWeekStart, displayedDates, onTimeSlotClick }) => {
   const daysOfWeek = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
   const dates = displayedDates;
 
   const calendarStartHour = 0; // Start at 00:00 (12 AM)
   const timeSlots = Array.from({ length: 24 }, (_, i) => calendarStartHour + i); // 24 hours in a day
 
-  // --- CHANGE MADE HERE: pixelsPerHour now 200 ---
   const pixelsPerHour = 200; // Assuming 200px height per hour slot in your CSS
 
   const [currentTime, setCurrentTime] = useState(new Date());
@@ -35,8 +34,10 @@ const CalendarGrid = ({ patients, currentWeekStart, displayedDates }) => {
     const targetYear = currentWeekStart.getFullYear();
     const targetMonth = currentWeekStart.getMonth();
 
+    // Filter appointments for the specific day, considering month and year
     return patients.filter(
       (app) =>
+        app.startTime && // Ensure startTime exists
         app.startTime.getDate() === dateDayNumber &&
         app.startTime.getFullYear() === targetYear &&
         app.startTime.getMonth() === targetMonth
@@ -57,9 +58,30 @@ const CalendarGrid = ({ patients, currentWeekStart, displayedDates }) => {
 
   const currentTimeTop = calculateCurrentTimeIndicatorPosition();
 
+  // Check if today's date is actually displayed in the current week view
   const isTodayDisplayed = dates.includes(currentTime.getDate()) &&
-                           currentTime.getMonth() === currentWeekStart.getMonth() &&
-                           currentTime.getFullYear() === currentWeekStart.getFullYear();
+                           currentWeekStart.getMonth() === currentTime.getMonth() &&
+                           currentWeekStart.getFullYear() === currentTime.getFullYear();
+
+
+  // New function to handle clicks on time slots
+  const handleTimeSlotClick = (dateDayNumber, hour) => {
+    if (onTimeSlotClick) {
+      // Construct a Date object representing the clicked time slot
+      // We need to use the full year and month from currentWeekStart,
+      // and the day number from the loop (dateDayNumber), and the hour from the time slot.
+      const clickedDateTime = new Date(
+        currentWeekStart.getFullYear(),
+        currentWeekStart.getMonth(),
+        dateDayNumber,
+        hour,
+        0 // Minutes, set to 0 for the start of the hour
+      );
+      // Call the passed-in function with the clicked Date object
+      onTimeSlotClick(clickedDateTime);
+    }
+  };
+
 
   return (
     <div className="calendar-grid-container">
@@ -97,11 +119,19 @@ const CalendarGrid = ({ patients, currentWeekStart, displayedDates }) => {
           {dates.map((dateDayNumber, dateIndex) => (
             <div key={dateDayNumber} className="day-slot-column">
               {timeSlots.map((hour) => (
-                <div key={`${dateDayNumber}-${hour}`} className="hour-cell-background"></div>
+                <div
+                  key={`${dateDayNumber}-${hour}`}
+                  className="hour-cell-background"
+                  onClick={() => handleTimeSlotClick(dateDayNumber, hour)} // Removed the comment here
+                ></div>
               ))}
 
               {/* Current time indicator - now dynamically positioned and shown only for today's column */}
-              {dateDayNumber === currentTime.getDate() && isTodayDisplayed && currentTimeTop !== -1 && (
+              {/* Ensure this indicator only appears in the column corresponding to the actual current day's date, month, and year */}
+              {dateDayNumber === currentTime.getDate() &&
+               currentWeekStart.getMonth() === currentTime.getMonth() &&
+               currentWeekStart.getFullYear() === currentTime.getFullYear() &&
+               currentTimeTop !== -1 && (
                 <div
                   className="current-time-indicator"
                   style={{ top: `${currentTimeTop}px` }}
@@ -116,7 +146,7 @@ const CalendarGrid = ({ patients, currentWeekStart, displayedDates }) => {
               {getAppointmentsForDay(dateDayNumber).map((patient) => (
                 <AppointmentCard
                   key={patient.id}
-                  patients={patient}
+                  patients={patient} // Note: This prop name is 'patients' but usually it's a single 'patient' object
                   calendarStartHour={calendarStartHour}
                   pixelsPerHour={pixelsPerHour} // Pass the updated pixelsPerHour
                 />
