@@ -40,7 +40,7 @@ const AppointmentPopup = ({
         <div className="popup-arrow"></div>
 
         <div className="popup-header">
-          <span className="popup-patient-name">{patients.name}</span>
+          <span className="popup-patient-name">{patients.patientName}</span>
           <div className="popup-actions">
             <Image
               className="d-flex"
@@ -89,7 +89,7 @@ const AppointmentPopup = ({
           <div className="detail-row">
             <span className="detail-label">Doctor</span>
             <span className="detail-value doctor-name">
-              <span className="doctor-dot"></span> Dr. Surya
+              <span className="doctor-dot"></span> {patients.doctor}
             </span>
           </div>
           <div className="detail-row">

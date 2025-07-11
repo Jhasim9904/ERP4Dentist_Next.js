@@ -35,7 +35,7 @@ const getDatesForWeek = (startOfWeek) => {
 
 const Page = () => {
   const { patients, setPatients, setEditPatient } = useContext(MyContext);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
   const [currentDisplayDate, setCurrentDisplayDate] = useState(new Date());
@@ -60,56 +60,91 @@ const Page = () => {
   });
   const [errors, setErrors] = useState({});
 
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const response = await fetch(
-          "http://localhost/erp-calendar/all_events.php"
-        );
+  // useEffect(() => {
+  //   const fetchData = async () => {
+  //     try {
+  //       setLoading(true); // Start loading
 
-        if (!response.ok) {
-          const errorText = await response.text();
-          throw new Error(
-            `HTTP error! Status: ${response.status}. Response: ${errorText}`
-          );
-        }
+  //       // IMPORTANT: Ensure this URL points to your correct PHP file (e.g., getPatients.php)
+  //       const response = await fetch(
+  //         "https://testing.erp4dentist.com/api/calendar"
+  //       );
+  //       console.log("hi");
 
-        const data = await response.json();
+  //       if (!response.ok) {
+  //         const errorText = await response.text();
+  //         throw new Error(
+  //           `HTTP error! Status: ${response.status}. Response: ${errorText}`
+  //         );
+  //       }
 
-        if (data && data.error) {
-          throw new Error(`PHP Backend Error: ${data.error}`);
-        }
+  //       const data = await response.json();
 
-        console.log("Fetched raw data from PHP:", data);
+  //       if (data && data.error) {
+  //         throw new Error(`PHP Backend Error: ${data.error}`);
+  //       }
 
-        const transformedData = data.map((event) => ({
-          id: event.id,
-          patientName: event.patientName,
-          treatment: event.treatment,
-          startTime: new Date(event.startTime),
-          endTime: new Date(event.endTime),
-          firstName: event.firstName || '',
-          lastName: event.lastName || '',
-          age: event.age || '',
-          gender: event.gender || 'Male',
-          email: event.email || '',
-          phone: event.phone || '',
-          doctor: event.doctor || '',
-          reason: event.reason || '',
-          status: event.status || 'Active',
-        }));
+  //       console.log("Fetched raw data from PHP:", data.appointment); // For debugging
 
-        setPatients(transformedData);
-      } catch (err) {
-        console.error("Error fetching data:", err);
-        setError(err);
-      } finally {
-        setLoading(false);
-      }
-    };
+  //       // Transform data to match frontend expectations, including all fields
+  //       const transformedData = data.appointment.map((patient) => ({
+  //         id: patient.id, // This is patient_id from PHP, e.g., "P1001"
+  //         firstName: patient.firstname,
+  //         lastName: patient.lastname,
+  //         name: patient.name, // This is already derived in PHP, or you can derive here: `${patient.first_name} ${patient.last_name}`
+  //         phone: patient.contact_no,
+  //         email: patient.email,
+  //         doctor: patient.choose_doctor,
 
-    fetchData();
-  }, [setPatients]);
+  //         // Use the ISO string directly for 'datetime' and create Date objects
+  //         datetime: patient.date_appointment, // Keep the ISO string for consistent parsing
+  //         startTime: new Date(patient.datetime), // Create Date object for specific use
+
+  //         // For endTime, combine the date part of datetime with the outTime string
+  //         // Ensure outTime is in HH:MM:SS or HH:MM format from PHP
+  //         endTime: new Date(
+  //           `${patient.appointment_date}T${patient.outTime}:00`
+  //         ), // Create Date object for specific use
+
+  //         date: patient.date_appointment, // 'date' is directly from DB
+  //         inTime: patient.inTime, // 'inTime' is directly from DB
+  //         outTime: patient.outTime, // 'outTime' is directly from DB
+
+  //         age: String(patient.age), // Ensure age is string if frontend expects it
+  //         gender: patient.gender,
+  //         reason: patient.reason,
+  //         note: patient.note,
+  //         title: patient.title,
+  //         status: patient.status, // Assuming this is "Active"/"Completed" string from PHP
+  //         color: patient.color, // Include color
+  //         patientName: patient.patientName, // From old column
+  //         treatment: patient.treatment, // From old column
+  //         appointmentcount: patient.appointmentcount,
+  //         chief_complaint: patient.chief_complaint,
+  //         created_at: patient.created_at,
+  //         updated_at: patient.updated_at,
+  //         branch: patient.branch,
+  //         appo_doc_id: patient.appo_doc_id,
+  //         old_patient: patient.old_patient,
+
+  //         // If you *still* need hasMore/hasDot for your UI, and they aren't in the DB:
+
+  //         // If you need the old patientName and treatment directly for some reason (less ideal for new schema):
+  //       }));
+
+  //       setPatients(transformedData.appointment);
+  //       setError(null); // Clear any previous errors
+  //     } catch (err) {
+  //       console.error("Error fetching data:", err);
+  //       setError(err.message); // Set the error message
+  //       setPatients([]); // Clear patients on error
+  //     } finally {
+  //       setLoading(false); // End loading, regardless of success or failure
+  //     }
+  //   };
+
+  //   fetchData(); // Call fetchData when component mounts
+  // }, []); // Empty dependency array means it runs once on mount
 
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const toggleSidebar = () => {
