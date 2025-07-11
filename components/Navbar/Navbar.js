@@ -11,8 +11,17 @@ import dp from "../images/dp.png";
 
 const Navbar = ({ onToggleSidebar, sidebarOpen }) => {
   const [showDropdown, setShowDropdown] = useState(false);
+  const [user, setUser] = useState(null);
   const profileRef = useRef(null);
   const router = useRouter();
+
+  useEffect(() => {
+    // ✅ Load user info from localStorage
+    const storedUser = localStorage.getItem("user");
+    if (storedUser) {
+      setUser(JSON.parse(storedUser));
+    }
+  }, []);
 
   const handleProfileClick = () => {
     router.push("/profile");
@@ -20,6 +29,8 @@ const Navbar = ({ onToggleSidebar, sidebarOpen }) => {
   };
 
   const handleLogout = () => {
+    localStorage.removeItem("user");
+    localStorage.removeItem("token");
     router.push("/login");
     setShowDropdown(false);
   };
@@ -70,7 +81,7 @@ const Navbar = ({ onToggleSidebar, sidebarOpen }) => {
 
             <div className="collapse navbar-collapse pd-4" id="navbarSupportedContent">
               <ul className="navbar-nav me-auto mb-2 mb-lg-0 d-flex align-items-center">
-                {/* ✅ Notification Icon with ID */}
+                {/* Notification Icons */}
                 <li id="notification-icon" className="nav-item">
                   <Image src={MyImage} alt="Notifications" width={24} height={24} />
                 </li>
@@ -103,8 +114,8 @@ const Navbar = ({ onToggleSidebar, sidebarOpen }) => {
                   {showDropdown && (
                     <div className="dropdown-menu-custom">
                       <div className="dropdown-user">
-                        <strong>sinnamuthu</strong>
-                        <span>Admin</span>
+                        <strong>{user?.name || "User"}</strong>
+                        <span>{user?.type || "Role"}</span>
                       </div>
                       <hr />
                       <button className="dropdown-item-custom" onClick={handleProfileClick}>
