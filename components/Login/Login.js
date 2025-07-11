@@ -2,11 +2,18 @@
 import React, { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import eyes from "../images/eyes.png";
 import "./Login.css";
+import axios from "axios";
 
 const Login = () => {
+  const router = useRouter();
+
   const [showPassword, setShowPassword] = useState(false);
+  const [error, setError] = useState('');
+  const [message, setMessage] = useState('');
+  const [loading, setLoading] = useState(false);
   const [formValues, setFormValues] = useState({
     email: "",
     password: "",
@@ -20,6 +27,47 @@ const Login = () => {
     setShowPassword((prev) => !prev);
   };
 
+  const handleSubmit = async (e) => {
+  e.preventDefault();
+  setLoading(true);
+  setError('');
+  setMessage('');
+
+  try {
+    const res = await axios.post(
+      "https://testing.erp4dentist.com/api/authenticate",
+      formValues
+    );
+
+    console.log("Login API Response:", res.data);
+
+    if (res.data.status === "success") {
+      // Optional: store user info if needed
+      localStorage.setItem("user", JSON.stringify(res.data.user));
+
+      setMessage("✅ Login successful! Redirecting...");
+      setTimeout(() => {
+        router.push("/dashboard");
+      }, 1500);
+    } else {
+      setError("⚠️ Unexpected response from server.");
+    }
+  } catch (err) {
+    const status = err.response?.status;
+    if (status === 401) {
+      setError("❌ Invalid email or password.");
+    } else if (status === 422) {
+      setError("❌ Missing or malformed fields.");
+    } else {
+      setError("❌ Login failed. Please try again.");
+    }
+  } finally {
+    setLoading(false);
+  }
+};
+
+
+
   return (
     <div className="login-container">
       <div className="login-form-box">
@@ -32,7 +80,7 @@ const Login = () => {
           </div>
         </div>
 
-        <form onSubmit={(e) => e.preventDefault()}>
+        <form onSubmit={handleSubmit}>
           <div className="login-form mt-4">
             <div className="form-group col-md-11 login-input">
               <label htmlFor="email">Email Address</label>
@@ -42,6 +90,7 @@ const Login = () => {
                 name="email"
                 value={formValues.email}
                 onChange={handleChange}
+                required
               />
             </div>
 
@@ -55,6 +104,7 @@ const Login = () => {
                     name="password"
                     value={formValues.password}
                     onChange={handleChange}
+                    required
                   />
                   <span
                     className="password-toggle-icon"
@@ -67,12 +117,7 @@ const Login = () => {
                       transform: "translateY(-50%)",
                     }}
                   >
-                    <Image
-                      src={eyes}
-                      alt="Toggle Password"
-                      width={20}
-                      height={20}
-                    />
+                    <Image src={eyes} alt="Toggle Password" width={20} height={20} />
                   </span>
                 </div>
 
@@ -83,11 +128,13 @@ const Login = () => {
             </div>
           </div>
 
+          {/* ✅ Success & Error messages */}
+          {message && <div className="alert alert-success mt-3">{message}</div>}
+          {error && <div className="alert alert-danger mt-3">{error}</div>}
+
           <div className="d-flex" style={{ fontWeight: "normal", fontSize: "17px" }}>
             Don’t have an account?
-            <Link className="nav-link mx-1" href="/">
-              Sign up
-            </Link>
+            <Link className="nav-link mx-1" href="/">Sign up</Link>
           </div>
 
           <div style={{ fontSize: "13px", marginTop: "10px" }}>
@@ -97,15 +144,14 @@ const Login = () => {
             Learn more
           </div>
 
-          <Link href="/dashboard" className="nav-link mx-1 mt-4">
-            <button
-              style={{ width: "95%" }}
-              type="submit"
-              className="btn btn-primary my-4"
-            >
-              Sign In
-            </button>
-          </Link>
+          <button
+            style={{ width: "95%" }}
+            type="submit"
+            className="btn btn-primary my-4"
+            disabled={loading}
+          >
+            {loading ? "Signing In..." : "Sign In"}
+          </button>
         </form>
       </div>
     </div>

@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import styles from './ProfilePage.module.css';
 
 const ProfilePage = ({ onSave }) => {
@@ -17,6 +17,37 @@ const ProfilePage = ({ onSave }) => {
     googleLocation: '',
     logo: null,
   });
+
+  // Fetch profile data on mount
+  useEffect(() => {
+    const fetchProfileData = async () => {
+      try {
+        const response = await fetch('https://testing.erp4dentist.com/api/calendar');
+        const data = await response.json();
+        const profile = data?.profile?.[0];
+
+        if (profile) {
+          setFormData({
+            hospitalName: profile.hospitalname || '',
+            branchName: profile.branchname || '',
+            email: profile.email || '',
+            mobile: profile.phoneNumber || '',
+            address: profile.address || '',
+            city: profile.city || '',
+            state: profile.state || '',
+            pincode: profile.picode || '',
+            country: profile.country || 'India',
+            googleLocation: profile.g_location || '',
+            logo: null, // logos are uploaded manually, not prefilled from URL
+          });
+        }
+      } catch (err) {
+        console.error('Error fetching profile data:', err);
+      }
+    };
+
+    fetchProfileData();
+  }, []);
 
   const handleChange = (e) => {
     const { name, value, files } = e.target;

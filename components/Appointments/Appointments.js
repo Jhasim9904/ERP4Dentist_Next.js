@@ -1,46 +1,89 @@
 "use client";
-import React, { useState, useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
+import axios from "axios";
+import Swal from "sweetalert2";
+import { useRouter } from "next/navigation";
+
 import AppModel from "@/components/Appointments/Appmodel";
 import headingbtnlogo from "@/components/images/headingbtnlogo.png";
 import Delete from "@/components/Appointments/images/Delete.png";
 import Edit from "@/components/Appointments/images/Edit.png";
 import Eyes from "@/components/Appointments/images/Eyes.png";
-import Swal from "sweetalert2";
-import { useRouter } from "next/navigation";
 import "./Appointments.css";
-import { useContext } from "react";
-import { MyContext } from "@/context/SetContext";
-
 
 const Appointments = () => {
   const router = useRouter();
-const { patients, setPatients, setEditPatient } = useContext(MyContext);
 
-
-
-  const [showModal, setShowModal] = useState(false);
+  const [appointments, setAppointments] = useState([]);
+  const [filteredAppointments, setFilteredAppointments] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
-  const [errors, setErrors] = useState({});
+  const [showModal, setShowModal] = useState(false);
+  const [loading, setLoading] = useState(true);
 
-  const [formData, setFormData] = useState({
-    date: "",
-    inTime: "",
-    outTime: "",
-    title: "Mr.",
-    firstName: "",
-    lastName: "",
-    age: "",
-    gender: "Male",
-    email: "",
-    phone: "",
-    doctor: "",
-    reason: "",
-    note: "",
-    status: "Active",
-  });
+  const [startDate, setStartDate] = useState("");
+  const [endDate, setEndDate] = useState("");
 
+  const [page, setPage] = useState(1);
+  const rowsPerPage = 5;
+
+  // 🟢 Fetch Appointments from API
+  useEffect(() => {
+    const fetchAppointments = async () => {
+      setLoading(true);
+      try {
+        const token = localStorage.getItem("token");
+        const res = await axios.get("https://testing.erp4dentist.com/api/appointment", {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+
+        const data = res.data?.appointment?.data || [];
+        setAppointments(data);
+        setFilteredAppointments(data);
+      } catch (err) {
+        console.error("Failed to fetch appointments:", err);
+        Swal.fire("Error", "Failed to load appointments.", "error");
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchAppointments();
+  }, []);
+
+  // 🔍 Search + Date Filter
+  useEffect(() => {
+    let results = appointments;
+
+    if (searchTerm) {
+      results = results.filter((p) =>
+        `${p.firstname} ${p.lastname} ${p.contact_no} ${p.choose_doctor}`
+          .toLowerCase()
+          .includes(searchTerm.toLowerCase())
+      );
+    }
+
+    if (startDate) {
+      results = results.filter((p) => new Date(p.date_appointment) >= new Date(startDate));
+    }
+
+    if (endDate) {
+      results = results.filter((p) => new Date(p.date_appointment) <= new Date(endDate));
+    }
+
+    setFilteredAppointments(results);
+    setPage(1);
+  }, [searchTerm, startDate, endDate, appointments]);
+
+  // 📄 Pagination
+  const indexOfLast = page * rowsPerPage;
+  const indexOfFirst = indexOfLast - rowsPerPage;
+  const currentRows = filteredAppointments.slice(indexOfFirst, indexOfLast);
+  const totalPages = Math.ceil(filteredAppointments.length / rowsPerPage);
+
+  // 🗑️ Delete
   const handleDelete = (id) => {
     Swal.fire({
       title: "Are you sure?",
@@ -48,125 +91,31 @@ const { patients, setPatients, setEditPatient } = useContext(MyContext);
       icon: "warning",
       showCancelButton: true,
       confirmButtonColor: "#d33",
-      cancelButtonColor: "#aaa",
       confirmButtonText: "Yes, delete it!",
     }).then((result) => {
       if (result.isConfirmed) {
-        setPatients(patients.filter((p) => p.id !== id));
-        Swal.fire({
-          icon: "success",
-          title: "Deleted!",
-          text: "The appointment has been deleted.",
-          confirmButtonColor: "#1669f2",
-        });
+        const updated = appointments.filter((p) => p.id !== id);
+        setAppointments(updated);
+        setFilteredAppointments(updated);
+        Swal.fire("Deleted!", "The appointment has been deleted.", "success");
       }
     });
   };
 
-  // ✅ Update patient on return from updateapt
-  useEffect(() => {
-    try {
-      const updated = localStorage.getItem("updatedPatient");
-      if (updated) {
-        const updatedPatient = JSON.parse(updated);
-        if (updatedPatient?.id) {
-          setPatients((prev) =>
-            prev.map((p) =>
-              p.id === updatedPatient.id
-                ? {
-                    ...updatedPatient,
-                    name: `${updatedPatient.firstName} ${updatedPatient.lastName}`,
-                    datetime: `${updatedPatient.date}, ${updatedPatient.inTime}`,
-                  }
-                : p
-            )
-          );
-        }
-        localStorage.removeItem("updatedPatient");
-      }
-    } catch (err) {
-      console.error("Error parsing updatedPatient from localStorage:", err);
-    }
-  }, []);
-
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setFormData((prev) => ({ ...prev, [name]: value }));
-  };
-
-  const validateForm = () => {
-    const newErrors = {};
-    if (!formData.date) newErrors.date = "Date is required";
-    if (!formData.inTime) newErrors.inTime = "In time is required";
-    if (!formData.outTime) newErrors.outTime = "Out time is required";
-    if (!formData.firstName) newErrors.firstName = "First name is required";
-    if (!formData.lastName) newErrors.lastName = "Last name is required";
-    if (!formData.age) newErrors.age = "Age is required";
-    if (!formData.email) newErrors.email = "Email is required";
-    if (!formData.phone) newErrors.phone = "Phone number is required";
-    if (!formData.doctor) newErrors.doctor = "Doctor selection is required";
-    if (!formData.reason) newErrors.reason = "Reason is required";
-
-    setErrors(newErrors);
-    return Object.keys(newErrors).length === 0;
-  };
-
-  const handleSubmit = () => {
-    if (!validateForm()) return;
-
-    const newPatient = {
-      ...formData,
-      id: `P${Math.floor(1000 + Math.random() * 9000)}`,
-      name: `${formData.firstName} ${formData.lastName}`,
-      datetime: `${formData.date}, ${formData.inTime}`,
-    };
-
-    setPatients([...patients, newPatient]);
-    setShowModal(false);
-    setFormData({
-      date: "",
-      inTime: "",
-      outTime: "",
-      title: "Mr.",
-      firstName: "",
-      lastName: "",
-      age: "",
-      gender: "Male",
-      email: "",
-      phone: "",
-      doctor: "",
-      reason: "",
-      note: "",
-      status: "Active",
-    });
-    setErrors({});
-
-    Swal.fire({
-      icon: "success",
-      title: "Appointment Booked!",
-      text: "The appointment has been successfully added.",
-      confirmButtonColor: "#1669f2",
-    });
-  };
-
+  // ✏️ Edit
   const handleEdit = (item) => {
-    setEditPatient(item);
+    localStorage.setItem("editAppointment", JSON.stringify(item));
     router.push("/updateapt");
   };
 
-  const filteredPatients = patients.filter((p) =>
-    `${p.name} ${p.phone} ${p.doctor}`
-      .toLowerCase()
-      .includes(searchTerm.toLowerCase())
-  );
-
   return (
     <div className="appointment-container">
+      {/* ✅ Header UI (Preserved from old version) */}
       <div className="appointment-header d-flex align-items-center justify-content-between flex-wrap">
         <div className="d-flex align-items-center">
           <h4 className="appointment-title mb-0 me-2">Appointment</h4>
           <span className="count-badge">
-            {patients.length.toString().padStart(2, "0")}
+            {appointments.length.toString().padStart(2, "0")}
           </span>
         </div>
 
@@ -188,14 +137,24 @@ const { patients, setPatients, setEditPatient } = useContext(MyContext);
             <label className="me-2" style={{ color: "#8F90A6" }}>
               Start Date
             </label>
-            <input className="form-control date-input" type="date" />
+            <input
+              className="form-control date-input"
+              type="date"
+              value={startDate}
+              onChange={(e) => setStartDate(e.target.value)}
+            />
           </div>
 
           <div className="date-filter d-flex align-items-center">
             <label className="me-2" style={{ color: "#8F90A6" }}>
               End Date
             </label>
-            <input className="form-control date-input" type="date" />
+            <input
+              className="form-control date-input"
+              type="date"
+              value={endDate}
+              onChange={(e) => setEndDate(e.target.value)}
+            />
           </div>
 
           <button
@@ -208,6 +167,7 @@ const { patients, setPatients, setEditPatient } = useContext(MyContext);
         </div>
       </div>
 
+      {/* ✅ Table */}
       <div className="table-responsive mt-4">
         <table className="custom-table">
           <thead>
@@ -222,48 +182,72 @@ const { patients, setPatients, setEditPatient } = useContext(MyContext);
             </tr>
           </thead>
           <tbody>
-            {filteredPatients.map((item, idx) => (
-              <tr key={idx} className={idx % 2 !== 0 ? "striped" : ""}>
-                <td>{item.id}</td>
-                <td>{item.patientName}</td>
-                <td>{item.phone}</td>
-                <td>{item.doctor}</td>
-                <td>{`${item.date}  ${item.inTime}-${item.outTime}`}</td>
-                <td>
-                  <span className="status-badge">{item.status === "1" ? "active":"not"}</span>
-                </td>
-                <td>
-                  <Link href="/customerprofile">
-                    <button className="view-btn">
-                      <Image src={Eyes} alt="view" /> View Patient
+            {loading ? (
+              <tr><td colSpan={7}>Loading...</td></tr>
+            ) : currentRows.length === 0 ? (
+              <tr><td colSpan={7}>No appointments found.</td></tr>
+            ) : (
+              currentRows.map((item, idx) => (
+                <tr key={item.id}>
+                  <td>{item.id || `P-${idx + 1}`}</td>
+                  <td>{`${item.firstname || ""} ${item.lastname || ""}`}</td>
+                  <td>{item.contact_no || "—"}</td>
+                  <td>{item.choose_doctor || "—"}</td>
+                  <td>{`${item.date_appointment || "—"} ${item.intime || ""}`}</td>
+                  <td>
+                    <span className={`status-badge ${item.status === "1" ? "active" : "inactive"}`}>
+                      {item.status === "1" ? "Active" : "Inactive"}
+                    </span>
+                  </td>
+                  <td>
+                    <Link href="/customerprofile">
+                      <button className="view-btn">
+                        <Image src={Eyes} alt="view" /> View
+                      </button>
+                    </Link>
+                    <button className="edit-btn ms-2" onClick={() => handleEdit(item)}>
+                      <Image src={Edit} alt="edit" />
                     </button>
-                  </Link>
-                  <button
-                    className="edit-btn ms-2"
-                    onClick={() => handleEdit(item)}
-                  >
-                    <Image src={Edit} alt="edit" />
-                  </button>
-                  <button
-                    className="delete-btn ms-2"
-                    onClick={() => handleDelete(item.id)}
-                  >
-                    <Image src={Delete} alt="delete" />
-                  </button>
-                </td>
-              </tr>
-            ))}
+                    <button className="delete-btn ms-2" onClick={() => handleDelete(item.id)}>
+                      <Image src={Delete} alt="delete" />
+                    </button>
+                  </td>
+                </tr>
+              ))
+            )}
           </tbody>
         </table>
       </div>
 
+      {/* ✅ Pagination */}
+      {totalPages > 1 && (
+        <div className="pagination-container mt-4 d-flex justify-content-center">
+          <nav>
+            <ul className="pagination">
+              {Array.from({ length: totalPages }, (_, i) => (
+                <li key={i} className={`page-item ${page === i + 1 ? "active" : ""}`}>
+                  <button
+                    className="page-link"
+                    onClick={() => setPage(i + 1)}
+                    style={{ cursor: "pointer" }}
+                  >
+                    {i + 1}
+                  </button>
+                </li>
+              ))}
+            </ul>
+          </nav>
+        </div>
+      )}
+
+      {/* ✅ Modal */}
       {showModal && (
         <AppModel
-          formData={formData}
-          handleChange={handleChange}
-          handleSubmit={handleSubmit}
+          formData={{}}
+          handleChange={() => {}}
+          handleSubmit={() => {}}
           onClose={() => setShowModal(false)}
-          errors={errors}
+          errors={{}}
         />
       )}
     </div>
