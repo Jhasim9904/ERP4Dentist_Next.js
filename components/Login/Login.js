@@ -28,45 +28,44 @@ const Login = () => {
   };
 
   const handleSubmit = async (e) => {
-  e.preventDefault();
-  setLoading(true);
-  setError('');
-  setMessage('');
+    e.preventDefault();
+    setLoading(true);
+    setError('');
+    setMessage('');
 
-  try {
-    const res = await axios.post(
-      "https://testing.erp4dentist.com/api/authenticate",
-      formValues
-    );
+    try {
+      const res = await axios.post(
+        "https://testing.erp4dentist.com/api/authenticate",
+        formValues
+      );
 
-    console.log("Login API Response:", res.data);
+      console.log("Login API Response:", res.data);
 
-    if (res.data.status === "success") {
-      // Optional: store user info if needed
-      localStorage.setItem("user", JSON.stringify(res.data.user));
+      if (res.data.status === "success") {
+        const user = res.data.user;
+        localStorage.setItem("user", JSON.stringify(user));
+        console.log("Stored User:", user);
 
-      setMessage("✅ Login successful! Redirecting...");
-      setTimeout(() => {
-        router.push("/dashboard");
-      }, 1500);
-    } else {
-      setError("⚠️ Unexpected response from server.");
+        setMessage("✅ Login successful! Redirecting...");
+        setTimeout(() => {
+          router.push("/dashboard");
+        }, 1500);
+      } else {
+        setError("⚠️ Unexpected response from server.");
+      }
+    } catch (err) {
+      const status = err.response?.status;
+      if (status === 401) {
+        setError("❌ Invalid email or password.");
+      } else if (status === 422) {
+        setError("❌ Missing or malformed fields.");
+      } else {
+        setError("❌ Login failed. Please try again.");
+      }
+    } finally {
+      setLoading(false);
     }
-  } catch (err) {
-    const status = err.response?.status;
-    if (status === 401) {
-      setError("❌ Invalid email or password.");
-    } else if (status === 422) {
-      setError("❌ Missing or malformed fields.");
-    } else {
-      setError("❌ Login failed. Please try again.");
-    }
-  } finally {
-    setLoading(false);
-  }
-};
-
-
+  };
 
   return (
     <div className="login-container">
