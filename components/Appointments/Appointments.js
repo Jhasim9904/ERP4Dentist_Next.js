@@ -59,7 +59,7 @@ const Appointments = () => {
     note: "",
   };
 
-  const [formData, setFormData] = useState(initialFormData);
+  const [formData, setFormData] = useState(initialFormData); 
   const [errors, setErrors] = useState({});
 
   useEffect(() => {
