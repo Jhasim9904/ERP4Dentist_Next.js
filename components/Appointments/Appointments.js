@@ -26,7 +26,7 @@ const doctorIdMap = {
 
 const Appointments = () => {
   const router = useRouter();
-  const [formData,setFormData] = useState({})
+  // const [formData,setFormData] = useState({})
   const [appointments, setAppointments] = useState([]);
   const [filteredAppointments, setFilteredAppointments] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");

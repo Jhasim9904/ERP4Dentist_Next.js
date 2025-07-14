@@ -152,7 +152,11 @@ const SAdminDashboard = () => {
                 </select>
                 {/* Custom dropdown arrow handled by CSS ::after */}
               </div>
+
+
             </div>
+
+          </div>
             <div className="growth-chart-container">
               <svg viewBox="0 0 36 36" className="circular-chart">
                 <path
@@ -168,13 +172,12 @@ const SAdminDashboard = () => {
                 <text x="18" y="20.35" className="percentage" dominantBaseline="middle" textAnchor="middle">78%</text>
               </svg>
               <p className="growth-label">Growth</p>
-            </div>
             <p className="company-growth">62% Company Growth</p>
             <div className="growth-financials">
               <p>2022 <br/><span className="value">$32.5k</span></p>
               <p>2021 <br/><span className="value">$41.2k</span></p>
             </div>
-          </div>
+            </div>
           </div>
         </div>
 
