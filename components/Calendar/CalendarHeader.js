@@ -66,6 +66,7 @@ const CalendarHeader = ({
       id: `P${Math.floor(1000 + Math.random() * 9000)}`,
       name: `${formData.firstName} ${formData.lastName}`,
       datetime: `${formData.date}, ${formData.inTime}`,
+      startTime: new Date(`${formData.date}T${formData.inTime}`), 
     };
 
     setPatients([...patients, newPatient]);
