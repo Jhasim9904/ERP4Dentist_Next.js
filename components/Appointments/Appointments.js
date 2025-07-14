@@ -61,6 +61,8 @@ const Appointments = () => {
 
   const [formData, setFormData] = useState(initialFormData); 
   const [errors, setErrors] = useState({});
+  const [isBooking, setIsBooking] = useState(false); // ✅ New state
+
 
   useEffect(() => {
     fetchAppointments();
@@ -192,6 +194,7 @@ const Appointments = () => {
 
     const newStart = parseTime(finalPayload.intime);
     const newEnd = parseTime(finalPayload.outtime);
+    setIsBooking(true); // ✅ START SPINNER
 
     try {
       // ✅ Always get latest appointments from live API
@@ -250,6 +253,8 @@ const Appointments = () => {
     } catch (err) {
       console.error("Add appointment failed:", err);
       Swal.fire("Error", "Failed to add appointment", "error");
+    } finally {
+      setIsBooking(false);
     }
   };
 
@@ -408,6 +413,7 @@ const Appointments = () => {
           handleSubmit={handleSubmit}
           onClose={() => setShowModal(false)}
           errors={errors}
+          isBooking={isBooking}
         />
       )}
     </div>
