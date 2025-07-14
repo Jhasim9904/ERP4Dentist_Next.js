@@ -1,167 +1,206 @@
-/* General Styling */
 .dashboard-container {
-  font-family: 'Poppins', sans-serif; /* Or your preferred font */
+  font-family: 'Poppins', sans-serif;
+  background-color: #f0f2f8; /* Light background as per image */
   padding: 20px;
-  background-color: #f0f2f5; /* Light background for the whole dashboard */
+  min-height: 100vh;
   display: flex;
   flex-direction: column;
   gap: 20px;
 }
 
-/* Card Base Styles */
-.welcome-card,
-.summary-card,
-.revenue-card,
-.growth-card,
-.leads-card {
-  background-color: #fff;
-  border-radius: 12px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
-  padding: 20px;
-}
-
-/* --- Dashboard Header Row --- */
+/* Header Row */
 .dashboard-header-row {
   display: flex;
+  flex-direction: column;
   gap: 20px;
-  align-items: stretch; /* Ensures cards stretch to fill height */
 }
 
+@media (min-width: 1024px) {
+  .dashboard-header-row {
+    flex-direction: row;
+  }
+}
+
+/* Welcome Card */
 .welcome-card {
-  flex: 2; /* Takes more space */
+  background: #fff;
+  border-radius: 12px;
+  padding: 25px 30px;
   display: flex;
+  flex-direction: column;
   justify-content: space-between;
-  align-items: center;
-  padding: 30px;
-  background: linear-gradient(135deg, #e0f2f7, #ffffff); /* Subtle gradient */
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  flex: 2;
+  text-align: center; /* Default for smaller screens */
+}
+
+@media (min-width: 640px) {
+  .welcome-card {
+    flex-direction: row;
+    text-align: left; /* Align text to left for larger screens */
+  }
 }
 
 .welcome-text-content h2 {
-  font-size: 1.6rem;
+  font-size: 1.6rem; /* Increased font size */
+  color: #333; /* Darker color for heading */
+  font-weight: 600;
   margin-bottom: 10px;
-  color: #333;
+  display: flex;
+  align-items: center;
+  gap: 6px;
 }
 
 .welcome-text-content p {
-  font-size: 0.95rem;
+  font-size: 0.95rem; /* Slightly larger font size */
   color: #666;
-  margin-bottom: 20px;
+  margin-bottom: 20px; /* Increased margin */
 }
 
-.welcome-text-content .highlight {
+.highlight {
   font-weight: bold;
-  color: #3b5998; /* A darker blue for highlight */
+  color: #3b5998; /* Specific blue from the image */
 }
 
 .view-badges-button {
-  background-color: #e0f2f7; /* Lighter blue, similar to background */
+  padding: 10px 20px; /* Adjusted padding */
+  border: none; /* No border as per image */
+  border-radius: 8px; /* More rounded corners */
+  background: #e0f2f7; /* Light blue background */
   color: #3b5998; /* Darker blue text */
-  border: none;
-  border-radius: 8px;
-  padding: 10px 20px;
-  font-size: 0.9rem;
+  font-weight: 500;
   cursor: pointer;
+  font-size: 0.9rem;
   transition: background-color 0.2s ease;
 }
 
 .view-badges-button:hover {
-  background-color: #d1eff7;
+  background: #d1eff7; /* Lighter hover effect */
 }
 
 .welcome-image img {
-  max-height: 150px; /* Adjust as needed */
+  max-height: 150px; /* Adjusted image size */
   width: auto;
+  flex-shrink: 0;
 }
 
-.summary-cards-container {
-  flex: 1; /* Takes less space than welcome card */
+/* Summary Cards Container */
+.summary-cards-container,
+.summary-cards-lower {
   display: grid;
-  grid-template-columns: 1fr 1fr; /* Two columns */
+  grid-template-columns: 1fr;
   gap: 20px;
+  flex: 1;
 }
 
+@media (min-width: 640px) {
+  .summary-cards-container,
+  .summary-cards-lower {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+/* Summary Card Base */
 .summary-card {
+  padding: 20px;
+  border-radius: 12px;
+  background: #fff;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
   display: flex;
-  align-items: center;
   gap: 15px;
   position: relative;
-  overflow: hidden; /* For the gradient effect */
+  align-items: center;
 }
 
-/* Summary Card Background Gradients */
+/* Specific Summary Card Backgrounds (with subtle gradients as in image) */
 .clinic-card { background: linear-gradient(45deg, #e6ffe6, #ffffff); } /* Light Green */
 .user-card { background: linear-gradient(45deg, #f0e6ff, #ffffff); } /* Light Purple */
 .payment-card { background: linear-gradient(45deg, #ffe6e6, #ffffff); } /* Light Red */
 .help-card { background: linear-gradient(45deg, #e6f7ff, #ffffff); } /* Light Blue */
 
+
+/* Icon Wrappers */
 .summary-icon-wrapper {
-  border-radius: 50%;
   width: 50px;
   height: 50px;
+  border-radius: 50%;
   display: flex;
   justify-content: center;
   align-items: center;
+  font-size: 1.8rem; /* Adjusted font size for icons */
   color: #fff;
-  font-size: 1.8rem;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1); /* Added shadow to icons */
 }
 
-.summary-icon-wrapper.green { background-color: #4CAF50; }
-.summary-icon-wrapper.purple { background-color: #9C27B0; }
-.summary-icon-wrapper.red { background-color: #F44336; }
-.summary-icon-wrapper.blue-light { background-color: #2196F3; } /* Light Blue */
+.green { background: #4CAF50; }
+.purple { background: #9C27B0; } /* Adjusted purple to match image */
+.red { background: #F44336; }
+.blue-light { background: #2196F3; }
 
-
-.summary-details {
-  flex-grow: 1;
+/* Icon Size */
+.icon-large {
+  width: 24px;
+  height: 24px;
 }
 
-.summary-details .more-options {
-  position: absolute;
-  top: 15px;
-  right: 15px;
-  font-size: 1.2rem;
-  color: #999;
-  cursor: pointer;
-}
-
-.summary-details .summary-label {
+/* Text Details */
+.summary-label {
   font-size: 0.85rem;
-  color: #888;
+  color: #888; /* Adjusted color */
   margin-bottom: 5px;
 }
 
-.summary-details .summary-value {
-  font-size: 1.5rem;
+.summary-value {
+  font-size: 1.5rem; /* Adjusted font size */
   font-weight: 600;
   color: #333;
 }
 
+/* More Options Icon */
+.more-options-icon {
+  position: absolute;
+  top: 15px;
+  right: 15px;
+  width: 20px; /* Adjusted size */
+  height: 20px;
+  color: #999;
+  cursor: pointer;
+}
 
-/* --- Dashboard Content Row --- */
+/* Content Row */
 .dashboard-content-row {
   display: flex;
+  flex-direction: column;
   gap: 20px;
 }
 
+@media (min-width: 1024px) {
+  .dashboard-content-row {
+    flex-direction: row;
+  }
+}
+
+/* Revenue Card */
 .revenue-card {
-  flex: 2; /* Takes more space, similar to welcome card */
-  display: flex;
-  flex-direction: column;
+  flex: 2;
+  background: #fff;
+  border-radius: 12px;
+  padding: 20px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
 }
 
 .revenue-card h3 {
+  margin-bottom: 15px; /* Adjusted margin */
   font-size: 1.2rem;
   color: #333;
-  margin-bottom: 15px;
 }
 
 .revenue-legend {
   display: flex;
   gap: 20px;
-  margin-bottom: 20px;
   font-size: 0.85rem;
-  color: #666;
+  color: #666; /* Adjusted color */
+  margin-bottom: 20px; /* Adjusted margin */
 }
 
 .legend-item {
@@ -170,40 +209,41 @@
 }
 
 .legend-item .dot {
-  width: 8px;
+  width: 8px; /* Adjusted size */
   height: 8px;
   border-radius: 50%;
   margin-right: 5px;
 }
 
-.legend-item .dot.blue { background-color: #536DFE; } /* Darker blue for 2021 */
-.legend-item .dot.purple { background-color: #9C27B0; } /* Purple for 2020 */
-
+.dot.blue { background: #536DFE; } /* Adjusted blue to match image */
+.dot.cyan { background: #4DD0E1; } /* Adjusted cyan to match image */
 
 .revenue-chart {
   display: flex;
-  height: 200px; /* Fixed height for the chart area */
+  height: 200px;
   position: relative;
-  padding-bottom: 25px; /* Space for month labels */
+  padding-bottom: 25px; /* Adjusted padding */
+  padding-right: 10px; /* Added padding for Y-axis */
 }
 
 .y-axis {
   display: flex;
-  flex-direction: column-reverse; /* To align numbers correctly */
+  flex-direction: column-reverse;
   justify-content: space-between;
-  text-align: right;
-  padding-right: 10px;
+  width: 40px;
   font-size: 0.75rem;
   color: #888;
-  border-right: 1px solid #eee; /* Y-axis line */
+  border-right: 1px solid #eee; /* Added border */
+  padding-right: 10px; /* Adjusted padding */
+  flex-shrink: 0; /* Prevent shrinking */
 }
 
 .y-axis span {
-  height: calc(100% / 5); /* 5 divisions for 30, 20, 10, 0, -10, -20 */
+  height: calc(100% / 5); /* Adjusted for 5 divisions */
   display: flex;
   align-items: center;
   justify-content: flex-end;
-  transform: translateY(50%); /* Adjust to center label with line */
+  transform: translateY(50%); /* Center label with line */
 }
 .y-axis span:first-child { transform: translateY(0); } /* Adjust top label */
 .y-axis span:last-child { transform: translateY(-100%); } /* Adjust bottom label */
@@ -212,40 +252,40 @@
 .bars-container {
   flex-grow: 1;
   display: flex;
-  align-items: flex-end; /* Bars start from the bottom */
+  align-items: flex-end;
   justify-content: space-around;
   padding: 0 10px;
-  position: relative;
-  border-bottom: 1px solid #eee; /* X-axis line */
+  border-bottom: 1px solid #eee; /* Added border */
 }
 
 .bar-group {
   display: flex;
   flex-direction: column;
   align-items: center;
-  width: 25px; /* Width of each bar group */
+  width: 25px; /* Adjusted width */
   position: relative;
   justify-content: flex-end;
+  margin: 0 4px; /* Added margin between groups */
 }
 
 .bar {
   width: 100%;
-  margin-bottom: 2px; /* Space between bars in a group */
-  border-radius: 4px 4px 0 0; /* Rounded top corners */
-  transition: height 0.3s ease;
+  border-radius: 4px 4px 0 0;
+  margin-bottom: 2px;
+  transition: height 0.7s ease-out; /* Changed to ease-out for smoother animation */
 }
 
-.bar.blue { background-color: #536DFE; } /* 2021 color */
-.bar.cyan { background-color: #4DD0E1; } /* 2020 color (slightly different from purple in legend for visual distinction on bars) */
+.blue-bar { background: #536DFE; } /* Adjusted blue to match image */
+.cyan-bar { background: #4DD0E1; } /* Adjusted cyan to match image */
 
-.bar-group .month {
+.month {
   position: absolute;
-  bottom: -20px; /* Position below the bars */
+  bottom: -20px;
   font-size: 0.75rem;
   color: #666;
 }
 
-
+/* Right Column */
 .dashboard-right-column {
   flex: 1;
   display: flex;
@@ -253,74 +293,85 @@
   gap: 20px;
 }
 
-.summary-cards-lower {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 20px;
-}
-
 /* Growth Card */
 .growth-card {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  padding: 25px;
+  padding: 25px; /* Adjusted padding */
+  border-radius: 12px;
   text-align: center;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
 }
 
 .growth-header {
-  width: 100%;
   display: flex;
-  justify-content: flex-end; /* Align dropdown to the right */
-  margin-bottom: 15px;
+  justify-content: flex-end;
+  margin-bottom: 15px; /* Adjusted margin */
+}
+
+.select-wrapper {
+  position: relative;
+  display: inline-block; /* Ensure wrapper respects content width */
 }
 
 .year-select {
-  padding: 5px 10px;
-  border: 1px solid #ddd;
-  border-radius: 5px;
+  padding: 5px 10px; /* Adjusted padding */
+  border: 1px solid #ddd; /* Adjusted border color */
+  border-radius: 5px; /* Adjusted border radius */
+  appearance: none;
   background-color: #fff;
-  font-size: 0.85rem;
-  color: #555;
   cursor: pointer;
-  appearance: none; /* Remove default dropdown arrow */
-  background-image: url('data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%23000000%22%20d%3D%22M287%2C197.942L146.204%2C57.146L5.408%2C197.942H287z%22%2F%3E%3C%2Fsvg%3E'); /* Custom arrow */
-  background-repeat: no-repeat;
-  background-position: right 10px center;
-  background-size: 10px;
-  padding-right: 30px; /* Space for the custom arrow */
+  font-size: 0.85rem;
+  color: #555; /* Adjusted text color */
+  outline: none; /* Remove default focus outline */
+  padding-right: 30px; /* Space for custom arrow */
 }
 
+.year-select:focus {
+  box-shadow: 0 0 0 2px rgba(33, 150, 243, 0.5); /* Blue ring on focus */
+}
+
+.select-wrapper::after {
+  content: '';
+  position: absolute;
+  right: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 0;
+  height: 0;
+  border-left: 5px solid transparent;
+  border-right: 5px solid transparent;
+  border-top: 5px solid #555; /* Color of the arrow */
+  pointer-events: none;
+}
 
 .growth-chart-container {
-  position: relative;
-  width: 150px; /* Size of the donut chart */
+  width: 150px; /* Adjusted size */
   height: 150px;
-  margin: 20px auto 10px auto;
+  position: relative;
 }
 
 .circular-chart {
-  display: block;
+  width: 100%;
+  height: 100%;
 }
 
 .circle-bg {
   fill: none;
-  stroke: #eee; /* Background circle color */
+  stroke: #eee;
   stroke-width: 3.8;
 }
 
 .circle {
   fill: none;
-  stroke: #7B1FA2; /* Purple color for the progress */
+  stroke: #7B1FA2; /* Adjusted purple to match image */
   stroke-width: 3.8;
   stroke-linecap: round;
-  transform: rotate(-90deg);
-  transform-origin: 50% 50%;
+  transform: rotate(-90deg); /* Ensure correct rotation */
+  transform-origin: 50% 50%; /* Ensure rotation from center */
 }
 
 .percentage {
   fill: #333;
-  font-size: 0.5em; /* Relative to viewBox font size */
+  font-size: 0.5em;
   text-anchor: middle;
   font-weight: bold;
 }
@@ -328,70 +379,82 @@
 .growth-label {
   font-size: 0.9rem;
   color: #666;
-  margin-top: 5px;
+  margin-top: 5px; /* Adjusted margin */
 }
 
 .company-growth {
   font-size: 0.85rem;
-  color: #4CAF50; /* Green for positive growth */
+  color: #4CAF50;
+  margin-top: 10px; /* Adjusted margin */
   font-weight: 500;
-  margin-top: 10px;
 }
 
 .growth-financials {
   display: flex;
   justify-content: space-around;
-  width: 100%;
-  margin-top: 20px;
+  width: 100%; /* Ensure full width */
   font-size: 0.85rem;
   color: #666;
+  margin-top: 20px; /* Adjusted margin */
 }
 
-.growth-financials .value {
+.value {
   font-weight: 600;
   color: #333;
 }
 
-
 /* Leads Card */
 .leads-card {
+  background: #fff; /* Changed background to white as per image */
   padding: 20px;
+  border-radius: 12px;
   position: relative;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
 }
 
 .leads-card h3 {
-  font-size: 1.2rem;
+  font-size: 1.2rem; /* Adjusted font size */
   color: #333;
   margin-bottom: 5px;
 }
 
-.leads-card .more-options {
-  position: absolute;
-  top: 15px;
-  right: 15px;
-  font-size: 1.2rem;
-  color: #999;
-  cursor: pointer;
-}
-
 .leads-value {
-  font-size: 2rem;
+  font-size: 2rem; /* Adjusted font size */
   font-weight: 600;
   color: #333;
-  margin-bottom: 15px;
+  margin-bottom: 15px; /* Adjusted margin */
 }
 
 .leads-graph {
-  height: 60px; /* Height for the graph */
-  width: 100%;
+  height: 60px;
   display: flex;
   align-items: flex-end;
 }
 
-.leads-graph svg {
+.leads-svg {
   width: 100%;
   height: 100%;
 }
 
-/* Material Icons (if you're using them) */
-@import url('https://fonts.googleapis.com/icon?family=Material+Icons');
+.leads-svg path { /* Added style for the path in leads-svg */
+  stroke: #FFBF00; /* Yellow color from image */
+  stroke-width: 2; /* Adjusted stroke width */
+}
+
+
+/* Lucide React Icon Specific Styling (for inline SVGs) */
+.inline-icon {
+  display: inline-block;
+  vertical-align: middle;
+  width: 24px;
+  height: 24px;
+}
+
+.yellow-icon {
+  color: #FFD700; /* Gold-like color for PartyPopper */
+}
+
+.icon-large {
+  width: 24px;
+  height: 24px;
+}

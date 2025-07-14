@@ -26,7 +26,7 @@ const doctorIdMap = {
 
 const Appointments = () => {
   const router = useRouter();
-
+  const [formData,setFormData] = useState({})
   const [appointments, setAppointments] = useState([]);
   const [filteredAppointments, setFilteredAppointments] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
@@ -138,7 +138,9 @@ const Appointments = () => {
   };
 
   const handleEdit = (item) => {
-    localStorage.setItem("editAppointment", JSON.stringify(item));
+    console.log("this is item",item);
+    setFormData({item});
+    console.log("this is form data",formData);
     router.push("/updateapt");
   };
 

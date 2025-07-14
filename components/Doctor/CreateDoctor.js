@@ -1,9 +1,14 @@
+// components/Doctor/CreateDoctor.js
 "use client";
-import React, { useState, useRef } from "react";
+import React, { useState, useEffect, useRef, useContext } from "react";
+import { MyContext } from "@/context/SetContext.js"; // Corrected import path
 import "./CreateDoctor.css";
 
-const CreateDoctor = ({ onClose, onCreate }) => {
+const CreateDoctor = ({ onClose, formData }) => {
+  const { AddDoctorApi, addingDocLoading, addingDocError,setEditDoctors } = useContext(MyContext);
+
   const [doctorData, setDoctorData] = useState({
+    doc_id: null,
     name: "",
     type: "",
     specialization: "",
@@ -11,16 +16,70 @@ const CreateDoctor = ({ onClose, onCreate }) => {
     contactNumber: "",
     joinDate: "",
     status: "",
-    profileImage: "",
+    profileImage: "", // This will now store base64 string or URL
     note: "",
     color: "#3a6351",
-    signature: "",
+    signature: "", // This will now store base64 string or URL
   });
 
   const [errors, setErrors] = useState({});
   const canvasRef = useRef(null);
   const isDrawing = useRef(false);
   const [ctx, setCtx] = useState(null);
+
+  useEffect(() => {
+    if (formData) {
+      setDoctorData({
+        doc_id: formData.doc_id || null,
+        name: formData.doc_name || "",
+        type: formData.doc_type || "",
+        specialization: formData.doc_speciality || "",
+        email: formData.doc_email || "",
+        contactNumber: formData.doc_mobile || "",
+        joinDate: formData.doc_join_date || "",
+        status: formData.doc_status || "",
+        profileImage: formData.image || "", // Existing image URL
+        note: formData.note || "",
+        color: formData.doc_cal_color || "#3a6351",
+        signature: formData.signature || "", // Existing signature URL
+      });
+
+      if (formData.signature && canvasRef.current) {
+        const img = new Image();
+        img.onload = () => {
+          const canvas = canvasRef.current;
+          if (canvas) {
+            const context = canvas.getContext("2d");
+            context.clearRect(0, 0, canvas.width, canvas.height);
+            context.drawImage(img, 0, 0, canvas.width, canvas.height);
+          }
+        };
+        img.src = formData.signature;
+      } else if (canvasRef.current) {
+        const context = canvasRef.current.getContext("2d");
+        context.clearRect(0, 0, canvasRef.current.width, canvasRef.current.height);
+      }
+    } else {
+      setDoctorData({
+        doc_id: null,
+        name: "",
+        type: "",
+        specialization: "",
+        email: "",
+        contactNumber: "",
+        joinDate: "",
+        status: "",
+        profileImage: "",
+        note: "",
+        color: "#3a6351",
+        signature: "",
+      });
+      if (canvasRef.current) {
+        const context = canvasRef.current.getContext("2d");
+        context.clearRect(0, 0, canvasRef.current.width, canvasRef.current.height);
+      }
+    }
+  }, [formData]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -34,11 +93,12 @@ const CreateDoctor = ({ onClose, onCreate }) => {
 
   const handleFileChange = (e) => {
     if (e.target.files && e.target.files[0]) {
+      const file = e.target.files[0];
       const reader = new FileReader();
       reader.onload = (ev) => {
-        setDoctorData({ ...doctorData, profileImage: ev.target.result });
+        setDoctorData({ ...doctorData, profileImage: ev.target.result }); // Store as Data URL (base64)
       };
-      reader.readAsDataURL(e.target.files[0]);
+      reader.readAsDataURL(file);
     }
   };
 
@@ -46,15 +106,18 @@ const CreateDoctor = ({ onClose, onCreate }) => {
     const newErrors = {};
     if (!doctorData.name.trim()) newErrors.name = "Name is required";
     if (!doctorData.type.trim()) newErrors.type = "Type is required";
-    if (!doctorData.specialization.trim()) newErrors.specialization = "Specialization is required";
+    if (!doctorData.specialization.trim())
+      newErrors.specialization = "Specialization is required";
     if (!doctorData.email.trim()) newErrors.email = "Email is required";
-    if (!doctorData.contactNumber.trim()) newErrors.contactNumber = "Contact number is required";
-    if (!doctorData.joinDate.trim()) newErrors.joinDate = "Join date is required";
+    if (!doctorData.contactNumber.trim())
+      newErrors.contactNumber = "Contact number is required";
+    if (!doctorData.joinDate.trim())
+      newErrors.joinDate = "Join date is required";
     if (!doctorData.status.trim()) newErrors.status = "Status is required";
     return newErrors;
   };
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     const newErrors = validateFields();
     if (Object.keys(newErrors).length > 0) {
       setErrors(newErrors);
@@ -62,16 +125,57 @@ const CreateDoctor = ({ onClose, onCreate }) => {
     }
 
     const canvas = canvasRef.current;
-    const trimmed = trimCanvas(canvas); // Auto-trim white
-    const signatureImage = trimmed.toDataURL("image/png");
+    let signatureImageBase64 = doctorData.signature; // Default to existing signature if not redrawn or empty
 
-    const updatedDoctor = { ...doctorData, signature: signatureImage };
-    onCreate(updatedDoctor);
-    onClose();
+    if (canvas && !isCanvasEmpty(canvas)) {
+      const trimmed = trimCanvas(canvas);
+      signatureImageBase64 = trimmed.toDataURL("image/png"); // Get base64 for new signature
+    } else if (!formData && isCanvasEmpty(canvas)) {
+      signatureImageBase64 = ""; // New doctor, empty canvas means no signature
+    }
+    // If it's an existing doctor and canvas is empty but formData.signature had a value, keep it.
+    // Otherwise, if canvas was cleared, signatureImageBase64 is effectively an empty string.
+
+
+    // Construct JSON object for API submission
+    const apiJsonData = {
+      doc_id: doctorData.doc_id, // Will be null for new doctors
+      doc_name: doctorData.name,
+      doc_type: doctorData.type,
+      doc_speciality: doctorData.specialization,
+      doc_email: doctorData.email,
+      doc_mobile: doctorData.contactNumber,
+      doc_join_date: doctorData.joinDate,
+      doc_cal_color: doctorData.color,
+      doc_status: doctorData.status,
+      note: doctorData.note,
+      signature: signatureImageBase64, // Send base64 string
+      image: doctorData.profileImage, // Send base64 string or existing URL
+      doc_branch: "1",
+      user_email: doctorData.email,
+      main_email: doctorData.email,
+      user_id: "1",
+    };
+
+    try {
+      // Call the API function from context
+      const responseData = await AddDoctorApi(apiJsonData); // Pass JSON object
+      console.log("Doctor added/updated successfully:", responseData);
+      onClose();
+      setErrors({});
+    } catch (err) {
+      console.error("Failed to add/update doctor:", err);
+      if (typeof err === "object" && err !== null) {
+        setErrors(err);
+      } else {
+        // Error message from context's addingDocError will be displayed automatically
+      }
+    }
   };
 
   const startDrawing = (e) => {
     const canvas = canvasRef.current;
+    if (!canvas) return;
     const ctx = canvas.getContext("2d");
     ctx.lineWidth = 2;
     ctx.lineCap = "round";
@@ -95,11 +199,23 @@ const CreateDoctor = ({ onClose, onCreate }) => {
 
   const clearSignature = () => {
     const canvas = canvasRef.current;
-    const ctx = canvas.getContext("2d");
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    if (canvas) {
+      const ctx = canvas.getContext("2d");
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      setDoctorData((prev) => ({ ...prev, signature: "" }));
+    }
   };
 
-  // --- Trim canvas to remove white space ---
+  const isCanvasEmpty = (canvas) => {
+    if (!canvas) return true;
+    const ctx = canvas.getContext("2d");
+    const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+    for (let i = 0; i < imageData.data.length; i += 4) {
+      if (imageData.data[i + 3] !== 0) return false;
+    }
+    return true;
+  };
+
   const trimCanvas = (canvas) => {
     const ctx = canvas.getContext("2d");
     const width = canvas.width;
@@ -128,8 +244,8 @@ const CreateDoctor = ({ onClose, onCreate }) => {
 
     if (bound.top === null) return canvas;
 
-    const trimmedWidth = bound.right - bound.left;
-    const trimmedHeight = bound.bottom - bound.top;
+    const trimmedWidth = bound.right - bound.left + 1;
+    const trimmedHeight = bound.bottom - bound.top + 1;
     const trimmedCanvas = document.createElement("canvas");
     trimmedCanvas.width = trimmedWidth;
     trimmedCanvas.height = trimmedHeight;
@@ -147,42 +263,95 @@ const CreateDoctor = ({ onClose, onCreate }) => {
   return (
     <div className="custom-modal-overlay">
       <div className="custom-modal">
-        <h3>Create Doctor</h3>
+        <h3>{formData ? "Edit Doctor" : "Create Doctor"}</h3>
         <div className="form-container">
           <div className="row">
             <div className="col">
               <label>Doctor Name</label>
-              <input name="name" value={doctorData.name} onChange={handleChange} placeholder="Name" className={`input-field ${errors.name ? "error-border" : ""}`} />
+              <input
+                name="name"
+                value={doctorData.name}
+                onChange={handleChange}
+                placeholder="Name"
+                className={`input-field ${errors.name ? "error-border" : ""}`}
+              />
               {errors.name && <span className="error-text">{errors.name}</span>}
 
               <label>Doctor Speciality</label>
-              <input name="specialization" value={doctorData.specialization} onChange={handleChange} placeholder="Implant Surgery" className={`input-field ${errors.specialization ? "error-border" : ""}`} />
-              {errors.specialization && <span className="error-text">{errors.specialization}</span>}
+              <input
+                name="specialization"
+                value={doctorData.specialization}
+                onChange={handleChange}
+                placeholder="Implant Surgery"
+                className={`input-field ${errors.specialization ? "error-border" : ""}`}
+              />
+              {errors.specialization && (
+                <span className="error-text">{errors.specialization}</span>
+              )}
 
               <label>Contact Number</label>
-              <input name="contactNumber" value={doctorData.contactNumber} onChange={handleChange} placeholder="Contact No" className={`input-field ${errors.contactNumber ? "error-border" : ""}`} />
-              {errors.contactNumber && <span className="error-text">{errors.contactNumber}</span>}
+              <input
+                name="contactNumber"
+                value={doctorData.contactNumber}
+                onChange={handleChange}
+                placeholder="Contact No"
+                className={`input-field ${errors.contactNumber ? "error-border" : ""}`}
+              />
+              {errors.contactNumber && (
+                <span className="error-text">{errors.contactNumber}</span>
+              )}
 
               <label>Status</label>
-              <input name="status" value={doctorData.status} onChange={handleChange} placeholder="Active" className={`input-field ${errors.status ? "error-border" : ""}`} />
+              <input
+                name="status"
+                value={doctorData.status}
+                onChange={handleChange}
+                placeholder="Active"
+                className={`input-field ${errors.status ? "error-border" : ""}`}
+              />
               {errors.status && <span className="error-text">{errors.status}</span>}
             </div>
 
             <div className="col">
               <label>Type</label>
-              <input name="type" value={doctorData.type} onChange={handleChange} placeholder="Resident Doctor" className={`input-field ${errors.type ? "error-border" : ""}`} />
+              <input
+                name="type"
+                value={doctorData.type}
+                onChange={handleChange}
+                placeholder="Resident Doctor"
+                className={`input-field ${errors.type ? "error-border" : ""}`}
+              />
               {errors.type && <span className="error-text">{errors.type}</span>}
 
               <label>Email</label>
-              <input name="email" value={doctorData.email} onChange={handleChange} placeholder="Email" className={`input-field ${errors.email ? "error-border" : ""}`} />
+              <input
+                name="email"
+                value={doctorData.email}
+                onChange={handleChange}
+                placeholder="Email"
+                className={`input-field ${errors.email ? "error-border" : ""}`}
+              />
               {errors.email && <span className="error-text">{errors.email}</span>}
 
               <label>Join Date</label>
-              <input name="joinDate" type="date" value={doctorData.joinDate} onChange={handleChange} className={`input-field ${errors.joinDate ? "error-border" : ""}`} />
-              {errors.joinDate && <span className="error-text">{errors.joinDate}</span>}
+              <input
+                name="joinDate"
+                type="date"
+                value={doctorData.joinDate}
+                onChange={handleChange}
+                className={`input-field ${errors.joinDate ? "error-border" : ""}`}
+              />
+              {errors.joinDate && (
+                <span className="error-text">{errors.joinDate}</span>
+              )}
 
               <label>Choose Color</label>
-              <input type="color" className="color-input" value={doctorData.color} onChange={handleColorChange} />
+              <input
+                type="color"
+                className="color-input"
+                value={doctorData.color}
+                onChange={handleColorChange}
+              />
 
               <label>Profile (max 2MB)</label>
               <input type="file" onChange={handleFileChange} />
@@ -202,21 +371,36 @@ const CreateDoctor = ({ onClose, onCreate }) => {
               onMouseUp={stopDrawing}
               onMouseLeave={stopDrawing}
             ></canvas>
-
-            {/* Optional Preview */}
-            {/* {doctorData.signature && (
-              <img src={doctorData.signature} alt="Signature Preview" style={{ maxWidth: "100%", marginTop: 10 }} />
-            )} */}
           </div>
 
           <label>Note</label>
-          <textarea name="note" value={doctorData.note} onChange={handleChange} className="input-field" rows="2" placeholder="Note" />
+          <textarea
+            name="note"
+            value={doctorData.note}
+            onChange={handleChange}
+            className="input-field"
+            rows="2"
+            placeholder="Note"
+          />
         </div>
 
+        {addingDocLoading && <p>Processing doctor data...</p>}
+        {addingDocError && <p className="error-text">{addingDocError}</p>}
+
         <div className="buttons">
-          <button className="cancel-btn" onClick={clearSignature}>Clear Signature</button>
-          <button className="cancel-btn" onClick={onClose}>Cancel</button>
-          <button className="create-btn" onClick={handleSubmit}>Create</button>
+          <button className="cancel-btn" onClick={clearSignature}>
+            Clear Signature
+          </button>
+          <button className="cancel-btn" onClick={onClose}>
+            Cancel
+          </button>
+          <button
+            className="create-btn"
+            onClick={handleSubmit}
+            disabled={addingDocLoading}
+          >
+            {addingDocLoading ? "Saving..." : formData ? "Update" : "Create"}
+          </button>
         </div>
       </div>
     </div>
