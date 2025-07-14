@@ -1,11 +1,41 @@
 // components/Calendar/Month/MonthlyCalendar.js
 "use client";
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import MonthlyAppointmentCard from './MonthlyAppointmentCard';
 import './MonthlyCalendar.css';
 
 const MonthlyCalendar = ({ patients, currentDisplayDate, onTimeSlotClick }) => {
-  console.log("i am form month",patients)
+  // State to hold patients with guaranteed Date objects for startTime
+  const [processedPatients, setProcessedPatients] = useState([]);
+
+  // Process patients data when the 'patients' prop changes
+  useEffect(() => {
+    const updatedPatients = patients.map(app => {
+      // If startTime is already a Date object, or if datetime is missing, use as is.
+      // Otherwise, attempt to convert datetime string to a Date object for startTime.
+      if (app.startTime instanceof Date) {
+        return app;
+      } else if (typeof app.datetime === 'string' && app.datetime) {
+        // Assuming datetime is in a format like "YYYY-MM-DD, HH:mm"
+        // We need to parse it correctly. A simple new Date() might work if format is ISO.
+        // If not, we might need custom parsing. For now, let's assume a parseable format.
+        const [datePart, timePart] = app.datetime.split(', ');
+        const dateTimeString = `${datePart}T${timePart}:00`; // Adding seconds for robust parsing
+        const parsedDate = new Date(dateTimeString);
+
+        // Check if parsedDate is a valid Date object
+        if (!isNaN(parsedDate.getTime())) {
+          return { ...app, startTime: parsedDate };
+        }
+      }
+      // If startTime is not a Date and datetime cannot be parsed, return original app
+      // This might mean some appointments won't show if their date is invalid.
+      console.warn("Could not parse startTime for appointment:", app);
+      return app;
+    });
+    setProcessedPatients(updatedPatients);
+  }, [patients]); // Re-run when patients prop changes
+
   const daysOfWeek = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
 
   const getFirstDayOfMonth = (date) => {
@@ -21,9 +51,15 @@ const MonthlyCalendar = ({ patients, currentDisplayDate, onTimeSlotClick }) => {
   };
 
   const getAppointmentsForDay = (year, month, day) => {
-    return patients.filter(app => {
-      // Use app.startTime which is now a guaranteed Date object from context
-      const appStartTime = app.startTime; // It's already a Date object
+    // Use processedPatients here
+    return processedPatients.filter(app => {
+      const appStartTime = app.startTime;
+
+      // Defensive check: ensure appStartTime is a valid Date object
+      if (!(appStartTime instanceof Date) || isNaN(appStartTime.getTime())) {
+        return false; // Skip if startTime is not a valid Date
+      }
+
       return appStartTime.getFullYear() === year &&
              appStartTime.getMonth() === month && // month is 0-indexed
              appStartTime.getDate() === day;

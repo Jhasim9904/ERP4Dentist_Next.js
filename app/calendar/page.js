@@ -5,157 +5,87 @@ import Navbar from "@/components/Navbar/Navbar";
 import Sidebar from "@/components/Sidebar/Sidebar";
 import Footer from "@/components/Footer/Footer";
 import CalendarHeader from "@/components/Calendar/CalendarHeader";
-import CalendarGrid from "@/components/Calendar/CalendarGrid"; // Weekly view
-import MonthlyCalendar from "@/components/Calendar/Month/MonthlyCalendar"; // Monthly view
-import DayViewComponent from "@/components/Calendar/Day/DayViewComponent"; // Day view
+import CalendarGrid from "@/components/Calendar/CalendarGrid";
+import MonthlyCalendar from "@/components/Calendar/Month/MonthlyCalendar";
+import DayViewComponent from "@/components/Calendar/Day/DayViewComponent";
 import AppModel from '@/components/Appointments/Appmodel';
 import Swal from 'sweetalert2';
 import { useContext } from "react";
 import { MyContext } from "@/context/SetContext";
+import axios from "axios";
 
-// Helper function to get the start of the week (Sunday) for a given date
+const normalizeDoctor = (name) => name?.replace(/\s+/g, "").toLowerCase();
+
+const doctorIdMap = {
+  "dr.saritha": 1,
+  "dr.a": 2,
+  gandhi: 3,
+  pooja: 4,
+  giri: 6,
+  sabari: 7,
+};
+
 const getStartOfWeek = (date) => {
-  const day = date.getDay(); // 0 for Sunday, 1 for Monday, etc.
-  const diff = date.getDate() - day; // Adjust date to Sunday of the current week
+  const day = date.getDay();
+  const diff = date.getDate() - day;
   return new Date(date.getFullYear(), date.getMonth(), diff);
 };
 
-// Helper function to get all day numbers (and their full Date objects) for a given week (starting Sunday)
 const getDatesForWeek = (startOfWeek) => {
   const dates = [];
-  const fullDateObjects = []; // To store full Date objects for each day
+  const fullDateObjects = [];
   for (let i = 0; i < 7; i++) {
     const date = new Date(startOfWeek);
     date.setDate(startOfWeek.getDate() + i);
-    dates.push(date.getDate()); // Day number (e.g., 16, 17, 18...)
-    fullDateObjects.push(date); // Full Date object for specific day (e.g., Feb 16 2025)
+    dates.push(date.getDate());
+    fullDateObjects.push(date);
   }
-  return { dates, fullDateObjects }; // Return both
+  return { dates, fullDateObjects };
 };
 
 const Page = () => {
   const { patients, setPatients, setEditPatient } = useContext(MyContext);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState(null);
-
   const [currentDisplayDate, setCurrentDisplayDate] = useState(new Date());
   const [currentView, setCurrentView] = useState('month');
-
   const [showModal, setShowModal] = useState(false);
   const [formData, setFormData] = useState({
     date: "",
     inTime: "",
     outTime: "",
-    title: "Mr.",
+    title: "Mr",
     firstName: "",
     lastName: "",
     age: "",
-    gender: "Male",
-    email: "",
+    gender: "male",
+    countryCode: "+91",
     phone: "",
+    email: "",
     doctor: "",
     reason: "",
-    note: "",
+    chiefComplaint: "",
+    branch: "1",
     status: "Active",
+    note: "",
   });
   const [errors, setErrors] = useState({});
-
-  // useEffect(() => {
-  //   const fetchData = async () => {
-  //     try {
-  //       setLoading(true); // Start loading
-
-  //       // IMPORTANT: Ensure this URL points to your correct PHP file (e.g., getPatients.php)
-  //       const response = await fetch(
-  //         "https://testing.erp4dentist.com/api/calendar"
-  //       );
-  //       console.log("hi");
-
-  //       if (!response.ok) {
-  //         const errorText = await response.text();
-  //         throw new Error(
-  //           `HTTP error! Status: ${response.status}. Response: ${errorText}`
-  //         );
-  //       }
-
-  //       const data = await response.json();
-
-  //       if (data && data.error) {
-  //         throw new Error(`PHP Backend Error: ${data.error}`);
-  //       }
-
-  //       console.log("Fetched raw data from PHP:", data.appointment); // For debugging
-
-  //       // Transform data to match frontend expectations, including all fields
-  //       const transformedData = data.appointment.map((patient) => ({
-  //         id: patient.id, // This is patient_id from PHP, e.g., "P1001"
-  //         firstName: patient.firstname,
-  //         lastName: patient.lastname,
-  //         name: patient.name, // This is already derived in PHP, or you can derive here: `${patient.first_name} ${patient.last_name}`
-  //         phone: patient.contact_no,
-  //         email: patient.email,
-  //         doctor: patient.choose_doctor,
-
-  //         // Use the ISO string directly for 'datetime' and create Date objects
-  //         datetime: patient.date_appointment, // Keep the ISO string for consistent parsing
-  //         startTime: new Date(patient.datetime), // Create Date object for specific use
-
-  //         // For endTime, combine the date part of datetime with the outTime string
-  //         // Ensure outTime is in HH:MM:SS or HH:MM format from PHP
-  //         endTime: new Date(
-  //           `${patient.appointment_date}T${patient.outTime}:00`
-  //         ), // Create Date object for specific use
-
-  //         date: patient.date_appointment, // 'date' is directly from DB
-  //         inTime: patient.inTime, // 'inTime' is directly from DB
-  //         outTime: patient.outTime, // 'outTime' is directly from DB
-
-  //         age: String(patient.age), // Ensure age is string if frontend expects it
-  //         gender: patient.gender,
-  //         reason: patient.reason,
-  //         note: patient.note,
-  //         title: patient.title,
-  //         status: patient.status, // Assuming this is "Active"/"Completed" string from PHP
-  //         color: patient.color, // Include color
-  //         patientName: patient.patientName, // From old column
-  //         treatment: patient.treatment, // From old column
-  //         appointmentcount: patient.appointmentcount,
-  //         chief_complaint: patient.chief_complaint,
-  //         created_at: patient.created_at,
-  //         updated_at: patient.updated_at,
-  //         branch: patient.branch,
-  //         appo_doc_id: patient.appo_doc_id,
-  //         old_patient: patient.old_patient,
-
-  //         // If you *still* need hasMore/hasDot for your UI, and they aren't in the DB:
-
-  //         // If you need the old patientName and treatment directly for some reason (less ideal for new schema):
-  //       }));
-
-  //       setPatients(transformedData.appointment);
-  //       setError(null); // Clear any previous errors
-  //     } catch (err) {
-  //       console.error("Error fetching data:", err);
-  //       setError(err.message); // Set the error message
-  //       setPatients([]); // Clear patients on error
-  //     } finally {
-  //       setLoading(false); // End loading, regardless of success or failure
-  //     }
-  //   };
-
-  //   fetchData(); // Call fetchData when component mounts
-  // }, []); // Empty dependency array means it runs once on mount
-
   const [sidebarOpen, setSidebarOpen] = useState(true);
-  const toggleSidebar = () => {
-    setSidebarOpen(!sidebarOpen);
+
+  const toggleSidebar = () => setSidebarOpen(!sidebarOpen);
+
+  const fetchAppointments = async () => {
+    try {
+      const res = await axios.get("https://testing.erp4dentist.com/api/appointment");
+      const appointments = res.data?.appointment?.data || [];
+      setPatients(appointments);
+      return appointments;
+    } catch (err) {
+      console.error("Error fetching appointments", err);
+      return [];
+    }
   };
 
   const currentWeekStart = useMemo(() => getStartOfWeek(currentDisplayDate), [currentDisplayDate]);
-  const { dates: displayedDates, fullDateObjects: displayedFullDates } = useMemo(
-    () => getDatesForWeek(currentWeekStart),
-    [currentWeekStart]
-  );
+  const { dates: displayedDates, fullDateObjects: displayedFullDates } = useMemo(() => getDatesForWeek(currentWeekStart), [currentWeekStart]);
 
   const getHeaderDisplay = () => {
     switch (currentView) {
@@ -184,221 +114,104 @@ const Page = () => {
     }
   };
 
-  const handlePrev = () => {
-    setCurrentDisplayDate(prevDate => {
-      const newDate = new Date(prevDate);
-      switch (currentView) {
-        case 'month':
-          newDate.setMonth(newDate.getMonth() - 1);
-          break;
-        case 'week':
-          newDate.setDate(newDate.getDate() - 7);
-          break;
-        case 'day':
-          newDate.setDate(newDate.getDate() - 1);
-          break;
-        default:
-          break;
-      }
-      return newDate;
-    });
-  };
+  const handlePrev = () => setCurrentDisplayDate(prev => {
+    const newDate = new Date(prev);
+    if (currentView === 'month') newDate.setMonth(newDate.getMonth() - 1);
+    if (currentView === 'week') newDate.setDate(newDate.getDate() - 7);
+    if (currentView === 'day') newDate.setDate(newDate.getDate() - 1);
+    return newDate;
+  });
 
-  const handleNext = () => {
-    setCurrentDisplayDate(prevDate => {
-      const newDate = new Date(prevDate);
-      switch (currentView) {
-        case 'month':
-          newDate.setMonth(newDate.getMonth() + 1);
-          break;
-        case 'week':
-          newDate.setDate(newDate.getDate() + 7);
-          break;
-        case 'day':
-          newDate.setDate(newDate.getDate() + 1);
-          break;
-        default:
-          break;
-      }
-      return newDate;
-    });
-  };
+  const handleNext = () => setCurrentDisplayDate(prev => {
+    const newDate = new Date(prev);
+    if (currentView === 'month') newDate.setMonth(newDate.getMonth() + 1);
+    if (currentView === 'week') newDate.setDate(newDate.getDate() + 7);
+    if (currentView === 'day') newDate.setDate(newDate.getDate() + 1);
+    return newDate;
+  });
 
-  const formatDateForInput = (date) => {
-    const year = date.getFullYear();
-    const month = (date.getMonth() + 1).toString().padStart(2, '0');
-    const day = date.getDate().toString().padStart(2, '0');
-    return `${year}-${month}-${day}`;
-  };
+  const formatDateForInput = (date) => `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`;
+  const formatTimeForInput = (date) => `${String(date.getHours()).padStart(2, '0')}:${String(date.getMinutes()).padStart(2, '0')}`;
 
-  const formatTimeForInput = (date) => {
-    const hours = date.getHours().toString().padStart(2, '0');
-    const minutes = date.getMinutes().toString().padStart(2, '0');
-    return `${hours}:${minutes}`;
-  };
-
-  // This function is passed to CalendarGrid, MonthlyCalendar, and DayViewComponent
   const handleTimeSlotClick = (clickedDateTime) => {
-    const initialDate = formatDateForInput(clickedDateTime);
-    const initialInTime = formatTimeForInput(clickedDateTime);
-
-    const outDateTime = new Date(clickedDateTime.getTime() + 60 * 60 * 1000);
-    const initialOutTime = formatTimeForInput(outDateTime);
-
-    setFormData({
-      ...formData,
-      date: initialDate,
-      inTime: initialInTime,
-      outTime: initialOutTime,
-    });
+    setFormData(prev => ({
+      ...prev,
+      date: formatDateForInput(clickedDateTime),
+      inTime: formatTimeForInput(clickedDateTime),
+      outTime: formatTimeForInput(new Date(clickedDateTime.getTime() + 60 * 60 * 1000)),
+    }));
     setShowModal(true);
   };
 
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setFormData((prev) => ({ ...prev, [name]: value }));
-  };
-
-  const validateForm = () => {
-    const newErrors = {};
-    if (!formData.date) newErrors.date = "Date is required";
-    if (!formData.inTime) newErrors.inTime = "In time is required";
-    if (!formData.outTime) newErrors.outTime = "Out time is required";
-    if (!formData.firstName) newErrors.firstName = "First name is required";
-    if (!formData.lastName) newErrors.lastName = "Last name is required";
-    if (!formData.age) newErrors.age = "Age is required";
-    if (!formData.email) newErrors.email = "Email is required";
-    if (!formData.phone) newErrors.phone = "Phone number is required";
-    if (!formData.doctor) newErrors.doctor = "Doctor selection is required";
-    if (!formData.reason) newErrors.reason = "Reason is required";
-
-    setErrors(newErrors);
-    return Object.keys(newErrors).length === 0;
-  };
+  const handleChange = (e) => setFormData(prev => ({ ...prev, [e.target.name]: e.target.value }));
 
   const handleSubmit = async () => {
-    if (!validateForm()) {
-      Swal.fire({
-        icon: "error",
-        title: "Validation Error!",
-        text: "Please fill in all required fields.",
-        confirmButtonColor: "#1669f2",
-      });
-      return;
-    }
-
-    const newAppointmentData = {
-        date: formData.date,
-        inTime: formData.inTime,
-        outTime: formData.outTime,
-        title: formData.title,
-        firstName: formData.firstName,
-        lastName: formData.lastName,
-        age: formData.age,
-        gender: formData.gender,
-        email: formData.email,
-        phone: formData.phone,
-        doctor: formData.doctor,
-        reason: formData.reason,
-        note: formData.note,
-        status: formData.status,
+    const finalPayload = {
+      title: formData.title,
+      firstname: formData.firstName,
+      lastname: formData.lastName,
+      age: Number(formData.age),
+      gender: formData.gender,
+      countrycode: formData.countryCode,
+      contact_no: formData.phone,
+      email: formData.email,
+      choose_doctor: formData.doctor,
+      appo_doc_id: doctorIdMap[normalizeDoctor(formData.doctor)] || 6,
+      reason_appointment: formData.reason,
+      chief_complaint: formData.chiefComplaint || "",
+      status: formData.status === "Active" ? 1 : 0,
+      date_appointment: formData.date,
+      intime: formData.inTime,
+      outtime: formData.outTime,
+      note: formData.note,
+      branch: parseInt(formData.branch),
     };
 
+    const parseTime = (t) => new Date(`1970-01-01T${t}:00`);
+    const newStart = parseTime(finalPayload.intime);
+    const newEnd = parseTime(finalPayload.outtime);
+
     try {
-        const response = await fetch("http://localhost/erp-calendar/add_event.php", {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify(newAppointmentData),
+      const res = await axios.get("https://testing.erp4dentist.com/api/appointment");
+      const liveAppointments = res.data?.appointment?.data || [];
+
+      const hasClash = liveAppointments.some((appt) => {
+        const isSameDate = appt.date_appointment === finalPayload.date_appointment;
+        const isSameDoctor = appt.choose_doctor === finalPayload.choose_doctor;
+        if (!isSameDate || !isSameDoctor) return false;
+        const existingStart = parseTime(appt.intime);
+        const existingEnd = parseTime(appt.outtime);
+        return newStart < existingEnd && newEnd > existingStart;
+      });
+
+      if (hasClash) {
+        Swal.fire({ title: "Time Slot Unavailable", text: `Selected time slot is already booked for ${finalPayload.choose_doctor}. Please choose a different time.`, icon: "error" });
+        return;
+      }
+
+      const postRes = await axios.post("https://testing.erp4dentist.com/api/addappointment", finalPayload, { headers: { "Content-Type": "application/json" } });
+      if (postRes.status === 200 || postRes.data?.status === "success") {
+        await fetchAppointments();
+        Swal.fire("Success", "Appointment added successfully", "success");
+        setShowModal(false);
+        setFormData({
+          date: "", inTime: "", outTime: "", title: "Mr", firstName: "", lastName: "",
+          age: "", gender: "male", countryCode: "+91", phone: "", email: "",
+          doctor: "", reason: "", chiefComplaint: "", branch: "1", status: "Active", note: ""
         });
-
-        if (!response.ok) {
-            const errorText = await response.text();
-            throw new Error(`HTTP error! Status: ${response.status}. Response: ${errorText}`);
-        }
-
-        const result = await response.json();
-
-        if (result.success) {
-            Swal.fire({
-                icon: "success",
-                title: "Appointment Booked!",
-                text: "The appointment has been successfully added.",
-                confirmButtonColor: "#1669f2",
-            });
-            setShowModal(false);
-            setFormData({
-                date: "", inTime: "", outTime: "", title: "Mr.", firstName: "", lastName: "", age: "",
-                gender: "Male", email: "", phone: "", doctor: "", reason: "", note: "", status: "Active",
-            });
-            setErrors({});
-
-            const refetchResponse = await fetch("http://localhost/erp-calendar/all_events.php");
-            const refetchData = await refetchResponse.json();
-            const transformedRefetchData = refetchData.map((event) => ({
-                id: event.id,
-                patientName: event.patientName,
-                treatment: event.treatment,
-                startTime: new Date(event.startTime),
-                endTime: new Date(event.endTime),
-                firstName: event.firstName || '',
-                lastName: event.lastName || '',
-                age: event.age || '',
-                gender: event.gender || 'Male',
-                email: event.email || '',
-                phone: event.phone || '',
-                doctor: event.doctor || '',
-                reason: event.reason || '',
-                status: event.status || 'Active',
-            }));
-            setPatients(transformedRefetchData);
-
-        } else {
-            throw new Error(result.message || "Failed to add appointment.");
-        }
+        setErrors({});
+      } else {
+        Swal.fire("Error", postRes.data?.message || "Appointment failed", "error");
+      }
     } catch (err) {
-        console.error("Error adding appointment:", err);
-        Swal.fire({
-            icon: "error",
-            title: "Submission Error!",
-            text: err.message || "There was an error adding the appointment.",
-            confirmButtonColor: "#1669f2",
-        });
+      console.error("Add appointment failed:", err);
+      Swal.fire("Error", "Failed to add appointment", "error");
     }
   };
-
-  if (loading) {
-    return (
-      <div className="app-layout">
-        <p>Loading calendar data...</p>
-      </div>
-    );
-  }
-
-  if (error) {
-    return (
-      <div className="app-layout">
-        <p>Error loading data: {error.message}</p>
-        <p>Please ensure:</p>
-        <ul>
-          <li>XAMPP Apache and MySQL are running.</li>
-          <li>Your PHP files are correctly placed in `htdocs` (e.g., `http://localhost/erp-calendar/`).</li>
-          <li>`database.php` has the correct credentials and port.</li>
-          <li>`all_events.php` has the CORS headers at the very top and outputs pure JSON.</li>
-          <li>Check your browser's console (F12) for more detailed network errors.</li>
-        </ul>
-      </div>
-    );
-  }
 
   return (
     <div className="app-layout">
-      <Sidebar
-        isOpen={sidebarOpen}
-        onToggleSidebar={toggleSidebar}
-        sidebarOpen={sidebarOpen}
-      />
+      <Sidebar isOpen={sidebarOpen} onToggleSidebar={toggleSidebar} sidebarOpen={sidebarOpen} />
       <div className="main-content">
         <Navbar onToggleSidebar={toggleSidebar} sidebarOpen={sidebarOpen} />
         <div className="container1">
@@ -408,46 +221,15 @@ const Page = () => {
             onViewChange={setCurrentView}
             onPrev={handlePrev}
             onNext={handleNext}
+            fetchAppointments={fetchAppointments}
           />
-
-          {currentView === 'month' && (
-            <MonthlyCalendar
-              patients={patients}
-              currentDisplayDate={currentDisplayDate}
-              onTimeSlotClick={handleTimeSlotClick}
-            />
-          )}
-          {currentView === 'week' && (
-            <CalendarGrid
-              patients={patients}
-              currentWeekStart={currentWeekStart}
-              displayedDates={displayedDates}
-              displayedFullDates={displayedFullDates}
-              onTimeSlotClick={handleTimeSlotClick}
-            />
-          )}
-          {currentView === 'day' && (
-            <DayViewComponent
-              patients={patients}
-              currentDisplayDate={currentDisplayDate}
-              onTimeSlotClick={handleTimeSlotClick}
-            />
-          )}
+          {currentView === 'month' && <MonthlyCalendar patients={patients} currentDisplayDate={currentDisplayDate} onTimeSlotClick={handleTimeSlotClick} />}
+          {currentView === 'week' && <CalendarGrid patients={patients} currentWeekStart={currentWeekStart} displayedDates={displayedDates} displayedFullDates={displayedFullDates} onTimeSlotClick={handleTimeSlotClick} fetchAppointments={fetchAppointments} />}
+          {currentView === 'day' && <DayViewComponent patients={patients} currentDisplayDate={currentDisplayDate} onTimeSlotClick={handleTimeSlotClick} />}
         </div>
-        <div style={{ marginTop: "200px" }}>
-          <Footer />
-        </div>
+        <div style={{ marginTop: "200px" }}><Footer /></div>
       </div>
-
-      {showModal && (
-        <AppModel
-          formData={formData}
-          handleChange={handleChange}
-          handleSubmit={handleSubmit}
-          onClose={() => setShowModal(false)}
-          errors={errors}
-        />
-      )}
+      {showModal && <AppModel formData={formData} handleChange={handleChange} handleSubmit={handleSubmit} onClose={() => setShowModal(false)} errors={errors} />}
     </div>
   );
 };
