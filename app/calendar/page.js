@@ -46,6 +46,7 @@ const getDatesForWeek = (startOfWeek) => {
 const Page = () => {
   const { patients, setPatients, setEditPatient } = useContext(MyContext);
   const [currentDisplayDate, setCurrentDisplayDate] = useState(new Date());
+  const [isBooking, setIsBooking] = useState(false);
   const [currentView, setCurrentView] = useState('month');
   const [showModal, setShowModal] = useState(false);
   const [formData, setFormData] = useState({
@@ -146,6 +147,7 @@ const Page = () => {
   const handleChange = (e) => setFormData(prev => ({ ...prev, [e.target.name]: e.target.value }));
 
   const handleSubmit = async () => {
+    setIsBooking(true);
     const finalPayload = {
       title: formData.title,
       firstname: formData.firstName,
@@ -206,6 +208,8 @@ const Page = () => {
     } catch (err) {
       console.error("Add appointment failed:", err);
       Swal.fire("Error", "Failed to add appointment", "error");
+    } finally{
+      setIsBooking(false);
     }
   };
 
@@ -229,7 +233,7 @@ const Page = () => {
         </div>
         <div style={{ marginTop: "200px" }}><Footer /></div>
       </div>
-      {showModal && <AppModel formData={formData} handleChange={handleChange} handleSubmit={handleSubmit} onClose={() => setShowModal(false)} errors={errors} />}
+      {showModal && <AppModel formData={formData} handleChange={handleChange} handleSubmit={handleSubmit} onClose={() => setShowModal(false)} errors={errors} isBooking={isBooking} />}
     </div>
   );
 };
