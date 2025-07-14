@@ -1,5 +1,5 @@
 "use client";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Image from "next/image";
 
 import CardGrid from "@/components/Dashboard/Cardgrid";
@@ -12,15 +12,34 @@ import Footer from "@/components/Footer/Footer";
 import headingbtnlogo from "@/components/images/headingbtnlogo.png";
 import arrow from "@/components/images/arrow.png";
 
-import { useTour } from "@/context/TourContext"; // ✅ Import the tour context
+import { useTour } from "@/context/TourContext"; // ✅ Tour context
 
 const Dashboard = () => {
   const [sidebarOpen, setSidebarOpen] = useState(true);
-  const { startTour } = useTour(); // ✅ Access startTour function
+  const [dashboardData, setDashboardData] = useState(null);
+  const { startTour } = useTour();
 
   const toggleSidebar = () => {
     setSidebarOpen(!sidebarOpen);
   };
+
+  useEffect(() => {
+    const fetchDashboardData = async () => {
+      try {
+        const res = await fetch("https://testing.erp4dentist.com/api/dashboard");
+        const json = await res.json();
+        if (json && json.data) {
+          setDashboardData(json.data);
+        } else {
+          console.error("Invalid dashboard response structure");
+        }
+      } catch (err) {
+        console.error("Failed to fetch dashboard data", err);
+      }
+    };
+
+    fetchDashboardData();
+  }, []);
 
   return (
     <div className="app-layout">
@@ -52,7 +71,7 @@ const Dashboard = () => {
               <h2>Welcome Sinnamuth</h2>
               <div className="d-flex gap-2">
                 <button
-                  id="add-appointment" // ✅ Highlightable in tour
+                  id="add-appointment"
                   className="btn btn-primary d-flex align-items-center"
                 >
                   <Image
@@ -67,7 +86,7 @@ const Dashboard = () => {
 
                 <button
                   id="start-tour-btn"
-                  onClick={startTour} // ✅ Use context function
+                  onClick={startTour}
                   className="btn btn-outline-primary d-flex align-items-center"
                 >
                   Start Tour
@@ -86,7 +105,7 @@ const Dashboard = () => {
             </p>
           </div>
 
-          {/* Main Content */}
+          {/* Main Dashboard Content */}
           <div
             className="d-flex"
             style={{
@@ -98,11 +117,11 @@ const Dashboard = () => {
               boxSizing: "border-box",
             }}
           >
-            <div style={{ flex: 1}}>
-              <CardGrid />
-              <PatientTable />
+            <div style={{ flex: 1 }}>
+              <CardGrid dashboardCounts={dashboardData || {}} />
+              <PatientTable appointments={dashboardData?.appointment || []} />
             </div>
-            <RightInfoCard />
+            <RightInfoCard appointments={dashboardData?.appointment || []} />
           </div>
         </div>
 
