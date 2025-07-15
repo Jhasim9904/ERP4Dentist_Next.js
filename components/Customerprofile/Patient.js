@@ -1,7 +1,9 @@
-import React, { useState } from "react";
+import React, { useState,useContext } from "react";
 import "./Patient.css";
+import { MyContext } from "@/context/AppointmentContext";
 
 const Patient = ({ activeTab, setActiveTab,handleBookClick }) => {
+  const {patient_details} = useContext(MyContext);
   const [formData, setFormData] = useState({
     regDate: "",
     refer: "",
@@ -134,7 +136,7 @@ const Patient = ({ activeTab, setActiveTab,handleBookClick }) => {
               <label>First Name</label>
               <input
                 type="text"
-                value={formData.firstName}
+                value={patient_details.first_name}
                 onChange={(e) => handleChange("firstName", e.target.value)}
               />
             </div>

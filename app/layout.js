@@ -6,6 +6,7 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import "@fortawesome/fontawesome-free/css/all.min.css";
 
 import { AppointmentProvider } from "@/context/SetContext";
+import { CustomerInfo } from "@/context/AppointmentContext";
 import { TourProvider } from "@/context/TourContext";
 import TourOverlay from "@/components/TourOverlay/TourOverlay";
 import BootstrapClientLoader from "@/components/BootstrapClientLoader";
@@ -31,13 +32,14 @@ export default function RootLayout({ children }) {
       <body className={`${geistSans.variable} ${geistMono.variable}`}>
         {/* ✅ Bootstrap JS loaded client-side */}
         <BootstrapClientLoader />
-
-        <AppointmentProvider>
-          <TourProvider>
-            <TourOverlay />
-            {children}
-          </TourProvider>
-        </AppointmentProvider>
+        <CustomerInfo>
+          <AppointmentProvider>
+            <TourProvider>
+              <TourOverlay />
+              {children}
+            </TourProvider>
+          </AppointmentProvider>
+        </CustomerInfo>
       </body>
     </html>
   );
