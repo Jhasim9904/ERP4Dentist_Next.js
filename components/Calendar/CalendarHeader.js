@@ -52,6 +52,7 @@ const CalendarHeader = ({
   const [showModal, setShowModal] = useState(false);
   const [formData, setFormData] = useState(initialFormData);
   const [errors, setErrors] = useState({});
+  const [loading, setLoading] = useState(false);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -59,6 +60,7 @@ const CalendarHeader = ({
   };
 
   const handleSubmit = async (payloadFromModal) => {
+    setLoading(true);
     const finalPayload = payloadFromModal || {
       title: formData.title,
       firstname: formData.firstName,
@@ -85,11 +87,14 @@ const CalendarHeader = ({
     const newEnd = parseTime(finalPayload.outtime);
 
     try {
-      const res = await axios.get("https://testing.erp4dentist.com/api/appointment");
+      const res = await axios.get(
+        "https://testing.erp4dentist.com/api/appointment"
+      );
       const liveAppointments = res.data?.appointment?.data || [];
 
       const hasClash = liveAppointments.some((appt) => {
-        const isSameDate = appt.date_appointment === finalPayload.date_appointment;
+        const isSameDate =
+          appt.date_appointment === finalPayload.date_appointment;
         const isSameDoctor = appt.choose_doctor === finalPayload.choose_doctor;
 
         if (!isSameDate || !isSameDoctor) return false;
@@ -124,11 +129,17 @@ const CalendarHeader = ({
         setFormData({ ...initialFormData });
         setErrors({});
       } else {
-        Swal.fire("Error", postRes.data?.message || "Appointment failed", "error");
+        Swal.fire(
+          "Error",
+          postRes.data?.message || "Appointment failed",
+          "error"
+        );
       }
     } catch (err) {
       console.error("Add appointment failed:", err);
       Swal.fire("Error", "Failed to add appointment", "error");
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -141,27 +152,79 @@ const CalendarHeader = ({
           </span>
           <span className="calendar-date-text">{currentPeriodDisplay}</span>
           <button className="calendar-nav-button left-arrow" onClick={onPrev}>
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="15 18 9 12 15 6"></polyline></svg>
+            <svg
+              width="16"
+              height="16"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            >
+              <polyline points="15 18 9 12 15 6"></polyline>
+            </svg>
           </button>
           <button className="calendar-nav-button right-arrow" onClick={onNext}>
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+            <svg
+              width="16"
+              height="16"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            >
+              <polyline points="9 18 15 12 9 6"></polyline>
+            </svg>
           </button>
         </div>
       </div>
 
       <div className="calendar-right-section">
         <div className="month-select-wrapper">
-          <select className="month-select" value={currentView} onChange={(e) => onViewChange(e.target.value)}>
+          <select
+            className="month-select"
+            value={currentView}
+            onChange={(e) => onViewChange(e.target.value)}
+          >
             <option value="month">Month</option>
             <option value="week">Week</option>
             <option value="day">Day</option>
           </select>
           <span className="select-arrow">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
+            <svg
+              width="16"
+              height="16"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            >
+              <polyline points="6 9 12 15 18 9"></polyline>
+            </svg>
           </span>
         </div>
-        <button className="add-appointment-btn" onClick={() => setShowModal(true)}>
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+        <button
+          className="add-appointment-btn"
+          onClick={() => setShowModal(true)}
+        >
+          <svg
+            width="20"
+            height="20"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="2"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          >
+            <line x1="12" y1="5" x2="12" y2="19"></line>
+            <line x1="5" y1="12" x2="19" y2="12"></line>
+          </svg>
           Add New Appointment
         </button>
       </div>
@@ -173,6 +236,7 @@ const CalendarHeader = ({
           handleSubmit={handleSubmit}
           onClose={() => setShowModal(false)}
           errors={errors}
+          isBooking={loading}
         />
       )}
     </div>
