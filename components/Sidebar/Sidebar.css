@@ -80,5 +80,7 @@
 .label-text {
   text-decoration: none;
 }
-
+.icon-filter {
+  filter: brightness(0) saturate(100%) invert(1%) sepia(67%) saturate(492%) hue-rotate(82deg) brightness(95%) contrast(91%);
+}
 

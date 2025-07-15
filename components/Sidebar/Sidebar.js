@@ -10,8 +10,10 @@ import frame3 from "../images/Frame (3).png";
 import frame4 from "../images/Frame (4).png";
 import frame5 from "../images/Frame (5).png";
 import frame8 from "../images/Frame (8).png";
+import Dashboard from "@/app/dashboard/page";
 
 // Sidebar item list
+const Dashboardicon = frame1;
 const items = [
   { label: "Dashboard", icon: frame1, path: "/dashboard" },
   { label: "Calender", icon: frame8, path: "/calendar" },
@@ -66,7 +68,9 @@ const Sidebar = ({ isOpen, onToggleSidebar, sidebarOpen }) => {
               <Image
                 src={item.icon}
                 alt={item.label}
-                className="menu-icon"
+                className={`menu-icon ${
+                  item.label === "Dashboard" ? "icon-filter" : ""
+                }`}
                 width={20}
                 height={20}
               />

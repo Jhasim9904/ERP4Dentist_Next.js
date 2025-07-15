@@ -1,115 +1,117 @@
+/* Dashboard Container */
 .dashboard-container {
-  font-family: 'Poppins', sans-serif;
-  background-color: #f0f2f8; /* Light background as per image */
-  padding: 20px;
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-  gap: 20px;
+    font-family: 'Poppins', sans-serif;
+    background-color: #f0f2f8; /* Light background as per image */
+    padding: 20px;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
 }
+
 
 /* Header Row */
 .dashboard-header-row {
-  display: flex;
-  flex-direction: column;
-  gap: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
 }
 
 @media (min-width: 1024px) {
-  .dashboard-header-row {
-    flex-direction: row;
-  }
+    .dashboard-header-row {
+        flex-direction: row;
+    }
 }
 
 /* Welcome Card */
 .welcome-card {
-  background: #fff;
-  border-radius: 12px;
-  padding: 25px 30px;
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
-  flex: 2;
-  text-align: center; /* Default for smaller screens */
+    background: #fff;
+    border-radius: 12px;
+    padding: 25px 30px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+    flex: 2;
+    text-align: center; /* Default for smaller screens */
 }
 
 @media (min-width: 640px) {
-  .welcome-card {
-    flex-direction: row;
-    text-align: left; /* Align text to left for larger screens */
-  }
+    .welcome-card {
+        flex-direction: row;
+        text-align: left; /* Align text to left for larger screens */
+    }
 }
 
 .welcome-text-content h2 {
-  font-size: 1.6rem; /* Increased font size */
-  color: #333; /* Darker color for heading */
-  font-weight: 600;
-  margin-bottom: 10px;
-  display: flex;
-  align-items: center;
-  gap: 6px;
+    font-size: 1.6rem; /* Increased font size */
+    color: #333; /* Darker color for heading */
+    font-weight: 600;
+    margin-bottom: 10px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
 }
 
 .welcome-text-content p {
-  font-size: 0.95rem; /* Slightly larger font size */
-  color: #666;
-  margin-bottom: 20px; /* Increased margin */
+    font-size: 0.95rem; /* Slightly larger font size */
+    color: #666;
+    margin-bottom: 20px; /* Increased margin */
 }
 
 .highlight {
-  font-weight: bold;
-  color: #3b5998; /* Specific blue from the image */
+    font-weight: bold;
+    color: #3b5998; /* Specific blue from the image */
 }
 
 .view-badges-button {
-  padding: 10px 20px; /* Adjusted padding */
-  border: none; /* No border as per image */
-  border-radius: 8px; /* More rounded corners */
-  background: #e0f2f7; /* Light blue background */
-  color: #3b5998; /* Darker blue text */
-  font-weight: 500;
-  cursor: pointer;
-  font-size: 0.9rem;
-  transition: background-color 0.2s ease;
+    padding: 10px 20px; /* Adjusted padding */
+    border: none; /* No border as per image */
+    border-radius: 8px; /* More rounded corners */
+    background: #e0f2f7; /* Light blue background */
+    color: #3b5998; /* Darker blue text */
+    font-weight: 500;
+    cursor: pointer;
+    font-size: 0.9rem;
+    transition: background-color 0.2s ease;
 }
 
 .view-badges-button:hover {
-  background: #d1eff7; /* Lighter hover effect */
+    background: #d1eff7; /* Lighter hover effect */
 }
 
 .welcome-image img {
-  max-height: 150px; /* Adjusted image size */
-  width: auto;
-  flex-shrink: 0;
+    max-height: 150px; /* Adjusted image size */
+    width: auto;
+    flex-shrink: 0;
 }
 
 /* Summary Cards Container */
 .summary-cards-container,
 .summary-cards-lower {
-  display: grid;
-  grid-template-columns: 1fr;
-  gap: 20px;
-  flex: 1;
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 20px;
+    flex: 1;
 }
 
 @media (min-width: 640px) {
-  .summary-cards-container,
-  .summary-cards-lower {
-    grid-template-columns: repeat(2, 1fr);
-  }
+    .summary-cards-container,
+    .summary-cards-lower {
+        grid-template-columns: repeat(2, 1fr);
+    }
 }
 
 /* Summary Card Base */
 .summary-card {
-  padding: 20px;
-  border-radius: 12px;
-  background: #fff;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
-  display: flex;
-  gap: 15px;
-  position: relative;
-  align-items: center;
+    padding: 20px;
+    border-radius: 12px;
+    background: #fff;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+    display: flex;
+    gap: 15px;
+    position: relative;
+    align-items: center;
 }
 
 /* Specific Summary Card Backgrounds (with subtle gradients as in image) */
@@ -121,15 +123,15 @@
 
 /* Icon Wrappers */
 .summary-icon-wrapper {
-  width: 50px;
-  height: 50px;
-  border-radius: 50%;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  font-size: 1.8rem; /* Adjusted font size for icons */
-  color: #fff;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1); /* Added shadow to icons */
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 1.8rem; /* Adjusted font size for icons */
+    color: #fff;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1); /* Added shadow to icons */
 }
 
 .green { background: #4CAF50; }
@@ -139,322 +141,389 @@
 
 /* Icon Size */
 .icon-large {
-  width: 24px;
-  height: 24px;
+    width: 24px;
+    height: 24px;
 }
 
 /* Text Details */
 .summary-label {
-  font-size: 0.85rem;
-  color: #888; /* Adjusted color */
-  margin-bottom: 5px;
+    font-size: 0.85rem;
+    color: #888; /* Adjusted color */
+    margin-bottom: 5px;
 }
 
 .summary-value {
-  font-size: 1.5rem; /* Adjusted font size */
-  font-weight: 600;
-  color: #333;
+    font-size: 1.5rem; /* Adjusted font size */
+    font-weight: 600;
+    color: #333;
 }
 
 /* More Options Icon */
 .more-options-icon {
-  position: absolute;
-  top: 15px;
-  right: 15px;
-  width: 20px; /* Adjusted size */
-  height: 20px;
-  color: #999;
-  cursor: pointer;
+    position: absolute;
+    top: 15px;
+    right: 15px;
+    width: 20px; /* Adjusted size */
+    height: 20px;
+    color: #999;
+    cursor: pointer;
 }
 
 /* Content Row */
 .dashboard-content-row {
-  display: flex;
-  flex-direction: column;
-  gap: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
 }
 
 @media (min-width: 1024px) {
-  .dashboard-content-row {
-    flex-direction: row;
-  }
+    .dashboard-content-row {
+        flex-direction: row;
+    }
+}
+
+/* Wrapper for Revenue and Growth cards (siblings) */
+.revenue-growth-wrapper {
+    flex: 2; /* Takes up 2/3 of the space in the dashboard-content-row */
+    display: flex;
+    flex-direction: column; /* Stack vertically on small screens */
+    gap: 20px;
+}
+
+@media (min-width: 768px) { /* Adjust breakpoint as needed */
+    .revenue-growth-wrapper {
+        flex-direction: row; /* Arrange horizontally on larger screens */
+        align-items: stretch; /* Make children stretch to fill height */
+    }
 }
 
 /* Revenue Card */
 .revenue-card {
-  flex: 2;
-  background: #fff;
-  border-radius: 12px;
-  padding: 20px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+    flex: 2; /* Takes up more space within the wrapper */
+    background: #fff;
+    border-radius: 12px;
+    padding: 20px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+    display: flex;
+    flex-direction: column;
+    gap: 20px; /* Gap between title/legend and chart area */
 }
 
 .revenue-card h3 {
-  margin-bottom: 15px; /* Adjusted margin */
-  font-size: 1.2rem;
-  color: #333;
+    margin-bottom: 0;
+    font-size: 1.2rem;
+    color: #333;
 }
 
 .revenue-legend {
-  display: flex;
-  gap: 20px;
-  font-size: 0.85rem;
-  color: #666; /* Adjusted color */
-  margin-bottom: 20px; /* Adjusted margin */
+    display: flex;
+    gap: 20px;
+    font-size: 0.85rem;
+    color: #666;
+    margin-bottom: 0; /* Handled by parent gap */
 }
 
 .legend-item {
-  display: flex;
-  align-items: center;
+    display: flex;
+    align-items: center;
 }
 
 .legend-item .dot {
-  width: 8px; /* Adjusted size */
-  height: 8px;
-  border-radius: 50%;
-  margin-right: 5px;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    margin-right: 5px;
 }
 
-.dot.blue { background: #536DFE; } /* Adjusted blue to match image */
-.dot.cyan { background: #4DD0E1; } /* Adjusted cyan to match image */
+.dot.blue { background: #536DFE; }
+.dot.cyan { background: #4DD0E1; }
 
 .revenue-chart {
-  display: flex;
-  height: 200px;
-  position: relative;
-  padding-bottom: 25px; /* Adjusted padding */
-  padding-right: 10px; /* Added padding for Y-axis */
+    display: flex;
+    flex-grow: 1;
+    position: relative; /* Needed for absolute positioning of zero-line and bars */
+    padding-bottom: 25px; /* Space for month labels */
+    height: 200px; /* Fixed height for the chart area to control bar scaling */
+    border-bottom: 1px solid #eee; /* Horizontal line at the bottom of the chart area */
 }
 
 .y-axis {
-  display: flex;
-  flex-direction: column-reverse;
-  justify-content: space-between;
-  width: 40px;
-  font-size: 0.75rem;
-  color: #888;
-  border-right: 1px solid #eee; /* Added border */
-  padding-right: 10px; /* Adjusted padding */
-  flex-shrink: 0; /* Prevent shrinking */
+    display: flex;
+    flex-direction: column-reverse; /* To place 30 at top, -20 at bottom */
+    justify-content: space-between;
+    width: 40px;
+    font-size: 0.75rem;
+    color: #888;
+    padding-right: 10px;
+    flex-shrink: 0;
+    position: relative; /* For horizontal lines */
 }
 
 .y-axis span {
-  height: calc(100% / 5); /* Adjusted for 5 divisions */
-  display: flex;
-  align-items: center;
-  justify-content: flex-end;
-  transform: translateY(50%); /* Center label with line */
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    height: calc(100% / 5); /* Divide height by number of segments (30 to -20 is 5 segments) */
+    transform: translateY(50%); /* Center text vertically on the line */
 }
-.y-axis span:first-child { transform: translateY(0); } /* Adjust top label */
-.y-axis span:last-child { transform: translateY(-100%); } /* Adjust bottom label */
+
+.y-axis span:nth-child(1) { transform: translateY(0%); } /* 30 */
+.y-axis span:nth-child(2) { transform: translateY(0%); } /* 20 */
+.y-axis span:nth-child(3) { transform: translateY(0%); } /* 10 */
+.y-axis span:nth-child(4) { transform: translateY(0%); } /* 0 */
+.y-axis span:nth-child(5) { transform: translateY(0%); } /* -10 */
+.y-axis span:nth-child(6) { transform: translateY(0%); } /* -20 */
 
 
 .bars-container {
-  flex-grow: 1;
-  display: flex;
-  align-items: flex-end;
-  justify-content: space-around;
-  padding: 0 10px;
-  border-bottom: 1px solid #eee; /* Added border */
+    flex-grow: 1;
+    display: flex;
+    justify-content: space-around;
+    padding: 0 10px;
+    position: relative; /* For positioning bars */
 }
 
 .bar-group {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  width: 25px; /* Adjusted width */
-  position: relative;
-  justify-content: flex-end;
-  margin: 0 4px; /* Added margin between groups */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 25px; /* Fixed width for each bar group */
+    position: relative; /* For absolute positioning of bars within the group */
+    height: 100%; /* Take full height of bars-container */
+    justify-content: flex-end; /* Align month labels at the bottom */
 }
 
 .bar {
-  width: 100%;
-  border-radius: 4px 4px 0 0;
-  margin-bottom: 2px;
-  transition: height 0.7s ease-out; /* Changed to ease-out for smoother animation */
+    width: 100%;
+    position: absolute; /* Position bars relative to bar-group */
+    transition: height 0.7s ease-out;
 }
 
-.blue-bar { background: #536DFE; } /* Adjusted blue to match image */
-.cyan-bar { background: #4DD0E1; } /* Adjusted cyan to match image */
+.blue-bar { background: #536DFE; }
+.cyan-bar { background: #4DD0E1; }
 
 .month {
-  position: absolute;
-  bottom: -20px;
-  font-size: 0.75rem;
-  color: #666;
+    position: absolute;
+    bottom: -20px; /* Position below the chart area */
+    font-size: 0.75rem;
+    color: #666;
+    white-space: nowrap;
+}
+
+.zero-line {
+    position: absolute;
+    left: 40px; /* Aligns with the end of y-axis labels */
+    right: 0;
+    height: 1px;
+    background-color: #eee;
+    z-index: 1; /* Ensure it's above bars initially */
 }
 
 /* Right Column */
 .dashboard-right-column {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  gap: 20px;
+    flex: 1; /* Takes up 1/3 of the space in the dashboard-content-row */
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
 }
 
 /* Growth Card */
 .growth-card {
-  padding: 25px; /* Adjusted padding */
-  border-radius: 12px;
-  text-align: center;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+    flex: 1; /* Takes up remaining space within the wrapper */
+    background: #fff;
+    border-radius: 12px;
+    padding: 25px;
+    text-align: center;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between; /* Distribute content vertically */
+    min-width: 180px; /* Ensure it doesn't get too small */
+    /* Remove fixed height if any, let flexbox manage it */
 }
 
 .growth-header {
-  display: flex;
-  justify-content: flex-end;
-  margin-bottom: 15px; /* Adjusted margin */
+    display: flex;
+    justify-content: flex-end;
+    /* margin-bottom: 15px; */
 }
 
 .select-wrapper {
-  position: relative;
-  display: inline-block; /* Ensure wrapper respects content width */
+    position: relative;
+    display: inline-block;
 }
 
 .year-select {
-  padding: 5px 10px; /* Adjusted padding */
-  border: 1px solid #ddd; /* Adjusted border color */
-  border-radius: 5px; /* Adjusted border radius */
-  appearance: none;
-  background-color: #fff;
-  cursor: pointer;
-  font-size: 0.85rem;
-  color: #555; /* Adjusted text color */
-  outline: none; /* Remove default focus outline */
-  padding-right: 30px; /* Space for custom arrow */
+    padding: 5px 10px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    appearance: none;
+    background-color: #fff;
+    cursor: pointer;
+    font-size: 0.85rem;
+    color: #555;
+    outline: none;
+    padding-right: 30px;
 }
 
 .year-select:focus {
-  box-shadow: 0 0 0 2px rgba(33, 150, 243, 0.5); /* Blue ring on focus */
+    box-shadow: 0 0 0 2px rgba(33, 150, 243, 0.5);
 }
 
 .select-wrapper::after {
-  content: '';
-  position: absolute;
-  right: 10px;
-  top: 50%;
-  transform: translateY(-50%);
-  width: 0;
-  height: 0;
-  border-left: 5px solid transparent;
-  border-right: 5px solid transparent;
-  border-top: 5px solid #555; /* Color of the arrow */
-  pointer-events: none;
+    content: '';
+    position: absolute;
+    right: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 0;
+    height: 0;
+    border-left: 5px solid transparent;
+    border-right: 5px solid transparent;
+    border-top: 5px solid #555;
+    pointer-events: none;
 }
 
 .growth-chart-container {
-  width: 150px; /* Adjusted size */
-  height: 150px;
-  position: relative;
+    margin: 100px auto; /* Adjusted margins to give more vertical space */
+    width: 150px;
+    height: 150px;
+    position: relative;
+    flex-shrink: 0;
 }
 
 .circular-chart {
-  width: 100%;
-  height: 100%;
+    width: 100%;
+    height: 100%;
 }
 
 .circle-bg {
-  fill: none;
-  stroke: #eee;
-  stroke-width: 3.8;
+    fill: none;
+    stroke: #eee;
+    stroke-width: 3.8;
 }
 
 .circle {
-  fill: none;
-  stroke: #7B1FA2; /* Adjusted purple to match image */
-  stroke-width: 3.8;
-  stroke-linecap: round;
-  transform: rotate(-90deg); /* Ensure correct rotation */
-  transform-origin: 50% 50%; /* Ensure rotation from center */
+    fill: none;
+    stroke: #7B1FA2;
+    stroke-width: 3.8;
+    stroke-linecap: round;
+    transform: rotate(-90deg);
+    transform-origin: 50% 50%;
 }
 
 .percentage {
-  fill: #333;
-  font-size: 0.5em;
-  text-anchor: middle;
-  font-weight: bold;
+    fill: #333;
+    font-size: 0.5em;
+    text-anchor: middle;
+    font-weight: bold;
 }
 
 .growth-label {
-  font-size: 0.9rem;
-  color: #666;
-  margin-top: 5px; /* Adjusted margin */
+    font-size: 0.9rem;
+    color: #666;
+    margin-top: 5px;
 }
 
 .company-growth {
-  font-size: 0.85rem;
-  color: #4CAF50;
-  margin-top: 10px; /* Adjusted margin */
-  font-weight: 500;
+    font-size: 0.85rem;
+    color: #4CAF50;
+    margin-top: 5px; /* Reduced margin */
+    font-weight: 500;
 }
 
 .growth-financials {
-  display: flex;
-  justify-content: space-around;
-  width: 100%; /* Ensure full width */
-  font-size: 0.85rem;
-  color: #666;
-  margin-top: 20px; /* Adjusted margin */
+    display: flex;
+    justify-content: space-around;
+    width: 100%;
+    font-size: 0.85rem;
+    color: #666;
+    margin-top: 15px; /* Adjusted margin */
 }
 
 .value {
-  font-weight: 600;
-  color: #333;
+    font-weight: 600;
+    color: #333;
 }
 
 /* Leads Card */
 .leads-card {
-  background: #fff; /* Changed background to white as per image */
-  padding: 20px;
-  border-radius: 12px;
-  position: relative;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+    background: #fff;
+    padding: 20px;
+    border-radius: 12px;
+    position: relative;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
 }
 
 .leads-card h3 {
-  font-size: 1.2rem; /* Adjusted font size */
-  color: #333;
-  margin-bottom: 5px;
+    font-size: 1.2rem;
+    color: #333;
+    margin-bottom: 5px;
 }
 
 .leads-value {
-  font-size: 2rem; /* Adjusted font size */
-  font-weight: 600;
-  color: #333;
-  margin-bottom: 15px; /* Adjusted margin */
+    font-size: 2rem;
+    font-weight: 600;
+    color: #333;
+    margin-bottom: 15px;
 }
 
 .leads-graph {
-  height: 60px;
-  display: flex;
-  align-items: flex-end;
+    height: 60px;
+    display: flex;
+    align-items: flex-end;
 }
 
 .leads-svg {
-  width: 100%;
-  height: 100%;
+    width: 100%;
+    height: 100%;
 }
 
-.leads-svg path { /* Added style for the path in leads-svg */
-  stroke: #FFBF00; /* Yellow color from image */
-  stroke-width: 2; /* Adjusted stroke width */
+.leads-svg path {
+    stroke: #FFBF00;
+    stroke-width: 2;
 }
 
 
 /* Lucide React Icon Specific Styling (for inline SVGs) */
 .inline-icon {
-  display: inline-block;
-  vertical-align: middle;
-  width: 24px;
-  height: 24px;
+    display: inline-block;
+    vertical-align: middle;
+    width: 24px;
+    height: 24px;
 }
 
 .yellow-icon {
-  color: #FFD700; /* Gold-like color for PartyPopper */
+    color: #FFD700;
 }
 
 .icon-large {
-  width: 24px;
-  height: 24px;
+    width: 24px;
+    height: 24px;
+}
+
+/* Growth Circle Animation */
+.circle {
+  fill: none;
+  stroke: #7B1FA2;
+  stroke-width: 3.8;
+  stroke-linecap: round;
+  transform: rotate(-90deg);
+  transform-origin: 50% 50%;
+  stroke-dasharray: 78, 100;
+  stroke-dashoffset: 78;
+}
+
+.animate-growth {
+  animation: grow-stroke 1s ease-out forwards;
+}
+
+@keyframes grow-stroke {
+  from {
+    stroke-dashoffset: 78;
+  }
+  to {
+    stroke-dashoffset: 0;
+  }
 }
