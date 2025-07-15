@@ -107,12 +107,15 @@ const Dashboard = () => {
 
     setIsBooking(true);
     try {
-      const res = await fetch("https://testing.erp4dentist.com/api/appointment");
+      const res = await fetch(
+        "https://testing.erp4dentist.com/api/appointment"
+      );
       const json = await res.json();
       const liveAppointments = json?.appointment?.data || [];
 
       const hasClash = liveAppointments.some((appt) => {
-        const isSameDate = appt.date_appointment === finalPayload.date_appointment;
+        const isSameDate =
+          appt.date_appointment === finalPayload.date_appointment;
         const isSameDoctor = appt.choose_doctor === finalPayload.choose_doctor;
         if (!isSameDate || !isSameDoctor) return false;
 
@@ -130,11 +133,14 @@ const Dashboard = () => {
         return;
       }
 
-      const postRes = await fetch("https://testing.erp4dentist.com/api/addappointment", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(finalPayload),
-      });
+      const postRes = await fetch(
+        "https://testing.erp4dentist.com/api/addappointment",
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(finalPayload),
+        }
+      );
 
       const postResult = await postRes.json();
 
@@ -144,7 +150,11 @@ const Dashboard = () => {
         setFormData({ ...initialFormData });
         setErrors({});
       } else {
-        Swal.fire("Error", postResult?.message || "Appointment failed", "error");
+        Swal.fire(
+          "Error",
+          postResult?.message || "Appointment failed",
+          "error"
+        );
       }
     } catch (err) {
       console.error("Add appointment failed:", err);
@@ -157,7 +167,9 @@ const Dashboard = () => {
   useEffect(() => {
     const fetchDashboardData = async () => {
       try {
-        const res = await fetch("https://testing.erp4dentist.com/api/dashboard");
+        const res = await fetch(
+          "https://testing.erp4dentist.com/api/dashboard"
+        );
         const json = await res.json();
         if (json && json.data) {
           setDashboardData(json.data);
@@ -172,39 +184,124 @@ const Dashboard = () => {
     fetchDashboardData();
   }, []);
 
+  useEffect(() => {
+    const tutorialModal = document.getElementById("tutorialModal");
+    const iframe = tutorialModal?.querySelector("iframe");
+
+    const stopVideoOnClose = () => {
+      if (iframe) {
+        iframe.src = iframe.src;
+      }
+    };
+
+    tutorialModal?.addEventListener("hidden.bs.modal", stopVideoOnClose);
+
+    return () => {
+      tutorialModal?.removeEventListener("hidden.bs.modal", stopVideoOnClose);
+    };
+  }, []);
+
   return (
     <div className="app-layout">
-      <Sidebar isOpen={sidebarOpen} onToggleSidebar={toggleSidebar} sidebarOpen={sidebarOpen} />
+      <Sidebar
+        isOpen={sidebarOpen}
+        onToggleSidebar={toggleSidebar}
+        sidebarOpen={sidebarOpen}
+      />
       <div className="main-content">
         <Navbar onToggleSidebar={toggleSidebar} sidebarOpen={sidebarOpen} />
 
         <div className="container1">
-          <div style={{ marginRight: "20px", display: "flex", flexDirection: "column", height: "70px" }}>
-            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-              <h2>Welcome Sinnamuth</h2>
+          <div
+            style={{
+              marginRight: "20px",
+              display: "flex",
+              flexDirection: "column",
+              height: "70px",
+            }}
+          >
+            <div
+              style={{
+                display: "flex",
+                justifyContent: "space-between",
+                alignItems: "center",
+              }}
+            >
+              <div className="d-flex align-items-center gap-3">
+                <h2
+                  style={{
+                    margin: 0,
+                    fontWeight: "600",
+                    fontSize: "24px",
+                    color: "#333",
+                  }}
+                >
+                  Welcome Sinnamuth
+                </h2>
+                <button
+                  className="btn custom-watch-btn d-flex align-items-center gap-2 "
+                  style={{
+                    fontSize: "14px",
+                    fontWeight: "500",
+                    padding: "6px 12px",
+                    borderRadius: "6px",
+                  }}
+                  data-bs-toggle="modal"
+                  data-bs-target="#tutorialModal"
+                >
+                  <i className="fas fa-play-circle fa-lg"></i>
+                  Watch Tutorial
+                </button>
+
+              </div>
+
               <div className="d-flex gap-2">
                 <button
                   id="add-appointment"
                   className="btn btn-primary d-flex align-items-center"
                   onClick={() => setShowModal(true)}
                 >
-                  <Image src={headingbtnlogo} alt="Add Icon" width={20} height={20} style={{ marginRight: "6px" }} />
+                  <Image
+                    src={headingbtnlogo}
+                    alt="Add Icon"
+                    width={20}
+                    height={20}
+                    style={{ marginRight: "6px" }}
+                  />
                   Add Appointment
                 </button>
+
                 <button
                   id="start-tour-btn"
                   onClick={startTour}
                   className="btn btn-outline-primary d-flex align-items-center"
                 >
                   Start Tour
-                  <Image src={arrow} alt="Arrow Icon" width={25} height={25} style={{ marginLeft: "6px" }} />
+                  <Image
+                    src={arrow}
+                    alt="Arrow Icon"
+                    width={25}
+                    height={25}
+                    style={{ marginLeft: "6px" }}
+                  />
                 </button>
               </div>
             </div>
-            <p style={{ color: "#555", fontSize: "15px" }}>Track your appointments</p>
+
+            <p style={{ color: "#555", fontSize: "15px" }}>
+              Track your appointments
+            </p>
           </div>
 
-          <div className="d-flex" style={{ padding: "0px 0px 0px 5px", gap: "20px", width: "100%", maxWidth: "100%" }}>
+          <div
+            className="d-flex"
+            style={{
+              padding: "0px 0px 0px 5px",
+              gap: "20px",
+              width: "100%",
+              maxWidth: "100%",
+            }}
+          >
             <div style={{ flex: 1 }}>
               <CardGrid dashboardCounts={dashboardData || {}} />
               <PatientTable appointments={dashboardData?.appointment || []} />
@@ -214,6 +311,42 @@ const Dashboard = () => {
         </div>
 
         <Footer />
+
+        <div
+          className="modal fade"
+          id="tutorialModal"
+          tabIndex="-1"
+          aria-labelledby="tutorialModalLabel"
+          aria-hidden="true"
+        >
+          <div className="modal-dialog modal-lg modal-dialog-centered">
+            <div className="modal-content">
+              <div className="modal-header">
+                <h5 className="modal-title" id="tutorialModalLabel">
+                  Video Tutorial
+                </h5>
+                <button
+                  type="button"
+                  className="btn-close"
+                  data-bs-dismiss="modal"
+                  aria-label="Close"
+                ></button>
+              </div>
+              <div className="modal-body p-0">
+                <div className="ratio ratio-16x9">
+                  <iframe
+                    width="560"
+                    height="315"
+                    src="https://www.youtube.com/embed/pguTCgMeGqg?si=OVOXvgTWhCJfToUJ"
+                    title="YouTube tutorial"
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                    allowFullScreen
+                  ></iframe>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
 
         {showModal && (
           <AppModel
