@@ -16,6 +16,8 @@ export const AppointmentProvider = ({ children }) => {
   const [editPatient, setEditPatient] = useState(null);
   const [editDoctors, setEditDoctors] = useState(null);
 
+  const [appointment_details, SetAppointment_details] = useState([]);
+
   // Doctors data state
   const [doctors, setDoctors] = useState([]);
 
@@ -62,7 +64,7 @@ export const AppointmentProvider = ({ children }) => {
             note: doctor.note,
             signature: doctor.signature,
             // Assuming your backend sends 'color' field for the doctor card border
-            color: doctor.doc_cal_color // Use doc_cal_color for the card border
+            color: doctor.doc_cal_color, // Use doc_cal_color for the card border
           };
         });
         setDoctors(transformedData);
@@ -160,19 +162,100 @@ export const AppointmentProvider = ({ children }) => {
     };
 
     fetchData();
-  }, []); // Empty dependency array means this runs once on mount
+  }, []);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        setLoading(true); // Set main loading for initial fetches
+
+        const response = await fetch(
+          "https://testing.erp4dentist.com/api/patientinfo/MTE="
+        );
+
+        if (!response.ok) {
+          const errorText = await response.text();
+          throw new Error(
+            `HTTP error! Status: ${response.status}. Response: ${errorText}`
+          );
+        }
+
+        const data = await response.json();
+
+        if (data && data.error) {
+          throw new Error(`PHP Backend Error: ${data.error}`);
+        }
+        const transformedData = data.appointment_details.map((patient) => {
+          const fullStartTimeStr = `${patient.date_appointment}T${patient.intime}:00`;
+          const fullEndTimeStr = `${patient.date_appointment}T${patient.outtime}:00`;
+
+          const startTime = new Date(fullStartTimeStr);
+          const endTime = new Date(fullEndTimeStr);
+
+          if (isNaN(startTime.getTime())) {
+            console.warn(
+              `Invalid startTime for patient ID ${patient.id}: ${fullStartTimeStr}`
+            );
+          }
+          if (isNaN(endTime.getTime())) {
+            console.warn(
+              `Invalid endTime for patient ID ${patient.id}: ${fullEndTimeStr}`
+            );
+          }
+
+          return {
+            id: patient.id,
+            title: patient.title,
+            firstname: patient.firstname,
+            lastname: patient.lastname,
+            date_appointment: patient.date_appointment,
+            intime: "11:02",
+            outtime: "12:03",
+            countrycode: "+91",
+            contact_no: "8237108278",
+            email: "chokidhani@gmail.com",
+            status: "1",
+            appointmentcount: "6",
+            choose_doctor: "sabari",
+            reason_appointment: "Checkup",
+            note: null,
+            chief_complaint: "Discolored teeth",
+            created_at: "2025-04-17T05:33:49.000000Z",
+            updated_at: "2025-04-17T05:33:49.000000Z",
+            branch: 1,
+            appo_doc_id: "1",
+            age: "30",
+            gender: "male",
+            old_patient: null,
+          };
+        });
+        SetAppointment_details(transformedData);
+        setError(null);
+      } catch (err) {
+        console.error("Error fetching calendar data:", err);
+        setError(err.message);
+        SetAppointment_details([]);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchData();
+  }, []);
 
   // Doctor POST/PUT API (This function will be provided via context)
   // It's a regular async function, NOT a useEffect.
- const AddDoctorApi = async (jsonData) => { // Changed formData to jsonData
-  console.log(jsonData);
+  const AddDoctorApi = async (jsonData) => {
+    // Changed formData to jsonData
+    console.log(jsonData);
     try {
       setAddingDocLoading(true);
       setAddingDocError(null); // Clear previous errors
 
       const url = "https://testing.erp4dentist.com/api/doctor/store"; // Add URL
 
-      const response = await axios.post(url, jsonData, { // Send JSON directly
+      const response = await axios.post(url, jsonData, {
+        // Send JSON directly
         headers: {
           "Content-Type": "application/json", // Set content type to application/json
         },
@@ -238,7 +321,6 @@ export const AppointmentProvider = ({ children }) => {
       setAddingDocLoading(false);
     }
   };
-
 
   return (
     <MyContext.Provider
