@@ -3,10 +3,10 @@ import "./Container.css";
 import Patient from "./Patient";
 import Card from "./Card";
 import EMR from "./EMR";
-import BookAppointmentModal from "./BookAppointmentModal"; // Import modal component
+import BookAppointmentModal from "./BookAppointmentModal";
 
-const Container = ({ activeTab, setActiveTab }) => {
-  const [bookModalOpen, setBookModalOpen] = useState(false); // State to control modal
+const Container = ({ activeTab, setActiveTab, patient_details, historyData }) => {
+  const [bookModalOpen, setBookModalOpen] = useState(false);
 
   const handleBookClick = () => {
     setBookModalOpen(true);
@@ -38,17 +38,28 @@ const Container = ({ activeTab, setActiveTab }) => {
               </button>
             </div>
 
-            <Card />
+            {/* ✅ Pass patient_details and optional historyData */}
+            <Card patient_details={patient_details} historyData={historyData} />
           </div>
         </div>
       )}
 
       {activeTab === "Patient" && (
-        <Patient activeTab={activeTab} setActiveTab={setActiveTab} handleBookClick={handleBookClick}/>
+        <Patient
+          activeTab={activeTab}
+          setActiveTab={setActiveTab}
+          handleBookClick={handleBookClick}
+          patient_details={patient_details}
+        />
       )}
 
       {activeTab === "EMR" && (
-        <EMR activeTab={activeTab} setActiveTab={setActiveTab} handleBookClick={handleBookClick}/>
+        <EMR
+          activeTab={activeTab}
+          setActiveTab={setActiveTab}
+          handleBookClick={handleBookClick}
+          patient_details={patient_details}
+        />
       )}
 
       {bookModalOpen && (

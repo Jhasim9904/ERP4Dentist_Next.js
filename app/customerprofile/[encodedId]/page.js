@@ -2,14 +2,14 @@
 
 import React, { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
-import Patient from "@/components/CustomerProfile/Patient";
-import { DefaultCustomerProfilePage } from "../page"; // 👈 Reuse default version
+import Container from "@/components/Customerprofile/Container";
+import { DefaultCustomerProfilePage } from "../page"; // 👈 Fallback default
 
 export default function PatientProfilePage() {
   const { encodedId } = useParams(); // e.g. MTk= is 19
   const [patientDetails, setPatientDetails] = useState(null);
   const [loading, setLoading] = useState(true);
-  const [activeTab, setActiveTab] = useState("Patient");
+  const [activeTab, setActiveTab] = useState("History");
 
   useEffect(() => {
     const fetchPatientData = async () => {
@@ -19,19 +19,18 @@ export default function PatientProfilePage() {
         );
         const data = await response.json();
 
-        // ✅ If no valid data found, fallback
         if (
           !data ||
           !data.patientinformations ||
           data.patientinformations.length === 0
         ) {
-          setPatientDetails(null); // trigger fallback
+          setPatientDetails(null); // Fallback
         } else {
-          setPatientDetails(data.patientinformations[0]); // valid patient
+          setPatientDetails(data.patientinformations[0]); // ✅ valid patient
         }
       } catch (error) {
         console.error("Error fetching patient info", error);
-        setPatientDetails(null); // trigger fallback
+        setPatientDetails(null);
       } finally {
         setLoading(false);
       }
@@ -41,28 +40,27 @@ export default function PatientProfilePage() {
   }, [encodedId]);
 
   const handleBookClick = () => {
-    // Optional: navigate to booking flow
+    // Optional booking action
   };
 
   if (loading) return <p>Loading patient details...</p>;
 
-  // ❌ Fallback to default profile if patient not found
   if (!patientDetails) {
     return <DefaultCustomerProfilePage />;
   }
 
+  // ✅ This renders full tab layout with History, Patient, EMR
   return (
-    <div>
-      {activeTab === "Patient" && (
-        <Patient
-          activeTab={activeTab}
-          setActiveTab={setActiveTab}
-          handleBookClick={handleBookClick}
-          patient_details={patientDetails} // ✅ valid patient object
-        />
-      )}
-    </div>
+    <Container
+      activeTab={activeTab}
+      setActiveTab={setActiveTab}
+      patient_details={patientDetails}
+      historyData={[
+        {
+          date: patientDetails.startDate,
+          notes: `Visited for ${patientDetails.appointment_type}`,
+        },
+      ]}
+    />
   );
 }
-
-//works till fallback 
