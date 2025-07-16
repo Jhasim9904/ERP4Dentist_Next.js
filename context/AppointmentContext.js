@@ -1,3 +1,4 @@
+//context/AppointmentContext.js
 "use client";
 import { createContext, useState, useEffect } from "react";
 
@@ -72,6 +73,7 @@ export const CustomerInfo = ({ children }) => {
             age: patient.age,
             gender: patient.gender,
             old_patient: patient.old_patient,
+            dateofbirth: patient.dateofbirth,
           };
         });
 

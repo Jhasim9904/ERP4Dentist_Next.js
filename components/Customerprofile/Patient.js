@@ -1,3 +1,4 @@
+//Customerprofile/Patient.js
 import React, { useState,useContext } from "react";
 import "./Patient.css";
 import { MyContext } from "@/context/AppointmentContext";
@@ -147,7 +148,7 @@ const Patient = ({ activeTab, setActiveTab,handleBookClick }) => {
               <label>D.O.B</label>
               <input
                 type="date"
-                value={formData.dob}
+                value={patient_details.dateofbirth}
                 onChange={(e) => handleChange("dob", e.target.value)}
               />
             </div>
