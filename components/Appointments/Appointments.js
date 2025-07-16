@@ -1,7 +1,6 @@
 "use client";
 import React, { useEffect, useState } from "react";
 import Image from "next/image";
-import Link from "next/link";
 import axios from "axios";
 import Swal from "sweetalert2";
 import { useRouter } from "next/navigation";
@@ -26,18 +25,16 @@ const doctorIdMap = {
 
 const Appointments = () => {
   const router = useRouter();
-  // const [formData,setFormData] = useState({})
+
   const [appointments, setAppointments] = useState([]);
   const [filteredAppointments, setFilteredAppointments] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [showModal, setShowModal] = useState(false);
   const [loading, setLoading] = useState(true);
-
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");
-
   const [page, setPage] = useState(1);
-  const rowsPerPage = 5;
+  const rowsPerPage = 10;
 
   const initialFormData = {
     date: "",
@@ -59,10 +56,9 @@ const Appointments = () => {
     note: "",
   };
 
-  const [formData, setFormData] = useState(initialFormData); 
+  const [formData, setFormData] = useState(initialFormData);
   const [errors, setErrors] = useState({});
-  const [isBooking, setIsBooking] = useState(false); // ✅ New state
-
+  const [isBooking, setIsBooking] = useState(false);
 
   useEffect(() => {
     fetchAppointments();
@@ -71,10 +67,8 @@ const Appointments = () => {
   const fetchAppointments = async () => {
     setLoading(true);
     try {
-      const res = await axios.get(
-        "https://testing.erp4dentist.com/api/appointment"
-      );
-      const data = res.data?.appointment?.data || [];
+      const res = await axios.get("https://testing.erp4dentist.com/api/appointment");
+      const data = res.data?.appointment || [];
       setAppointments(data);
       setFilteredAppointments(data);
     } catch (err) {
@@ -86,35 +80,31 @@ const Appointments = () => {
   };
 
   useEffect(() => {
-  let results = [...appointments];
+    let results = [...appointments];
 
-  if (searchTerm) {
-    results = results.filter((p) =>
-      `${p.firstname} ${p.lastname} ${p.contact_no} ${p.choose_doctor}`
-        .toLowerCase()
-        .includes(searchTerm.toLowerCase())
-    );
-  }
+    if (searchTerm) {
+      results = results.filter((p) =>
+        `${p.firstname || ""} ${p.lastname || ""} ${p.contact_no || ""} ${p.choose_doctor || ""}`
+          .toLowerCase()
+          .includes(searchTerm.toLowerCase())
+      );
+    }
 
-  if (startDate || endDate) {
-  results = results.filter((p) => {
-    if (!p.date_appointment) return false;
+    if (startDate || endDate) {
+      results = results.filter((p) => {
+        if (!p.date_appointment) return false;
+        const appointmentDate = new Date(`${p.date_appointment}T00:00:00`);
+        const fromDate = startDate ? new Date(`${startDate}T00:00:00`) : null;
+        const toDate = endDate ? new Date(`${endDate}T23:59:59`) : null;
+        if (fromDate && appointmentDate < fromDate) return false;
+        if (toDate && appointmentDate > toDate) return false;
+        return true;
+      });
+    }
 
-    const appointmentDate = new Date(`${p.date_appointment}T00:00:00`);
-    const fromDate = startDate ? new Date(`${startDate}T00:00:00`) : null;
-    const toDate = endDate ? new Date(`${endDate}T23:59:59`) : null;
-
-    if (fromDate && appointmentDate < fromDate) return false;
-    if (toDate && appointmentDate > toDate) return false;
-
-    return true;
-  });
-}
-
-  setFilteredAppointments(results);
-  setPage(1);
-}, [searchTerm, startDate, endDate, appointments]);
-
+    setFilteredAppointments(results);
+    setPage(1);
+  }, [searchTerm, startDate, endDate, appointments]);
 
   const indexOfLast = page * rowsPerPage;
   const indexOfFirst = indexOfLast - rowsPerPage;
@@ -140,10 +130,14 @@ const Appointments = () => {
   };
 
   const handleEdit = (item) => {
-    console.log("this is item",item);
-    setFormData({item});
-    console.log("this is form data",formData);
+    setFormData(item);
     router.push("/updateapt");
+  };
+
+  const handleViewClick = (appointmentId) => {
+    if (!appointmentId) return;
+    const encodedId = btoa(appointmentId.toString());
+    router.push(`/customerprofile/${encodedId}`);
   };
 
   const handleChange = (e) => {
@@ -189,66 +183,48 @@ const Appointments = () => {
       branch: parseInt(formData.branch),
     };
 
-    // Convert time strings to Date objects for comparison
     const parseTime = (t) => new Date(`1970-01-01T${t}:00`);
-
     const newStart = parseTime(finalPayload.intime);
     const newEnd = parseTime(finalPayload.outtime);
-    setIsBooking(true); // ✅ START SPINNER
+    setIsBooking(true);
 
     try {
-      // ✅ Always get latest appointments from live API
-      const res = await axios.get(
-        "https://testing.erp4dentist.com/api/appointment"
-      );
+      const res = await axios.get("https://testing.erp4dentist.com/api/appointment");
       const liveAppointments = res.data?.appointment?.data || [];
 
       const hasClash = liveAppointments.some((appt) => {
-        const isSameDate =
-          appt.date_appointment === finalPayload.date_appointment;
+        const isSameDate = appt.date_appointment === finalPayload.date_appointment;
         const isSameDoctor = appt.choose_doctor === finalPayload.choose_doctor;
-
         if (!isSameDate || !isSameDoctor) return false;
-
         const existingStart = parseTime(appt.intime);
         const existingEnd = parseTime(appt.outtime);
-
         return newStart < existingEnd && newEnd > existingStart;
       });
 
       if (hasClash) {
         Swal.fire({
           title: "Time Slot Unavailable",
-          text: `Selected time slot is already booked for ${finalPayload.choose_doctor}. Please choose a different time.`,
+          text: `Selected time slot is already booked for ${finalPayload.choose_doctor}.`,
           icon: "error",
-          customClass: {
-            container: "custom-swal-container",
-          },
+          customClass: { container: "custom-swal-container" },
         });
         return;
       }
 
-      // ✅ No clash, proceed to add appointment
       const postRes = await axios.post(
         "https://testing.erp4dentist.com/api/addappointment",
         finalPayload,
-        {
-          headers: { "Content-Type": "application/json" },
-        }
+        { headers: { "Content-Type": "application/json" } }
       );
 
       if (postRes.status === 200 || postRes.data?.status === "success") {
-        await fetchAppointments(); // refresh local state
+        await fetchAppointments();
         Swal.fire("Success", "Appointment added successfully", "success");
         setShowModal(false);
         setFormData({ ...initialFormData });
         setErrors({});
       } else {
-        Swal.fire(
-          "Error",
-          postRes.data?.message || "Appointment failed",
-          "error"
-        );
+        Swal.fire("Error", postRes.data?.message || "Appointment failed", "error");
       }
     } catch (err) {
       console.error("Add appointment failed:", err);
@@ -264,15 +240,10 @@ const Appointments = () => {
       <div className="appointment-header d-flex align-items-center justify-content-between flex-wrap">
         <div className="d-flex align-items-center">
           <h4 className="appointment-title mb-0 me-2">Appointment</h4>
-          <span className="count-badge">
-            {appointments.length.toString().padStart(2, "0")}
-          </span>
+          <span className="count-badge">{appointments.length.toString().padStart(2, "0")}</span>
         </div>
 
-        <div
-          className="d-flex align-items-center flex-wrap"
-          style={{ gap: "25px" }}
-        >
+        <div className="d-flex align-items-center flex-wrap" style={{ gap: "25px" }}>
           <div className="search-wrapper d-flex align-items-center">
             <input
               className="form-control search-input"
@@ -282,11 +253,8 @@ const Appointments = () => {
               onChange={(e) => setSearchTerm(e.target.value)}
             />
           </div>
-
           <div className="date-filter d-flex align-items-center">
-            <label className="me-2" style={{ color: "#8F90A6" }}>
-              Start Date
-            </label>
+            <label className="me-2" style={{ color: "#8F90A6" }}>Start Date</label>
             <input
               className="form-control date-input"
               type="date"
@@ -294,11 +262,8 @@ const Appointments = () => {
               onChange={(e) => setStartDate(e.target.value)}
             />
           </div>
-
           <div className="date-filter d-flex align-items-center">
-            <label className="me-2" style={{ color: "#8F90A6" }}>
-              End Date
-            </label>
+            <label className="me-2" style={{ color: "#8F90A6" }}>End Date</label>
             <input
               className="form-control date-input"
               type="date"
@@ -306,7 +271,6 @@ const Appointments = () => {
               onChange={(e) => setEndDate(e.target.value)}
             />
           </div>
-
           <button
             className="btn btn-primary add-btn d-flex align-items-center"
             onClick={() => setShowModal(true)}
@@ -333,13 +297,9 @@ const Appointments = () => {
           </thead>
           <tbody>
             {loading ? (
-              <tr>
-                <td colSpan={7}>Loading...</td>
-              </tr>
+              <tr><td colSpan={7}>Loading...</td></tr>
             ) : currentRows.length === 0 ? (
-              <tr>
-                <td colSpan={7}>No appointments found.</td>
-              </tr>
+              <tr><td colSpan={7}>No appointments found.</td></tr>
             ) : (
               currentRows.map((item, idx) => (
                 <tr key={item.id}>
@@ -347,34 +307,20 @@ const Appointments = () => {
                   <td>{`${item.firstname || ""} ${item.lastname || ""}`}</td>
                   <td>{item.contact_no || "—"}</td>
                   <td>{item.choose_doctor || "—"}</td>
-                  <td>{`${item.date_appointment || "—"} ${
-                    item.intime || ""
-                  }`}</td>
+                  <td>{`${item.date_appointment || "—"} ${item.intime || ""}`}</td>
                   <td>
-                    <span
-                      className={`status-badge ${
-                        item.status === "1" ? "active" : "inactive"
-                      }`}
-                    >
+                    <span className={`status-badge ${item.status === "1" ? "active" : "inactive"}`}>
                       {item.status === "1" ? "Active" : "Inactive"}
                     </span>
                   </td>
                   <td>
-                    <Link href="/customerprofile">
-                      <button className="view-btn">
-                        <Image src={Eyes} alt="view" /> View
-                      </button>
-                    </Link>
-                    <button
-                      className="edit-btn ms-2"
-                      onClick={() => handleEdit(item)}
-                    >
+                    <button className="view-btn" onClick={() => handleViewClick(item.id)}>
+                      <Image src={Eyes} alt="view" /> View
+                    </button>
+                    <button className="edit-btn ms-2" onClick={() => handleEdit(item)}>
                       <Image src={Edit} alt="edit" />
                     </button>
-                    <button
-                      className="delete-btn ms-2"
-                      onClick={() => handleDelete(item.id)}
-                    >
+                    <button className="delete-btn ms-2" onClick={() => handleDelete(item.id)}>
                       <Image src={Delete} alt="delete" />
                     </button>
                   </td>
@@ -391,13 +337,8 @@ const Appointments = () => {
           <nav>
             <ul className="pagination">
               {Array.from({ length: totalPages }, (_, i) => (
-                <li
-                  key={i}
-                  className={`page-item ${page === i + 1 ? "active" : ""}`}
-                >
-                  <button className="page-link" onClick={() => setPage(i + 1)}>
-                    {i + 1}
-                  </button>
+                <li key={i} className={`page-item ${page === i + 1 ? "active" : ""}`}>
+                  <button className="page-link" onClick={() => setPage(i + 1)}>{i + 1}</button>
                 </li>
               ))}
             </ul>
@@ -421,6 +362,3 @@ const Appointments = () => {
 };
 
 export default Appointments;
-
-
-//Working appointments section

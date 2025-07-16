@@ -4,13 +4,16 @@ import Navbar from "@/components/Navbar/Navbar";
 import Sidebar from "@/components/Sidebar/Sidebar";
 import Footer from "@/components/Footer/Footer";
 import Container from "@/components/Customerprofile/Container";
-const page = () => {
+
+// 👇 Named export for reuse in [id]/page.js
+export function DefaultCustomerProfilePage() {
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const [activeTab, setActiveTab] = useState("History");
 
   const toggleSidebar = () => {
     setSidebarOpen(!sidebarOpen);
   };
+
   return (
     <div>
       <div className="app-layout">
@@ -29,6 +32,7 @@ const page = () => {
       </div>
     </div>
   );
-};
+}
 
-export default page;
+// 👇 Default export for /customerprofile route
+export default DefaultCustomerProfilePage;

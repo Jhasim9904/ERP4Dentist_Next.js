@@ -1,10 +1,7 @@
-//Customerprofile/Patient.js
-import React, { useState,useContext } from "react";
+import React, { useState, useEffect } from "react";
 import "./Patient.css";
-import { MyContext } from "@/context/AppointmentContext";
 
-const Patient = ({ activeTab, setActiveTab,handleBookClick }) => {
-  const {patient_details} = useContext(MyContext);
+const Patient = ({ patient_details, activeTab, setActiveTab, handleBookClick }) => {
   const [formData, setFormData] = useState({
     regDate: "",
     refer: "",
@@ -24,21 +21,10 @@ const Patient = ({ activeTab, setActiveTab,handleBookClick }) => {
 
   const [sameAddress, setSameAddress] = useState(true);
 
-  const handleChange = (field, value) => {
-    setFormData((prev) => ({ ...prev, [field]: value }));
-  };
-
-  const handleAddressChange = (type, index, value) => {
-    setFormData((prev) => ({
-      ...prev,
-      [type]: prev[type].map((item, i) => (i === index ? value : item)),
-    }));
-  };
-
   const [medicalInfo, setMedicalInfo] = useState({
     bloodPressure: false,
     diabetes: false,
-    acidityUlcer: true,
+    acidityUlcer: false,
     thyroid: false,
     heartProblem: false,
     asthma: false,
@@ -58,10 +44,83 @@ const Patient = ({ activeTab, setActiveTab,handleBookClick }) => {
   });
 
   const [dental, setDental] = useState({
-    smoke: true,
+    smoke: false,
     floss: false,
     brushing: "0",
   });
+
+  // ✅ useEffect to hydrate form fields from API
+  useEffect(() => {
+    if (patient_details) {
+      setFormData({
+        regDate: patient_details?.startDate || "",
+        refer: patient_details?.appointment_type || "",
+        title: patient_details?.title || "",
+        firstName: patient_details?.first_name || "",
+        dob: patient_details?.dateofbirth || "",
+        age: patient_details?.age || "",
+        gender: patient_details?.gender || "",
+        nationality: patient_details?.nationality || "",
+        countryCode: patient_details?.country_pin || "",
+        mobile: patient_details?.contact || "",
+        profession: patient_details?.occupation || "",
+        maritalStatus: patient_details?.marriage_status || "",
+        localAddress: [
+          patient_details?.lo_doorno || "",
+          patient_details?.lo_street || "",
+          patient_details?.lo_location || "",
+          patient_details?.lo_csc || "",
+          patient_details?.lo_pincode || "",
+        ],
+        permanentAddress: [
+          patient_details?.per_doorno || "",
+          patient_details?.per_street || "",
+          patient_details?.per_location || "",
+          patient_details?.per_csc || "",
+          patient_details?.per_pincode || "",
+        ],
+      });
+
+      setMedicalInfo({
+        bloodPressure: patient_details?.bp === "on",
+        diabetes: patient_details?.diabetes === "on",
+        acidityUlcer: patient_details?.acidity === "on",
+        thyroid: patient_details?.thyroid === "on",
+        heartProblem: patient_details?.heart === "on",
+        asthma: patient_details?.asthma === "on",
+        kidneyDisease: patient_details?.kd === "on",
+        epilepsy: patient_details?.epilepsy === "on",
+      });
+
+      setForWomen({
+        pregnant: patient_details?.pregnant === "on",
+        birthControl: patient_details?.pills === "on",
+        others: patient_details?.wom_others || "",
+      });
+
+      setMedications({
+        onMeds: patient_details?.present_med === "on",
+        allergic: patient_details?.allerg_med === "on",
+      });
+
+      setDental({
+        smoke: patient_details?.smoke === "on",
+        floss: patient_details?.floss === "on",
+        brushing: patient_details?.perday || "0",
+      });
+    }
+  }, [patient_details]);
+
+  const handleChange = (field, value) => {
+    setFormData((prev) => ({ ...prev, [field]: value }));
+  };
+
+  const handleAddressChange = (type, index, value) => {
+    setFormData((prev) => ({
+      ...prev,
+      [type]: prev[type].map((item, i) => (i === index ? value : item)),
+    }));
+  };
 
   const handleToggle = (group, field) => {
     if (group === "medical") {
@@ -76,6 +135,7 @@ const Patient = ({ activeTab, setActiveTab,handleBookClick }) => {
   };
 
   return (
+    <div className="d-flex justify-content-center">
     <div className="card" style={{ width: "78rem", minHeight: "100vh" }}>
       <div className="card-body">
         {/* Tabs */}
@@ -84,9 +144,7 @@ const Patient = ({ activeTab, setActiveTab,handleBookClick }) => {
             {["History", "Patient", "EMR"].map((tab) => (
               <div className="mx-2" key={tab}>
                 <button
-                  className={`tab-button ${
-                    activeTab === tab ? "active-tab" : ""
-                  }`}
+                  className={`tab-button ${activeTab === tab ? "active-tab" : ""}`}
                   onClick={() => setActiveTab(tab)}
                 >
                   {tab.charAt(0).toUpperCase() + tab.slice(1)}
@@ -95,7 +153,7 @@ const Patient = ({ activeTab, setActiveTab,handleBookClick }) => {
             ))}
           </div>
           <div>
-              <button className="btn btn-primary" onClick={handleBookClick}>
+            <button className="btn btn-primary" onClick={handleBookClick}>
               Book Appointment for check
             </button>
           </div>
@@ -137,7 +195,7 @@ const Patient = ({ activeTab, setActiveTab,handleBookClick }) => {
               <label>First Name</label>
               <input
                 type="text"
-                value={patient_details.first_name}
+                value={patient_details?.first_name || ""}
                 onChange={(e) => handleChange("firstName", e.target.value)}
               />
             </div>
@@ -148,7 +206,7 @@ const Patient = ({ activeTab, setActiveTab,handleBookClick }) => {
               <label>D.O.B</label>
               <input
                 type="date"
-                value={patient_details.dateofbirth}
+                value={patient_details?.dateofbirth || ""}
                 onChange={(e) => handleChange("dob", e.target.value)}
               />
             </div>
@@ -395,6 +453,7 @@ const Patient = ({ activeTab, setActiveTab,handleBookClick }) => {
           </div>
         </div>
       </div>
+    </div>
     </div>
   );
 };
