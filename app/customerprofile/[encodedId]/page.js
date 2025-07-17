@@ -1,3 +1,4 @@
+// app\customerprofile\[encodedId]\page.js
 "use client";
 
 import React, { useEffect, useState } from "react";
@@ -26,10 +27,29 @@ export default function PatientProfilePage() {
         ) {
           setPatientDetails(null); // Fallback
         } else {
-          setPatientDetails(data.patientinformations[0]); // ✅ valid patient
+          const patient = {
+            ...data.patientinformations[0],
+            examination: data.examination || [],
+            observ: data.observ || [],
+            plan: data.plan || [],
+            note: data.note || [],
+            prescription: data.prescription || [],
+            planbill: data.planbill || [],
+            bills: data.bills || [],
+            receipt: data.receipt || [],
+            invoice_total:
+              data.planbill?.reduce(
+                (sum, item) => sum + Number(item.invoice_amt || 0),
+                0
+              ) || 0,
+            // Add other EMR-related fields as needed
+          };
+
+          console.log("✅ Final patient_details passed to container:", patient);
+          setPatientDetails(patient);
         }
       } catch (error) {
-        console.error("Error fetching patient info", error);
+        console.error("❌ Error fetching patient info", error);
         setPatientDetails(null);
       } finally {
         setLoading(false);

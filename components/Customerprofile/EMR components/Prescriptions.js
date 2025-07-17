@@ -1,3 +1,4 @@
+"use client";
 import React, { useState } from "react";
 import { FaPen } from "react-icons/fa";
 import { LuPrinter } from "react-icons/lu";
@@ -6,59 +7,26 @@ import "./Prescriptions.css";
 import AddNewPrescriptionModal from "@/components/PopupModals/AddNewPrescriptionModal/AddNewPrescriptionModal";
 import EditPrescriptionModal from "@/components/PopupModals/EditPrescriptionModal/EditPrescriptionModal";
 
-const Prescriptions = () => {
+const Prescriptions = ({ data = [] }) => {
   const [showAddModal, setShowAddModal] = useState(false);
   const [showEditModal, setShowEditModal] = useState(false);
   const [selectedPrescription, setSelectedPrescription] = useState(null);
 
-  const [prescriptions, setPrescriptions] = useState([
-    {
-      date: "03-07-2025",
-      doctor: "Giri",
-      color: "#f28b82",
-      drug: "Drug4",
-      type: "Tablet",
-      dosage: "Afternoon 0",
-      duration: "5 days",
-      instructions: "fadsfdasdfs",
-    },
-    {
-      date: "03-07-2025",
-      doctor: "pooja",
-      color: "#f28b82",
-      drug: "Drug4",
-      type: "Tablet",
-      dosage: "Morning 0",
-      duration: "2 days",
-      instructions: "dsvfdhgfhgj",
-    },
-    {
-      date: "17-04-2025",
-      doctor: "sabari",
-      color: "#f28b82",
-      drug: "Chlorhexidine Mouthwash",
-      type: "Mouthwash",
-      dosage: "10 ml twice daily",
-      duration: "7 days",
-      instructions:
-        "Rinse with 10 ml for 30 seconds. Do not eat or drink for 30 minutes after use.",
-    },
-  ]);
-
-  // Handle save for newly added prescription
   const handleAddSave = (newData) => {
-    setPrescriptions([...prescriptions, newData]);
+    // Add logic to send to backend if needed
+    console.log("Add new prescription:", newData);
     setShowAddModal(false);
   };
 
-  // Handle save for edited prescription
   const handleEditSave = (updatedData) => {
-    const updatedList = prescriptions.map((prescription) =>
-      prescription === selectedPrescription ? updatedData : prescription
-    );
-    setPrescriptions(updatedList);
+    console.log("Edit prescription:", updatedData);
     setShowEditModal(false);
     setSelectedPrescription(null);
+  };
+
+  const formatDate = (datetime) => {
+    const date = new Date(datetime);
+    return date.toLocaleDateString("en-GB"); // dd/mm/yyyy
   };
 
   return (
@@ -70,60 +38,72 @@ const Prescriptions = () => {
         Add New Prescriptions
       </button>
 
-      <table className="prescription-table">
-        <thead>
-          <tr>
-            <th>S.No</th>
-            <th>Date</th>
-            <th>Dr</th>
-            <th>Drug</th>
-            <th>Drug Type</th>
-            <th>Dosage</th>
-            <th>Duration</th>
-            <th>Instructions</th>
-            <th>Edit</th>
-            <th>Print</th>
-          </tr>
-        </thead>
-        <tbody>
-          {prescriptions.map((p, idx) => (
-            <tr key={idx}>
-              <td>{idx + 1}</td>
-              <td>{p.date}</td>
-              <td>
-                <div className="doctor-badge">
-                  <span
-                    className="doctor-color"
-                    style={{ backgroundColor: p.color }}
-                  ></span>
-                  {p.doctor}
-                </div>
-              </td>
-              <td>{p.drug}</td>
-              <td>{p.type}</td>
-              <td>{p.dosage}</td>
-              <td>{p.duration}</td>
-              <td>{p.instructions}</td>
-              <td>
-                <button
-                  className="icon-btn"
-                  onClick={() => {
-                    setSelectedPrescription(p);
-                    setShowEditModal(true);
-                  }}
-                >
-                  <FaPen />
-                </button>
-              </td>
-              <td>
-                <button className="icon-btn">
-                  <LuPrinter />
-                </button>
-              </td>
+      {data.length === 0 ? (
+        <p>No prescriptions available.</p>
+      ) : (
+        <table className="prescription-table">
+          <thead>
+            <tr>
+              <th>S.No</th>
+              <th>Date</th>
+              <th>Dr</th>
+              <th>Drug</th>
+              <th>Drug Type</th>
+              <th>Dosage</th>
+              <th>Duration</th>
+              <th>Instructions</th>
+              <th>Edit</th>
+              <th>Print</th>
             </tr>
-          ))}
-        </tbody>
-      </table>
+          </thead>
+          <tbody>
+            {data.map((p, idx) => {
+              const dosageParts = [];
+              if (p.dossagem) dosageParts.push(`Morning ${p.dossagem}`);
+              if (p.dossagea) dosageParts.push(`Afternoon ${p.dossagea}`);
+              if (p.dossagen) dosageParts.push(`Night ${p.dossagen}`);
+              const dosage = dosageParts.join(", ");
+
+              return (
+                <tr key={p.id}>
+                  <td>{idx + 1}</td>
+                  <td>{formatDate(p.created_at)}</td>
+                  <td>
+                    <div className="doctor-badge">
+                      <span
+                        className="doctor-color"
+                        style={{ backgroundColor: "#f28b82" }}
+                      ></span>
+                      {p.doctor}
+                    </div>
+                  </td>
+                  <td>{p.drug_name}</td>
+                  <td>{p.drugtype}</td>
+                  <td>{dosage || "-"}</td>
+                  <td>{p.duration}</td>
+                  <td>{p.instructions}</td>
+                  <td>
+                    <button
+                      className="icon-btn"
+                      onClick={() => {
+                        setSelectedPrescription(p);
+                        setShowEditModal(true);
+                      }}
+                    >
+                      <FaPen />
+                    </button>
+                  </td>
+                  <td>
+                    <button className="icon-btn">
+                      <LuPrinter />
+                    </button>
+                  </td>
+                </tr>
+              );
+            })}
+          </tbody>
+        </table>
+      )}
 
       <div className="back-link">
         <a href="#">Back to History</a>

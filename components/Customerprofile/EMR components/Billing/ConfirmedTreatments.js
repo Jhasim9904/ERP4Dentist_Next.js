@@ -1,35 +1,31 @@
+"use client";
 import React, { useState } from "react";
 import "./ConfirmedTreatments.css";
 import { FaEdit } from "react-icons/fa";
 import CreateBillModal from "@/components/PopupModals/CreateBillModal/CreateBillModal";
 
-const ConfirmedTreatments = () => {
-  const [selectedTab, setSelectedTab] = useState("confirmed");
+const ConfirmedTreatments = ({ data = [] }) => {
   const [showModal, setShowModal] = useState(false);
 
-  const data = [
-    {
-      planNo: 1,
-      planDate: "2025-04-17",
-      toothNumbers: "18, 17, 16, 42",
-      procedureType: "Braces Consulting",
-      cost: 700,
-      discount: 100,
-      treatmentCost: 700,
-      invoicedAmount: 560,
-      balanceAmount: 240,
-      confirmed: true,
-    },
-  ];
+  const getSelectedTeeth = (entry) => {
+    return Object.keys(entry)
+      .filter((key) => key.startsWith("teeth_") && entry[key] === 1)
+      .map((key) => key.replace("teeth_", ""));
+  };
+
+  const totalCost = data.reduce((sum, item) => sum + Number(item.price_proce || 0), 0);
+  const totalInvoiced = data.reduce((sum, item) => sum + Number(item.invoice_amt || 0), 0);
+  const totalBalance = data.reduce((sum, item) => sum + Number(item.balance_amt || 0), 0);
 
   return (
     <div className="confirmed-container">
-              <div className="summary-bar">
-        <span>Total Treatment Cost: ₹ 700</span>
-        <span>Balance Advance Amount: ₹ 560</span>
-        <span>Total Invoiced Treatment Amount: ₹ 560</span>
-        <span>Total Balance Treatment Amount: ₹ 240</span>
+      <div className="summary-bar">
+        <span>Total Treatment Cost: ₹ {totalCost}</span>
+        <span>Balance Advance Amount: ₹ {totalInvoiced}</span>
+        <span>Total Invoiced Treatment Amount: ₹ {totalInvoiced}</span>
+        <span>Total Balance Treatment Amount: ₹ {totalBalance}</span>
       </div>
+
       <table className="treatment-table">
         <thead>
           <tr>
@@ -47,32 +43,45 @@ const ConfirmedTreatments = () => {
           </tr>
         </thead>
         <tbody>
-          {data.map((item) => (
-            <tr key={item.planNo}>
-              <td>{item.planNo}</td>
-              <td>{item.planDate}</td>
-              <td>{item.toothNumbers}</td>
-              <td>{item.procedureType}</td>
-              <td>₹ {item.cost}</td>
-              <td>₹ {item.discount}</td>
-              <td>₹ {item.treatmentCost}</td>
-              <td>₹ {item.invoicedAmount}</td>
-              <td>₹ {item.balanceAmount}</td>
-              <td>
-                <input type="checkbox" checked={item.confirmed} readOnly />
-              </td>
-              <td>
-                <button className="edit-btn" onClick={() => setShowModal(true)}>
-                  <FaEdit />
-                </button>
-                {showModal && <CreateBillModal onClose={() => setShowModal(false)} />}
+          {data.length === 0 ? (
+            <tr>
+              <td colSpan="11" style={{ textAlign: "center" }}>
+                No confirmed treatments found.
               </td>
             </tr>
-          ))}
+          ) : (
+            data.map((item) => {
+              const selectedTeeth = getSelectedTeeth(item).join(", ");
+              return (
+                <tr key={item.id}>
+                  <td>{item.id}</td>
+                  <td>{item.startDate}</td>
+                  <td>{selectedTeeth}</td>
+                  <td>{`${item.procedure} ${item.type || ""}`}</td>
+                  <td>₹ {item.price_proce}</td>
+                  <td>₹ {item.dicount}</td>
+                  <td>₹ {item.price_proce}</td>
+                  <td>₹ {item.invoice_amt}</td>
+                  <td>₹ {item.balance_amt}</td>
+                  <td>
+                    <input type="checkbox" checked={item.planunibill === 1} readOnly />
+                  </td>
+                  <td>
+                    <button className="edit-btn" onClick={() => setShowModal(true)}>
+                      <FaEdit />
+                    </button>
+                    {showModal && (
+                      <CreateBillModal onClose={() => setShowModal(false)} />
+                    )}
+                  </td>
+                </tr>
+              );
+            })
+          )}
         </tbody>
       </table>
 
-      <p className="entries-text">Showing 1 to 1 of 1 Entries →</p>
+      <p className="entries-text">Showing {data.length} of {data.length} Entries →</p>
     </div>
   );
 };

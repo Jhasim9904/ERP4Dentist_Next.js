@@ -1,22 +1,14 @@
+// components\Customerprofile\EMR components\Billing\Receipts.js
 import React from "react";
 import "./Receipts.css";
 import { FaRegFileAlt } from "react-icons/fa";
 
-const receiptData = [
-  { receiptNo: 7, date: "2025-04-18", doctor: "Giri", billNo: 7, paymentMode: "Phone pe", amount: 200 },
-  { receiptNo: 13, date: "2025-06-14", doctor: "Dr.X", billNo: 13, paymentMode: "Cash", amount: 100 },
-  { receiptNo: 16, date: "2025-06-25", doctor: "pooja", billNo: 16, paymentMode: "Cash", amount: 100 },
-  { receiptNo: 17, date: "2025-06-30", doctor: "gandhi", billNo: 17, paymentMode: "Cash", amount: 100 },
-  { receiptNo: 23, date: "2025-06-30", doctor: "gandhi", billNo: 23, paymentMode: "Cash", amount: 50 },
-  { receiptNo: 24, date: "2025-06-30", doctor: "gandhi", billNo: 24, paymentMode: "Cash", amount: 10 },
-];
-
-const Receipts = () => {
+const Receipts = ({ data = [] }) => {
   return (
     <div className="receipts-container">
       <div className="receipt-summary-bar">
-        <span>Total Estimated Plan Amount: ₹ 4200</span>
-        <span>Total Confirmed Plan Amount: ₹ 4200</span>
+        <span>Total Estimated Plan Amount: ₹ {/* Optional Total */}</span>
+        <span>Total Confirmed Plan Amount: ₹ {/* Optional Total */}</span>
       </div>
 
       <table className="receipt-table">
@@ -32,14 +24,14 @@ const Receipts = () => {
           </tr>
         </thead>
         <tbody>
-          {receiptData.map((item) => (
-            <tr key={item.receiptNo}>
-              <td>{item.receiptNo}</td>
-              <td>{item.date}</td>
-              <td>{item.doctor}</td>
-              <td>{item.billNo}</td>
-              <td>{item.paymentMode}</td>
-              <td>₹ {item.amount}</td>
+          {data.map((item) => (
+            <tr key={item.id}>
+              <td>{item.getunibill_id}</td>
+              <td>{item.reciept_date}</td>
+              <td>{item.choose_doctor}</td>
+              <td>{item.getunibill_id}</td>
+              <td>{item.paymethod}</td>
+              <td>₹ {item.getbalance_amt}</td>
               <td>
                 <button className="receipt-view-btn">
                   <FaRegFileAlt /> View Receipt
@@ -50,7 +42,9 @@ const Receipts = () => {
         </tbody>
       </table>
 
-      <p className="entries-text">Showing 1 to 6 of 6 Entries →</p>
+      <p className="entries-text">
+        Showing 1 to {data.length} of {data.length} Entries →
+      </p>
     </div>
   );
 };

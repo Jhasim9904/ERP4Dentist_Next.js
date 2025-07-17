@@ -1,3 +1,4 @@
+// components\Customerprofile\EMR.js
 import React, { useState } from "react";
 import "./EMR.css";
 import Examination from "./EMR components/Examination";
@@ -9,6 +10,7 @@ import LabWorks from "./EMR components/LabWorks";
 import Uploads from "./EMR components/Uploads";
 import Billing from "./EMR components/Billing/Billing";
 import InvoiceView from "./EMR components/InvoiceView/InvoiceView";
+
 const tabs = [
   { id: "examination", label: "Examination", icon: "🩺" },
   { id: "observation", label: "Observation", icon: "🔬" },
@@ -21,8 +23,16 @@ const tabs = [
   { id: "invoice", label: "Invoice", icon: "📄" },
 ];
 
-const EMR = ({ activeTab, setActiveTab, handleBookClick }) => {
+const EMR = ({ activeTab, setActiveTab, handleBookClick, patient_details }) => {
   const [activeTab1, setActiveTab1] = useState("examination");
+
+  console.log("💥 patient_details:", patient_details);
+
+  const calculateInvoiceTotal = (items) => {
+    if (!Array.isArray(items)) return 0;
+    return items.reduce((sum, item) => sum + Number(item.invoice_amt || 0), 0);
+  };
+
   return (
     <div>
       <div className="card" style={{ width: "78rem", minHeight: "100vh" }}>
@@ -37,7 +47,7 @@ const EMR = ({ activeTab, setActiveTab, handleBookClick }) => {
                     }`}
                     onClick={() => setActiveTab(tab)}
                   >
-                    {tab.charAt(0).toUpperCase() + tab.slice(1)}
+                    {tab}
                   </button>
                 </div>
               ))}
@@ -49,7 +59,7 @@ const EMR = ({ activeTab, setActiveTab, handleBookClick }) => {
             </div>
           </div>
 
-          {/* Patient Form Content */}
+          {/* Inner Tabs */}
           <div className="top-tabs" style={{ marginLeft: "60px" }}>
             {tabs.map((tab) => (
               <div
@@ -63,16 +73,48 @@ const EMR = ({ activeTab, setActiveTab, handleBookClick }) => {
               </div>
             ))}
           </div>
-          {activeTab1 === "examination" && <Examination />}
-          {activeTab1 === "observation" && <Observation />}
-          {activeTab1 === "treatment" && <Treatment />}
-          {activeTab1 === "clinical-notes" && <Clinicalnotes />}
-          {activeTab1 === "prescriptions" && <Prescriptions />}
+
+          {/* Dynamic Tab Content */}
+          {activeTab1 === "examination" && (
+            <Examination data={patient_details.examination?.[0]} />
+          )}
+          {activeTab1 === "observation" && (
+            <Observation data={patient_details.observ || []} />
+          )}
+
+          {activeTab1 === "treatment" && (
+            <Treatment data={patient_details.plan || []} />
+          )}
+          {activeTab1 === "clinical-notes" && (
+            <Clinicalnotes data={patient_details.note || []} />
+          )}
+          {activeTab1 === "prescriptions" && (
+            <Prescriptions data={patient_details.prescription || []} />
+          )}
           {activeTab1 === "lab-works" && <LabWorks />}
           {activeTab1 === "uploads" && <Uploads />}
-          {activeTab1 === "billing" && <Billing />}
-          {activeTab1 === "invoice" && <InvoiceView />}
+          {activeTab1 === "billing" && (
+            <Billing
+              data={patient_details.planbill || []}
+              bills={patient_details.bills || []}
+              receipts={patient_details.receipt || []}
+            />
+          )}
 
+          {activeTab1 === "invoice" && (
+            <>
+              {console.log("INVOICE DEBUG →", {
+                planbill: patient_details.planbill,
+                total: calculateInvoiceTotal(patient_details.planbill),
+                patient_info: patient_details,
+              })}
+              <InvoiceView
+                data={patient_details.planbill || []}
+                total={calculateInvoiceTotal(patient_details.planbill)}
+                patientinformations={[patient_details]} // ✅ wrapped in array
+              />
+            </>
+          )}
         </div>
       </div>
     </div>

@@ -14,6 +14,27 @@ export function DefaultCustomerProfilePage() {
     setSidebarOpen(!sidebarOpen);
   };
 
+  // ✅ Provide safe dummy data for sample patient
+  const fallbackPatientDetails = {
+    name: "Sample Patient",
+    examination: [
+      {
+        summary: "No examination data available",
+        date: "N/A",
+      },
+    ],
+    treatment: [],
+    observation: [],
+    notes: [],
+  };
+
+  const fallbackHistoryData = [
+    {
+      date: "2025-07-01",
+      notes: "No prior records available for this patient.",
+    },
+  ];
+
   return (
     <div>
       <div className="app-layout">
@@ -25,7 +46,12 @@ export function DefaultCustomerProfilePage() {
         <div className="main-content">
           <Navbar onToggleSidebar={toggleSidebar} sidebarOpen={sidebarOpen} />
           <div className="container1">
-            <Container activeTab={activeTab} setActiveTab={setActiveTab} />
+            <Container
+              activeTab={activeTab}
+              setActiveTab={setActiveTab}
+              patient_details={fallbackPatientDetails}
+              historyData={fallbackHistoryData}
+            />
           </div>
           <Footer />
         </div>
