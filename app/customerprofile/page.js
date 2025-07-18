@@ -1,3 +1,4 @@
+// app\customerprofile\page.js
 "use client";
 import React, { useState } from "react";
 import Navbar from "@/components/Navbar/Navbar";

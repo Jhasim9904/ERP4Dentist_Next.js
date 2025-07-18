@@ -1,35 +1,19 @@
+// components\Customerprofile\EMR components\LabWorks.js
 import React, { useState } from "react";
 import "./LabWorks.css";
 import { FaPen } from "react-icons/fa";
 import AddLabWorkModal from "@/components/PopupModals/AddLabWorkModal/AddLabWorkModal";
 
-const LabWorks = () => {
-  const [labData] = useState([
-    {
-      date: "2025-04-17",
-      doctor: "sabari",
-      color: "#3a6351",
-      labName: "Shanthi",
-      teeth: "18,17,16,42",
-      costDetails: "800",
-      workParticulars: "800",
-      repeat: "",
-      remarks: "",
-    },
-    {
-      date: "2025-06-10",
-      doctor: "pooja",
-      color: "#f28b82",
-      labName: "MedLab",
-      teeth: "36,37",
-      costDetails: "1200",
-      workParticulars: "1200",
-      repeat: "Yes",
-      remarks: "Impression required",
-    },
-  ]);
-
+const LabWorks = ({ labData = [] }) => {
   const [showModal, setShowModal] = useState(false);
+
+  // Utility to extract selected teeth like "18,17,16"
+  const extractTeethNumbers = (labItem) => {
+    return Object.keys(labItem)
+      .filter((key) => key.startsWith("teeth_") && labItem[key] === 1)
+      .map((key) => key.replace("teeth_", ""))
+      .join(", ");
+  };
 
   return (
     <div className="lab-container">
@@ -50,36 +34,47 @@ const LabWorks = () => {
           </tr>
         </thead>
         <tbody>
-          {labData.map((item, index) => (
-            <tr key={index}>
-              <td>{item.date}</td>
-              <td>
-                <div className="doctor-badge">
-                  <span
-                    className="color-box"
-                    style={{ backgroundColor: item.color }}
-                  ></span>
-                  {item.doctor}
-                </div>
-              </td>
-              <td>{item.labName}</td>
-              <td>{item.teeth}</td>
-              <td>{item.costDetails}</td>
-              <td>{item.workParticulars}</td>
-              <td>{item.repeat}</td>
-              <td>{item.remarks}</td>
-              <td className="edit-action" onClick={() => setShowModal(true)}>
-                <FaPen />
-              </td>
+          {labData.length === 0 ? (
+            <tr>
+              <td colSpan="9" className="text-center">No Lab Work Found</td>
             </tr>
-          ))}
+          ) : (
+            labData.map((item, index) => (
+              <tr key={item.id || index}>
+                <td>{item.orderdate || "-"}</td>
+                <td>
+                  <div className="doctor-badge">
+                    <span
+                      className="color-box"
+                      style={{
+                        backgroundColor: item.doc_cal_color || "#999",
+                      }}
+                    ></span>
+                    {item.doctor || "-"}
+                  </div>
+                </td>
+                <td>{item.lab || "-"}</td>
+                <td>
+                  {extractTeethNumbers(item)}
+                  <br />
+                  <strong>{item.procedure || ""}</strong>{" "}
+                  <em>{item.type || ""}</em>
+                </td>
+                <td>{item.cost || "-"}</td>
+                <td>{item.costper || "-"}</td>
+                <td>{item.repeat || "-"}</td>
+                <td>{item.specialinstruction || item.remark || "-"}</td>
+                <td className="edit-action" onClick={() => setShowModal(true)}>
+                  <FaPen />
+                </td>
+              </tr>
+            ))
+          )}
         </tbody>
       </table>
 
-      {/* ✅ Render modal separately, outside the table */}
-      {showModal && (
-        <AddLabWorkModal onClose={() => setShowModal(false)} />
-      )}
+      {/* ✅ Modal popup (edit/new) */}
+      {showModal && <AddLabWorkModal onClose={() => setShowModal(false)} />}
 
       <div className="back-link">
         <a href="#">Back to History</a>

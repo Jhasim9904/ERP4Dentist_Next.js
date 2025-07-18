@@ -91,7 +91,8 @@ const EMR = ({ activeTab, setActiveTab, handleBookClick, patient_details }) => {
           {activeTab1 === "prescriptions" && (
             <Prescriptions data={patient_details.prescription || []} />
           )}
-          {activeTab1 === "lab-works" && <LabWorks />}
+          {activeTab1 === "lab-works" && ( 
+            <LabWorks labData={patient_details.lab} />)}
           {activeTab1 === "uploads" && <Uploads />}
           {activeTab1 === "billing" && (
             <Billing
@@ -104,14 +105,15 @@ const EMR = ({ activeTab, setActiveTab, handleBookClick, patient_details }) => {
           {activeTab1 === "invoice" && (
             <>
               {console.log("INVOICE DEBUG →", {
-                planbill: patient_details.planbill,
-                total: calculateInvoiceTotal(patient_details.planbill),
-                patient_info: patient_details,
+                invoiceplan: patient_details.invoiceplan,
+                invoiceplan_total: patient_details.invoiceplan_total,
+                patient_information: patient_details,
               })}
+
               <InvoiceView
-                data={patient_details.planbill || []}
-                total={calculateInvoiceTotal(patient_details.planbill)}
-                patientinformations={[patient_details]} // ✅ wrapped in array
+                data={patient_details.invoiceplan || []} // ✅ FIXED
+                total={patient_details.invoiceplan_total || 0} // ✅ FIXED
+                patientinformations={[patient_details]} // ✅ Already correct
               />
             </>
           )}
