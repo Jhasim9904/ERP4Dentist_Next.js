@@ -1,3 +1,4 @@
+// components\Customerprofile\EMR components\Observation.js
 "use client";
 import { useState } from "react";
 import { FaPlus, FaPen } from "react-icons/fa";

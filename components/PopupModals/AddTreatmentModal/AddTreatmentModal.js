@@ -21,6 +21,7 @@ const deciduousTeeth = [
 export default function AddTreatmentModal({ onClose }) {
   const [selectedTab, setSelectedTab] = useState("permanent");
   const [selectedTeeth, setSelectedTeeth] = useState([]);
+  const [hoveredTooth, setHoveredTooth] = useState(null);
 
   const handleSelectTooth = (num) => {
     setSelectedTeeth((prev) =>
@@ -42,69 +43,41 @@ export default function AddTreatmentModal({ onClose }) {
       q4 = deciduousTeeth.slice(15, 20);
     }
 
+    const getToothImageSrc = (num) => {
+      const folder = selectedTeeth.includes(num) || hoveredTooth === num ? `${type}-blue` : type;
+      return `/tooth/${folder}/${num}.png`;
+    };
+
+    const renderQuadrantBox = (teeth) =>
+      teeth.map((num) => (
+        <div
+          key={num}
+          className={styles.toothWrapper}
+          onClick={() => handleSelectTooth(num)}
+        >
+          <Image
+            src={getToothImageSrc(num)}
+            alt={`Tooth ${num}`}
+            width={50}
+            height={50}
+            className={styles.toothImage}
+            onMouseEnter={() => setHoveredTooth(num)}
+            onMouseLeave={() => setHoveredTooth(null)}
+          />
+          <div className={styles.toothLabel}>{num}</div>
+        </div>
+      ));
+
     return (
       <div className={styles.toothGridContainer}>
         <div className={styles.cross}></div>
         <div className={styles.quadrantRow}>
-          <div className={styles.quadrantBox}>
-            {q1.map((num) => (
-              <div key={num} className={styles.toothWrapper} onClick={() => handleSelectTooth(num)}>
-                <Image
-                  src={`/tooth/${type}/${num}.png`}
-                  alt={`Tooth ${num}`}
-                  width={50}
-                  height={50}
-                  className={styles.toothImage}
-                />
-                <div className={styles.toothLabel}>{num}</div>
-              </div>
-            ))}
-          </div>
-          <div className={styles.quadrantBox}>
-            {q2.map((num) => (
-              <div key={num} className={styles.toothWrapper} onClick={() => handleSelectTooth(num)}>
-                <Image
-                  src={`/tooth/${type}/${num}.png`}
-                  alt={`Tooth ${num}`}
-                  width={50}
-                  height={50}
-                  className={styles.toothImage}
-                />
-                <div className={styles.toothLabel}>{num}</div>
-              </div>
-            ))}
-          </div>
+          <div className={styles.quadrantBox}>{renderQuadrantBox(q1)}</div>
+          <div className={styles.quadrantBox}>{renderQuadrantBox(q2)}</div>
         </div>
-
         <div className={styles.quadrantRow}>
-          <div className={styles.quadrantBox}>
-            {q3.map((num) => (
-              <div key={num} className={styles.toothWrapper} onClick={() => handleSelectTooth(num)}>
-                <Image
-                  src={`/tooth/${type}/${num}.png`}
-                  alt={`Tooth ${num}`}
-                  width={50}
-                  height={50}
-                  className={styles.toothImage}
-                />
-                <div className={styles.toothLabel}>{num}</div>
-              </div>
-            ))}
-          </div>
-          <div className={styles.quadrantBox}>
-            {q4.map((num) => (
-              <div key={num} className={styles.toothWrapper} onClick={() => handleSelectTooth(num)}>
-                <Image
-                  src={`/tooth/${type}/${num}.png`}
-                  alt={`Tooth ${num}`}
-                  width={50}
-                  height={50}
-                  className={styles.toothImage}
-                />
-                <div className={styles.toothLabel}>{num}</div>
-              </div>
-            ))}
-          </div>
+          <div className={styles.quadrantBox}>{renderQuadrantBox(q3)}</div>
+          <div className={styles.quadrantBox}>{renderQuadrantBox(q4)}</div>
         </div>
       </div>
     );
@@ -132,7 +105,7 @@ export default function AddTreatmentModal({ onClose }) {
               </select>
             </div>
 
-            {/* Tooth Selector */}
+            {/* Tooth Selector Tabs */}
             <ul className="nav nav-tabs mb-3">
               <li className="nav-item">
                 <button
@@ -158,7 +131,7 @@ export default function AddTreatmentModal({ onClose }) {
               <strong>Selected:</strong> {selectedTeeth.join(", ") || "None"}
             </div>
 
-            {/* Form Fields */}
+            {/* Treatment Form */}
             <div className="mt-4">
               <label className="form-label">Procedure</label>
               <select className="form-select mb-3">
@@ -175,7 +148,11 @@ export default function AddTreatmentModal({ onClose }) {
               </select>
 
               <label className="form-label">Number of Teeth / Units*</label>
-              <input type="number" className="form-control mb-3" defaultValue={selectedTeeth.length} />
+              <input
+                type="number"
+                className="form-control mb-3"
+                defaultValue={selectedTeeth.length}
+              />
 
               <label className="form-label">Original Price</label>
               <input type="number" className="form-control mb-3" />
