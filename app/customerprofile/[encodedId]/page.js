@@ -13,55 +13,56 @@ export default function PatientProfilePage() {
   const [patientDetails, setPatientDetails] = useState(null);
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState("History");
-  const [sidebarOpen, setSidebarOpen] = useState(true); // ✅ Sidebar state
+  const [sidebarOpen, setSidebarOpen] = useState(true);
 
   const toggleSidebar = () => {
     setSidebarOpen(!sidebarOpen);
   };
 
-  useEffect(() => {
-    const fetchPatientData = async () => {
-      try {
-        const response = await fetch(
-          `https://testing.erp4dentist.com/api/patientinfo/${encodedId}`
-        );
-        const data = await response.json();
+  // ✅ Move fetchPatientData function outside useEffect
+  const fetchPatientData = async () => {
+    try {
+      const response = await fetch(
+        `https://testing.erp4dentist.com/api/patientinfo/${encodedId}`
+      );
+      const data = await response.json();
 
-        if (
-          !data ||
-          !data.patientinformations ||
-          data.patientinformations.length === 0
-        ) {
-          setPatientDetails(null);
-        } else {
-          const patient = {
-            ...data.patientinformations[0],
-            examination: data.examination || [],
-            observ: data.observ || [],
-            plan: data.plan || [],
-            note: data.note || [],
-            prescription: data.prescription || [],
-            planbill: data.planbill || [],
-            bills: data.bills || [],
-            receipt: data.receipt || [],
-            lab: data.lab || [],
-            invoiceplan: data.invoiceplan || [],
-            invoiceplan_total: data.invoiceplan?.reduce(
-              (sum, item) => sum + Number(item.invoice_amt || 0),
-              0
-            ),
-          };
-          console.log("✅ Final patient_details passed to container:", patient);
-          setPatientDetails(patient);
-        }
-      } catch (error) {
-        console.error("❌ Error fetching patient info", error);
+      if (
+        !data ||
+        !data.patientinformations ||
+        data.patientinformations.length === 0
+      ) {
         setPatientDetails(null);
-      } finally {
-        setLoading(false);
+      } else {
+        const patient = {
+          ...data.patientinformations[0],
+          examination: data.examination || [],
+          observ: data.observ || [],
+          plan: data.plan || [],
+          note: data.note || [],
+          prescription: data.prescription || [],
+          planbill: data.planbill || [],
+          bills: data.bills || [],
+          receipt: data.receipt || [],
+          lab: data.lab || [],
+          invoiceplan: data.invoiceplan || [],
+          invoiceplan_total: data.invoiceplan?.reduce(
+            (sum, item) => sum + Number(item.invoice_amt || 0),
+            0
+          ),
+        };
+        console.log("✅ Final patient_details passed to container:", patient);
+        setPatientDetails(patient);
       }
-    };
+    } catch (error) {
+      console.error("❌ Error fetching patient info", error);
+      setPatientDetails(null);
+    } finally {
+      setLoading(false);
+    }
+  };
 
+  useEffect(() => {
     fetchPatientData();
   }, [encodedId]);
 
@@ -97,6 +98,7 @@ export default function PatientProfilePage() {
               setActiveTab={setActiveTab}
               patient_details={patientDetails}
               historyData={fallbackHistory}
+              onUpdatePatient={fetchPatientData} // ✅ now works fine
             />
           </div>
           <Footer />

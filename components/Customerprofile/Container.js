@@ -5,7 +5,7 @@ import Card from "./Card";
 import EMR from "./EMR";
 import BookAppointmentModal from "./BookAppointmentModal";
 
-const Container = ({ activeTab, setActiveTab, patient_details, historyData }) => {
+const Container = ({ activeTab, setActiveTab, patient_details, historyData, onUpdatePatient, }) => {
   const [bookModalOpen, setBookModalOpen] = useState(false);
 
   const handleBookClick = () => {
@@ -48,8 +48,9 @@ const Container = ({ activeTab, setActiveTab, patient_details, historyData }) =>
         <Patient
           activeTab={activeTab}
           setActiveTab={setActiveTab}
-          handleBookClick={handleBookClick}
+          handleBookClick={handleBookClick}   
           patient_details={patient_details}
+          onUpdatePatient={onUpdatePatient}
         />
       )}
 
