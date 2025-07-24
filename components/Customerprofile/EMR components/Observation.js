@@ -7,11 +7,19 @@ import ObservationModal from "@/components/PopupModals/ObservationModal/Observat
 import AddTreatmentModal from "@/components/PopupModals/AddTreatmentModal/AddTreatmentModal";
 
 const Observation = ({ data = [], onUpdatePatient, appo_id, branch }) => {
-  const [show, setShow] = useState(false);
-  const [showModal, setShowModal] = useState(false);
+  const [show, setShow] = useState(false); // For ObservationModal
+  const [showModal, setShowModal] = useState(false); // For AddTreatmentModal
+  const [selectedObsId, setSelectedObsId] = useState(null); // Track clicked observation row
 
-  const handleOpen = () => setShowModal(true);
-  const handleClose = () => setShowModal(false);
+  const handleOpen = (id) => {
+    setSelectedObsId(id);
+    setShowModal(true);
+  };
+
+  const handleClose = () => {
+    setShowModal(false);
+    setSelectedObsId(null);
+  };
 
   const handleModalClose = () => {
     setShow(false);
@@ -27,7 +35,7 @@ const Observation = ({ data = [], onUpdatePatient, appo_id, branch }) => {
         teethNumbers.push(key.replace("teeth_", ""));
       }
     }
-    return teethNumbers.join(",");
+    return teethNumbers.join(", ");
   };
 
   const firstObservation = data[0] || {};
@@ -101,10 +109,12 @@ const Observation = ({ data = [], onUpdatePatient, appo_id, branch }) => {
               <td>{obs.observation}</td>
               <td>{obs.note}</td>
               <td>
-                <button className="action-btn" onClick={handleOpen}>
+                <button className="action-btn" onClick={() => handleOpen(obs.id)}>
                   <FaPen style={{ marginRight: "6px" }} /> Add Treatment
                 </button>
-                {showModal && <AddTreatmentModal onClose={handleClose} />}
+                {showModal && selectedObsId === obs.id && (
+                  <AddTreatmentModal onClose={handleClose} obsId={selectedObsId} />
+                )}
               </td>
               <td>
                 <button className="edit-icon" onClick={() => setShow(true)}>

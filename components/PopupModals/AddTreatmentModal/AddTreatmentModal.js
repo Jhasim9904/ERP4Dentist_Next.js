@@ -1,7 +1,10 @@
+// components\PopupModals\AddTreatmentModal\AddTreatmentModal.js
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import axios from "axios";
 import Image from "next/image";
+import Swal from "sweetalert2"; // ✅ SweetAlert
 import styles from "./AddTreatmentModal.module.css";
 
 const permanentTeeth = [
@@ -18,12 +21,37 @@ const deciduousTeeth = [
   71, 72, 73, 74, 75
 ];
 
-export default function AddTreatmentModal({ onClose }) {
+export default function AddTreatmentModal({ onClose, obsId }) {
   const [selectedTab, setSelectedTab] = useState("permanent");
   const [selectedTeeth, setSelectedTeeth] = useState([]);
+  const [lockedTeeth, setLockedTeeth] = useState([]);
   const [hoveredTooth, setHoveredTooth] = useState(null);
 
+  useEffect(() => {
+    if (obsId) {
+      axios
+        .get(`https://testing.erp4dentist.com/observ-teeth/${obsId}`)
+        .then((res) => {
+          const teethArray = res?.data?.teethData || [];
+          setSelectedTeeth(teethArray);
+          setLockedTeeth(teethArray);
+        })
+        .catch((err) => console.error("Failed to fetch selected teeth", err));
+    }
+  }, [obsId]);
+
   const handleSelectTooth = (num) => {
+    if (!lockedTeeth.includes(num)) {
+      Swal.fire({
+        icon: "warning",
+        title: "Not Allowed",
+        text: "New Teeth Should Not Be Allowed",
+        confirmButtonColor: "#3085d6"
+      });
+      return;
+    }
+
+    // Toggle only if allowed
     setSelectedTeeth((prev) =>
       prev.includes(num) ? prev.filter((n) => n !== num) : [...prev, num]
     );
@@ -44,7 +72,10 @@ export default function AddTreatmentModal({ onClose }) {
     }
 
     const getToothImageSrc = (num) => {
-      const folder = selectedTeeth.includes(num) || hoveredTooth === num ? `${type}-blue` : type;
+      const folder =
+        selectedTeeth.includes(num) || hoveredTooth === num
+          ? `${type}-blue`
+          : type;
       return `/tooth/${folder}/${num}.png`;
     };
 
@@ -105,7 +136,7 @@ export default function AddTreatmentModal({ onClose }) {
               </select>
             </div>
 
-            {/* Tooth Selector Tabs */}
+            {/* Tabs */}
             <ul className="nav nav-tabs mb-3">
               <li className="nav-item">
                 <button
@@ -151,7 +182,8 @@ export default function AddTreatmentModal({ onClose }) {
               <input
                 type="number"
                 className="form-control mb-3"
-                defaultValue={selectedTeeth.length}
+                value={selectedTeeth.length}
+                readOnly
               />
 
               <label className="form-label">Original Price</label>
