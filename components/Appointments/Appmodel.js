@@ -248,27 +248,7 @@ const AppModel = ({
             className="appmodel-submit"
             onClick={(e) => {
               e.preventDefault();
-              const payload = {
-                date_appointment: formData.date,
-                intime: formData.inTime,
-                outtime: formData.outTime,
-                title: formData.title,
-                firstname: formData.firstName,
-                lastname: formData.lastName,
-                status: formData.status === "Active" ? 1 : 0,
-                age: Number(formData.age),
-                chief_complaint: formData.chiefComplaint || "",
-                gender: formData.gender,
-                countrycode: formData.countryCode,
-                contact_no: formData.phone,
-                branch: parseInt(formData.branch),
-                email: formData.email,
-                choose_doctor: formData.doctor,
-                reason_appointment: formData.reason,
-                note: formData.note,
-                appo_doc_id: doctorIdMap[normalizeDoctor(formData.doctor)] || 6,
-              };
-              handleSubmit(payload);
+              handleSubmit(); // Let parent validate and build payload
             }}
           >
             Book Appointment

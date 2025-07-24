@@ -162,77 +162,100 @@ const Appointments = () => {
   };
 
   const handleSubmit = async (payloadFromModal) => {
-    const finalPayload = payloadFromModal || {
-      title: formData.title,
-      firstname: formData.firstName,
-      lastname: formData.lastName,
-      age: Number(formData.age),
-      gender: formData.gender,
-      countrycode: formData.countryCode,
-      contact_no: formData.phone,
-      email: formData.email,
-      choose_doctor: formData.doctor,
-      appo_doc_id: doctorIdMap[normalizeDoctor(formData.doctor)] || 6,
-      reason_appointment: formData.reason,
-      chief_complaint: formData.chiefComplaint || "",
-      status: formData.status === "Active" ? 1 : 0,
-      date_appointment: formData.date,
-      intime: formData.inTime,
-      outtime: formData.outTime,
-      note: formData.note,
-      branch: parseInt(formData.branch),
-    };
+  const isValid = validate();
+  if (!isValid) {
+    console.warn("⛔ Validation failed:", errors);
+    Swal.fire({
+      icon: "warning",
+      title: "Incomplete Form",
+      text: "Please fill all required fields before submitting.",
+    });
+    return;
+  }
 
-    const parseTime = (t) => new Date(`1970-01-01T${t}:00`);
-    const newStart = parseTime(finalPayload.intime);
-    const newEnd = parseTime(finalPayload.outtime);
-    setIsBooking(true);
+  // If doctor still missing after validation, block submission
+  if (!formData.doctor || formData.doctor.trim() === "") {
+    Swal.fire("Error", "Doctor must be selected.", "error");
+    return;
+  }
 
-    try {
-      const res = await axios.get("https://testing.erp4dentist.com/api/appointment");
-      const liveAppointments = res.data?.appointment?.data || [];
 
-      const hasClash = liveAppointments.some((appt) => {
-        const isSameDate = appt.date_appointment === finalPayload.date_appointment;
-        const isSameDoctor = appt.choose_doctor === finalPayload.choose_doctor;
-        if (!isSameDate || !isSameDoctor) return false;
-        const existingStart = parseTime(appt.intime);
-        const existingEnd = parseTime(appt.outtime);
-        return newStart < existingEnd && newEnd > existingStart;
-      });
-
-      if (hasClash) {
-        Swal.fire({
-          title: "Time Slot Unavailable",
-          text: `Selected time slot is already booked for ${finalPayload.choose_doctor}.`,
-          icon: "error",
-          customClass: { container: "custom-swal-container" },
-        });
-        return;
-      }
-
-      const postRes = await axios.post(
-        "https://testing.erp4dentist.com/api/addappointment",
-        finalPayload,
-        { headers: { "Content-Type": "application/json" } }
-      );
-
-      if (postRes.status === 200 || postRes.data?.status === "success") {
-        await fetchAppointments();
-        Swal.fire("Success", "Appointment added successfully", "success");
-        setShowModal(false);
-        setFormData({ ...initialFormData });
-        setErrors({});
-      } else {
-        Swal.fire("Error", postRes.data?.message || "Appointment failed", "error");
-      }
-    } catch (err) {
-      console.error("Add appointment failed:", err);
-      Swal.fire("Error", "Failed to add appointment", "error");
-    } finally {
-      setIsBooking(false);
-    }
+  const finalPayload = payloadFromModal || {
+    title: formData.title,
+    firstname: formData.firstName,
+    lastname: formData.lastName,
+    age: Number(formData.age),
+    gender: formData.gender,
+    countrycode: formData.countryCode,
+    contact_no: formData.phone,
+    email: formData.email,
+    choose_doctor: formData.doctor,
+    appo_doc_id: doctorIdMap[normalizeDoctor(formData.doctor)] || 6,
+    reason_appointment: formData.reason,
+    chief_complaint: formData.chiefComplaint || "",
+    status: formData.status === "Active" ? 1 : 0,
+    date_appointment: formData.date,
+    note: formData.note,
+    branch: parseInt(formData.branch),
   };
+
+  const parseTime = (t) => new Date(`1970-01-01T${t}:00`);
+  const newStart = parseTime(finalPayload.intime);
+  const newEnd = parseTime(finalPayload.outtime);
+
+  setIsBooking(true);
+
+  try {
+    const res = await axios.get("https://testing.erp4dentist.com/api/appointment");
+    const liveAppointments = res.data?.appointment || [];
+
+    const hasClash = liveAppointments.some((appt) => {
+      if (!appt.intime || !appt.outtime) return false;
+
+      const isSameDate = appt.date_appointment === finalPayload.date_appointment;
+      const isSameDoctor = normalizeDoctor(appt.choose_doctor) === normalizeDoctor(finalPayload.choose_doctor);
+
+      if (!isSameDate || !isSameDoctor) return false;
+
+      const existingStart = parseTime(appt.intime);
+      const existingEnd = parseTime(appt.outtime);
+
+      return newStart < existingEnd && newEnd > existingStart;
+    });
+
+    if (hasClash) {
+      Swal.fire({
+        title: "Time Slot Unavailable",
+        text: `Selected time slot is already booked for ${finalPayload.choose_doctor}.`,
+        icon: "error",
+        customClass: { container: "custom-swal-container" },
+      });
+      return;
+    }
+
+    const postRes = await axios.post(
+      "https://testing.erp4dentist.com/api/addappointment",
+      finalPayload,
+      { headers: { "Content-Type": "application/json" } }
+    );
+
+    if (postRes.status === 200 || postRes.data?.status === "success") {
+      await fetchAppointments();
+      Swal.fire("Success", "Appointment added successfully", "success");
+      setShowModal(false);
+      setFormData({ ...initialFormData });
+      setErrors({});
+    } else {
+      Swal.fire("Error", postRes.data?.message || "Appointment failed", "error");
+    }
+  } catch (err) {
+    console.error("Add appointment failed:", err);
+    Swal.fire("Error", "Failed to add appointment", "error");
+  } finally {
+    setIsBooking(false);
+  }
+};
+
 
   return (
     <div className="appointment-container">
