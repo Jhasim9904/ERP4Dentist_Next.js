@@ -1,3 +1,4 @@
+// components\Customerprofile\Container.js
 import React, { useState } from "react";
 import "./Container.css";
 import Patient from "./Patient";
@@ -5,7 +6,13 @@ import Card from "./Card";
 import EMR from "./EMR";
 import BookAppointmentModal from "./BookAppointmentModal";
 
-const Container = ({ activeTab, setActiveTab, patient_details, historyData, onUpdatePatient, }) => {
+const Container = ({
+  activeTab,
+  setActiveTab,
+  patient_details,
+  historyData,
+  onUpdatePatient,
+}) => {
   const [bookModalOpen, setBookModalOpen] = useState(false);
 
   const handleBookClick = () => {
@@ -48,7 +55,7 @@ const Container = ({ activeTab, setActiveTab, patient_details, historyData, onUp
         <Patient
           activeTab={activeTab}
           setActiveTab={setActiveTab}
-          handleBookClick={handleBookClick}   
+          handleBookClick={handleBookClick}
           patient_details={patient_details}
           onUpdatePatient={onUpdatePatient}
         />
@@ -56,10 +63,13 @@ const Container = ({ activeTab, setActiveTab, patient_details, historyData, onUp
 
       {activeTab === "EMR" && (
         <EMR
-          activeTab={activeTab}
+          ctiveTab={activeTab}
           setActiveTab={setActiveTab}
           handleBookClick={handleBookClick}
           patient_details={patient_details}
+          onUpdatePatient={onUpdatePatient} // ✅ Add this
+          appo_id={patient_details?.appo_id} // ✅ Add this (make sure this exists)
+          branch="1" // ✅ Your fixed branch value
         />
       )}
 

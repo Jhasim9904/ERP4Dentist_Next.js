@@ -6,12 +6,19 @@ import "./Observation.css";
 import ObservationModal from "@/components/PopupModals/ObservationModal/ObservationModal";
 import AddTreatmentModal from "@/components/PopupModals/AddTreatmentModal/AddTreatmentModal";
 
-const Observation = ({ data = [] }) => {
+const Observation = ({ data = [], onUpdatePatient, appo_id, branch }) => {
   const [show, setShow] = useState(false);
   const [showModal, setShowModal] = useState(false);
 
   const handleOpen = () => setShowModal(true);
   const handleClose = () => setShowModal(false);
+
+  const handleModalClose = () => {
+    setShow(false);
+    if (typeof onUpdatePatient === "function") {
+      onUpdatePatient(); // Refresh data after POST
+    }
+  };
 
   const extractTeeth = (observation) => {
     const teethNumbers = [];
@@ -23,36 +30,23 @@ const Observation = ({ data = [] }) => {
     return teethNumbers.join(",");
   };
 
-  // Get the first item to show basic info like Exam Date, Doctor, etc.
   const firstObservation = data[0] || {};
 
   return (
     <div className="observation-container">
       <h2 className="observation-heading">Observation</h2>
 
-      {/* Show shared header info only once */}
       {firstObservation && (
         <div className="observation-header">
           <div className="observation-info">
-            <p>
-              <strong>Examination Date:</strong>{" "}
-              <span className="dim-text">{firstObservation.startDate}</span>
-            </p>
-            <p>
-              <strong>Chief Complaint:</strong>{" "}
-              <span className="dim-text">{firstObservation.observation}</span>
-            </p>
-            <p>
-              <strong>Occlusion:</strong>{" "}
-              <span className="dim-text">{firstObservation.occlusion || "-"}</span>
-            </p>
+            <p><strong>Examination Date:</strong> <span className="dim-text">{firstObservation.startDate}</span></p>
+            <p><strong>Chief Complaint:</strong> <span className="dim-text">{firstObservation.observation}</span></p>
+            <p><strong>Occlusion:</strong> <span className="dim-text">{firstObservation.occlusion || "-"}</span></p>
             <p><strong>Wisdom Teeth:</strong></p>
             <p>
-              <strong>Calculus:</strong>{" "}
-              <span className="dim-text">{firstObservation.calculus || "++"}</span>
+              <strong>Calculus:</strong> <span className="dim-text">{firstObservation.calculus || "++"}</span>
               <span style={{ marginLeft: "3rem" }}>
-                <strong>Stains:</strong>{" "}
-                <span className="dim-text">{firstObservation.stains || "++"}</span>
+                <strong>Stains:</strong> <span className="dim-text">{firstObservation.stains || "++"}</span>
               </span>
             </p>
           </div>
@@ -60,12 +54,15 @@ const Observation = ({ data = [] }) => {
           <div className="observation-actions">
             <p>Doctor: <strong>{firstObservation.doctor}</strong></p>
 
-            {show && <ObservationModal onClose={() => setShow(false)} />}
+            {show && (
+              <ObservationModal
+                onClose={handleModalClose}
+                appo_id={appo_id}
+                branch={branch}
+              />
+            )}
             {!show && (
-              <button
-                className="add-observation-btn"
-                onClick={() => setShow(true)}
-              >
+              <button className="add-observation-btn" onClick={() => setShow(true)}>
                 <FaPlus style={{ marginRight: "6px" }} /> Add New Observation
               </button>
             )}
@@ -73,7 +70,6 @@ const Observation = ({ data = [] }) => {
         </div>
       )}
 
-      {/* One single table with all rows */}
       <table className="observation-table">
         <thead>
           <tr>

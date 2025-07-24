@@ -23,7 +23,13 @@ const tabs = [
   { id: "invoice", label: "Invoice", icon: "📄" },
 ];
 
-const EMR = ({ activeTab, setActiveTab, handleBookClick, patient_details }) => {
+const EMR = ({
+  activeTab,
+  setActiveTab,
+  handleBookClick,
+  patient_details,
+  onUpdatePatient,
+}) => {
   const [activeTab1, setActiveTab1] = useState("examination");
 
   console.log("💥 patient_details:", patient_details);
@@ -79,7 +85,12 @@ const EMR = ({ activeTab, setActiveTab, handleBookClick, patient_details }) => {
             <Examination data={patient_details.examination?.[0]} />
           )}
           {activeTab1 === "observation" && (
-            <Observation data={patient_details.observ || []} />
+            <Observation
+              data={patient_details.observ || []}
+              onUpdatePatient={onUpdatePatient}
+              appo_id={patient_details?.appo_id}
+              branch={patient_details?.branch?.toString() || "1"}
+            />
           )}
 
           {activeTab1 === "treatment" && (
@@ -91,8 +102,9 @@ const EMR = ({ activeTab, setActiveTab, handleBookClick, patient_details }) => {
           {activeTab1 === "prescriptions" && (
             <Prescriptions data={patient_details.prescription || []} />
           )}
-          {activeTab1 === "lab-works" && ( 
-            <LabWorks labData={patient_details.lab} />)}
+          {activeTab1 === "lab-works" && (
+            <LabWorks labData={patient_details.lab} />
+          )}
           {activeTab1 === "uploads" && <Uploads />}
           {activeTab1 === "billing" && (
             <Billing
